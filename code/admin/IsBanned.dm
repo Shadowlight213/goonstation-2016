@@ -39,17 +39,10 @@
 	if(computer_id)
 		cidquery = " OR computerid = '[computer_id]' "
 
-	world.log << "Ran to DB query"
-	world.log << "tpkey" + ckeytext
-	world.log << "ip" + ipquery
-	world.log << "cid" + cidquery
 	var/DBQuery/query = dbcon.NewQuery("SELECT ckey, ip, computerid, a_ckey, reason, expiration_time, duration, bantime, bantype FROM ban WHERE (ckey = '[ckeytext]' [ipquery] [cidquery]) AND (bantype = 'PERMABAN' OR bantype = 'ADMIN_PERMABAN' OR ((bantype = 'TEMPBAN' OR bantype = 'ADMIN_TEMPBAN') AND expiration_time > Now())) AND isnull(unbanned)")
 
-	if(query.Execute())
-		world.log << "execute True"
-	else
-		world.log << "execute null"
-	world.log << "Ran past execute."
+	if(!query.Execute())
+		world.log << "Ban database execution failure. Key [ckeytext] not checked"
 	while(query.NextRow())
 		var/pckey = query.item[1]
 		//var/pip = query.item[2]
@@ -60,13 +53,6 @@
 		var/duration = query.item[7]
 		var/bantime = query.item[8]
 		var/bantype = query.item[9]
-
-		world.log << "pkey" + pckey
-		world.log << "akey" + ackey
-		world.log << "exp" + expiration
-		world.log << "dur" + duration
-		world.log << "type" + bantype
-
 
 		if (bantype == "ADMIN_PERMABAN" || bantype == "ADMIN_TEMPBAN")
 			//admin bans MUST match on ckey to prevent cid-spoofing attacks

@@ -86,6 +86,7 @@ USE_MYSQL
 MYSQL_HOSTNAME localhost
 MYSQL_PORT 3306
 MYSQL_USERNAME usernamehere
-MYSQL_PASSWORD passhere
-MYSQL_DATBASE feedback
+MYSQL_PASSWORD passwordhere
+# I lost 4 hours of work because I spelled this DATBASE
+MYSQL_DATABASE feedback
 
