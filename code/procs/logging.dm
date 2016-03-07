@@ -7,6 +7,9 @@ Example in-game log call:
 Example out of game log call:
 		logTheThing("diary", src, null, "gibbed everyone ever", "admin")
 */
+/proc/time_stamp(format = "hh:mm:ss")
+	return time2text(world.timeofday, format)
+
 /proc/logTheThing(type, source, target, text, diaryType)
 	var/diaryLogging
 
@@ -194,3 +197,16 @@ proc/log_shot(var/obj/projectile/P,var/obj/SHOT, var/target_is_immune = 0)
 // Does what is says on the tin. We're using the global proc, though (Convair880).
 /proc/log_atmos(var/atom/A as turf|obj|mob)
 	return scan_atmospheric(A, 0, 1)
+
+
+/proc/log_admin(text)
+	if (config.log_admin)
+		diary << "\[[time_stamp()]]ADMIN: [text]"
+
+/proc/log_game(text)
+	if (config.log_game)
+		diary << "\[[time_stamp()]]GAME: [text]"
+
+/proc/log_access(text)
+	if (config.log_access)
+		diary << "\[[time_stamp()]]ACCESS: [text]"

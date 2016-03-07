@@ -694,8 +694,8 @@ var/global
 	camera_network_reciprocity = 1 //If camera connections reciprocate one another or if the path is calculated separately for each camera
 	list/datum/ai_camera_tracker/tracking_list = list()
 
-	centralConn = 1 //Are we able to connect to the central server?
-	centralConnTries = 0 //How many times have we tried and failed to connect?
+	centralConn = 0 //Are we able to connect to the central server?
+	centralConnTries = 5 //How many times have we tried and failed to connect?
 
 	//Resource Management
 	list/localResources = list()

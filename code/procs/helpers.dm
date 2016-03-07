@@ -1,3 +1,11 @@
+
+/proc/sanitizeSQL(t as text)
+	var/sqltext = dbcon.Quote(t);
+	return copytext(sqltext, 2, lentext(sqltext));//Quote() adds quotes around input, we already do that
+
+/proc/format_table_name(table as text)
+	return table
+
 /proc/s_es(var/number as num, var/es = 0)
 	if (isnull(number))
 		return

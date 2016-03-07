@@ -224,6 +224,10 @@
 //Starts the dialog for banning a dude
 /client/proc/addBanDialog(target)
 	if (src.holder && usr.level >= LEVEL_SA)
+		alert("Use tg code to ban.")
+		return 1
+
+/*
 		var/mob/M
 		var/mobRef = 0
 		if (target && istype(target, /mob/))
@@ -296,7 +300,7 @@
 	else
 		alert("You need to be at least a Secondary Administrator to ban players.")
 		return 1
-
+*/
 
 //Admin verb to add bans
 /client/proc/cmd_admin_addban ()
@@ -362,6 +366,10 @@
 
 /client/proc/editBanDialog(id, ckey, compID, ip, oreason, otimestamp)
 	if (src.holder && usr.level >= LEVEL_SA)
+		alert("Use tg code to ban.")
+		return 1
+
+/*
 		var/CMinutes = (world.realtime / 10) / 60
 		var/remaining = (text2num(otimestamp) - CMinutes)
 		if(!remaining || remaining < 0) remaining = 0
@@ -421,7 +429,7 @@
 	else
 		alert("You need to be at least a Secondary Administrator to ban players.")
 		return 1
-
+*/
 
 /proc/deleteBan(step = 1, data)
 	set background = 1
@@ -475,6 +483,10 @@
 
 /client/proc/deleteBanDialog(id, ckey, compID, ip, akey)
 	if (src.holder && usr.level >= LEVEL_SA)
+		alert("Use tg code to ban.")
+		return 1
+
+/*
 		if(alert(usr, "Are you sure you want to unban [ckey]?", "Confirmation", "Yes", "No") == "Yes")
 			var/data[] = new()
 			data["id"] = id
@@ -486,7 +498,7 @@
 			src.holder.banPanel()
 	else
 		alert("You need to be at least a Secondary Administrator to remove bans.")
-
+*/
 /*
 /proc/addException(step = 1, data)
 	set background = 1

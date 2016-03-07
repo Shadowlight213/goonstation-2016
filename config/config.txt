@@ -79,3 +79,13 @@ SERVERREGION US
 ENV prod
 
 CDN http://cdn.goonhub.com
+
+
+USE_MYSQL
+
+MYSQL_HOSTNAME localhost
+MYSQL_PORT 3306
+MYSQL_USERNAME usernamehere
+MYSQL_PASSWORD passhere
+MYSQL_DATBASE feedback
+

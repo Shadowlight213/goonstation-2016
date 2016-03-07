@@ -137,6 +137,7 @@ var/global
 		//Called by client, sent data to investigate (cookie history so far)
 		analyzeClientData(cookie = "")
 			if (!cookie) return
+			return	//Goof ate all the cookies from the cookie jar. RIP
 			if (cookie != "none")
 				var/list/connData = json2list(cookie)
 				if (connData && islist(connData) && connData.len > 0 && connData["connData"])

@@ -1,3 +1,14 @@
+
+var/list/clientmessages = list()
+
+proc/addclientmessage(var/ckey, var/message)
+	ckey = ckey(ckey)
+	if (!ckey || !message)
+		return
+	if (!(ckey in clientmessages))
+		clientmessages[ckey] = list()
+	clientmessages[ckey] += message
+
 /client
 	preload_rsc = 1
 	var/datum/admins/holder = null
@@ -100,7 +111,7 @@ var/global/list/hellbans = null
 	//src.chui = new /datum/chui(src)
 	src.tooltip = new /datum/tooltip(src)
 
-	src.isbanned = checkBan(src.ckey, src.computer_id, src.address)
+//	src.isbanned = checkBan(src.ckey, src.computer_id, src.address)
 	if (isbanned)
 		logTheThing("diary", null, src, "Failed Login: %target% - Banned", "access")
 		if (announce_banlogin) message_admins("<span style=\"color:blue\">Failed Login: <a href='?src=%admin_ref%;action=notes;target=[src.ckey]'>[src]</a> - Banned (IP: [src.address], ID: [src.computer_id])</span>")

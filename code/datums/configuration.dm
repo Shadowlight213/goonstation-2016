@@ -45,6 +45,7 @@
 	var/allow_ai = 1					// allow ai job
 	var/hostedby = null
 	var/respawn = 1
+	var/panic_buker = 0
 
 	// MySQL
 	var/sql_enabled = 0
