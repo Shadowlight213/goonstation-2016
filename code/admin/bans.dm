@@ -128,6 +128,10 @@
 /proc/addBan(step = 1, data)
 	set background = 1
 
+	var/adminMsg = "<span style=\"color:blue\"> ALERT! Goon Code Ban attempt detected for [data["ckey"]].</span>"
+	message_admins(adminMsg)
+	return
+
 	if (step == 1)
 		var/banTimestamp = 0
 		if (data["mins"] > 0) //If a temp ban, calculate expiry
@@ -188,7 +192,7 @@
 			if (targetC) boutput(targetC, "<span style=\"color:red\">This is a permanent ban.</span>")
 			logTheThing("admin", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This is a permanent ban.")
 			logTheThing("diary", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This is a permanent ban.", "admin")
-			var/adminMsg = "<span style=\"color:blue\">"
+			//var/adminMsg = "<span style=\"color:blue\">"
 			adminMsg += (istype(adminC, /client) ? key_name(adminC) : adminC)
 			adminMsg += " has banned [targetC ? targetC : replacement_text].<br>Reason: [row["reason"]]<br>This is a permanent ban.</span>"
 			message_admins(adminMsg)
@@ -196,7 +200,7 @@
 			if (targetC) boutput(targetC, "<span style=\"color:red\">This is a temporary ban, it will be removed in [expiry].</span>")
 			logTheThing("admin", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This will be removed in [expiry].")
 			logTheThing("diary", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This will be removed in [expiry].", "admin")
-			var/adminMsg = "<span style=\"color:blue\">"
+			//var/adminMsg = "<span style=\"color:blue\">"
 			adminMsg += (istype(adminC, /client) ? key_name(adminC) : adminC)
 			adminMsg += " has banned [targetC ? targetC : replacement_text].<br>Reason: [row["reason"]]<br>This will be removed in [expiry].</span>"
 			message_admins(adminMsg)
