@@ -633,7 +633,6 @@ var/f_color_selector_handler/F_Color_Selector
 				logTheThing("ooc", nick, null, "OOC: [msg]")
 				logTheThing("diary", nick, null, ": [msg]", "ooc")
 				var/rendered = "<span class=\"adminooc\"><span class=\"prefix\">OOC:</span> <span class=\"name\">[nick]:</span> <span class=\"message\">[msg]</span></span>"
-typ
 				for (var/client/C)
 					if (C.preferences && !C.preferences.listen_ooc)
 						continue
