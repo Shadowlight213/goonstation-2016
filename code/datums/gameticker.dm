@@ -73,7 +73,7 @@ var/global/datum/controller/gameticker/ticker
 
 		return 0
 
-	if (!istype(src.mode, /datum/game_mode/construction) && map_setting != "DESTINY")
+	if (!istype(src.mode, /datum/game_mode/construction) && (map_setting != "DESTINY") && config.no_round_ooc)
 		ooc_allowed = 0
 		boutput(world, "<B>OOC has been automatically disabled until the round ends.</B>")
 

@@ -67,6 +67,9 @@ ALLOW_AI
 # disable abandon mob
 NORESPAWN
 
+# disables OOC during round
+#DISABLE_ROUND_OOC
+
 # set a hosted by name for unix platforms
 HOSTEDBY Galactic Order of Oppressive Neckbeards
 
