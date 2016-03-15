@@ -174,7 +174,7 @@
 			return
 #endif
 
-	if (params["alt"])
+	if (params["shift"])
 		target.examine() // in theory, usr should be us, this is shit though
 		return
 
@@ -262,7 +262,7 @@
 			src.set_cursor('icons/cursors/point.dmi')
 			return
 
-		if (src.client.check_key("alt"))
+		if (src.client.check_key("shift"))
 			src.set_cursor('icons/cursors/examine.dmi')
 			return
 

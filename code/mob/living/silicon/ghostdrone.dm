@@ -413,7 +413,7 @@
 		..()
 
 	click(atom/target, params)
-		if (params["alt"])
+		if (params["shift"])
 			target.examine() // in theory, usr should be us, this is shit though
 			return
 

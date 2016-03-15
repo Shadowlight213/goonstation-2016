@@ -95,6 +95,10 @@ macro "macro"
 		name = "CTRL+N"
 		command = "say \"*nod\""
 		is-disabled = false
+	elem 
+		name = "CTRL+O"
+		command = "ooc"
+		is-disabled = false
 	elem "togglepoint"
 		name = "CTRL+P"
 		command = "togglepoint 0"
@@ -316,6 +320,10 @@ macro "wasd"
 	elem "nod_2"
 		name = "CTRL+N"
 		command = "say \"*nod\""
+		is-disabled = false
+	elem 
+		name = "O"
+		command = "ooc"
 		is-disabled = false
 	elem "wasd_togglepoint"
 		name = "P"
@@ -1383,6 +1391,7 @@ window "mainwindow"
 		right-click = false
 		saved-params = "pos;size;is-minimized;is-maximized"
 		on-size = ".winset\"mainwindow.tooltip.is-visible=false\""
+		title = ""
 		titlebar = true
 		statusbar = true
 		can-close = true
