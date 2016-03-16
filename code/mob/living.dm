@@ -174,7 +174,7 @@
 			return
 #endif
 
-	if (params["alt"])
+	if (params["shift"])
 		target.examine() // in theory, usr should be us, this is shit though
 		return
 
@@ -262,7 +262,7 @@
 			src.set_cursor('icons/cursors/point.dmi')
 			return
 
-		if (src.client.check_key("alt"))
+		if (src.client.check_key("shift"))
 			src.set_cursor('icons/cursors/examine.dmi')
 			return
 
@@ -512,14 +512,14 @@
 
 	// :downs:
 	if (src.get_brain_damage() >= 60)
-		message = dd_replacetext(message, " am ", " ")
-		message = dd_replacetext(message, " is ", " ")
-		message = dd_replacetext(message, " are ", " ")
-		message = dd_replacetext(message, "you", "u")
-		message = dd_replacetext(message, "help", "halp")
-		message = dd_replacetext(message, "grief", "grife")
-		message = dd_replacetext(message, "she ", "him ")
-		message = dd_replacetext(message, "he ", "him ")
+		message = replacetext(message, " am ", " ")
+		message = replacetext(message, " is ", " ")
+		message = replacetext(message, " are ", " ")
+		message = replacetext(message, "you", "u")
+		message = replacetext(message, "help", "halp")
+		message = replacetext(message, "grief", "grife")
+		message = replacetext(message, "she ", "him ")
+		message = replacetext(message, "he ", "him ")
 
 		if(prob(50))
 			message = uppertext(message)

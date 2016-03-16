@@ -45,6 +45,7 @@
 	var/allow_ai = 1					// allow ai job
 	var/hostedby = null
 	var/respawn = 1
+	var/no_round_ooc = 0
 
 	// MySQL
 	var/sql_enabled = 0
@@ -103,7 +104,7 @@
 
 	diary << "Reading configuration file '[filename]'"
 
-	var/list/CL = dd_text2list(text, "\n")
+	var/list/CL = splittext(text, "\n")
 
 	for (var/t in CL)
 		if (!t)
@@ -204,6 +205,9 @@
 			if ("allow_ai")
 				config.allow_ai = 1
 
+			if ("disable_round_ooc")
+				config.no_round_ooc = 1
+
 			if ("norespawn")
 				config.respawn = 0
 
@@ -262,7 +266,7 @@
 				config.server_specific_configs = 1
 
 			if ("servers")
-				for(var/sv in dd_text2list(trim(value), " "))
+				for(var/sv in splittext(trim(value), " "))
 					sv = trim(sv)
 					if(sv)
 						config.servers.Add(sv)

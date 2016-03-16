@@ -67,6 +67,9 @@ ALLOW_AI
 # disable abandon mob
 NORESPAWN
 
+# disables OOC during round
+#DISABLE_ROUND_OOC
+
 # set a hosted by name for unix platforms
 HOSTEDBY Galactic Order of Oppressive Neckbeards
 
@@ -79,3 +82,14 @@ SERVERREGION US
 ENV prod
 
 CDN http://cdn.goonhub.com
+
+
+USE_MYSQL
+
+MYSQL_HOSTNAME localhost
+MYSQL_PORT 3306
+MYSQL_USERNAME usernamehere
+MYSQL_PASSWORD passwordhere
+# I lost 4 hours of work because I spelled this DATBASE
+MYSQL_DATABASE feedback
+

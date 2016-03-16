@@ -1,3 +1,14 @@
+
+var/list/clientmessages = list()
+
+proc/addclientmessage(var/ckey, var/message)
+	ckey = ckey(ckey)
+	if (!ckey || !message)
+		return
+	if (!(ckey in clientmessages))
+		clientmessages[ckey] = list()
+	clientmessages[ckey] += message
+
 /client
 	preload_rsc = 1
 	var/datum/admins/holder = null
@@ -71,6 +82,8 @@
 	var/datum/chatOutput/chatOutput = null
 	var/resourcesLoaded = 0 //Has this client done the mass resource downloading yet?
 	var/datum/tooltip/tooltip = null
+	
+	var/delete_state = DELETE_STOP
 
 /client/Del()
 	if (ticker && ticker.current_state < GAME_STATE_FINISHED)
@@ -100,7 +113,7 @@ var/global/list/hellbans = null
 	//src.chui = new /datum/chui(src)
 	src.tooltip = new /datum/tooltip(src)
 
-	src.isbanned = checkBan(src.ckey, src.computer_id, src.address)
+//	src.isbanned = checkBan(src.ckey, src.computer_id, src.address)
 	if (isbanned)
 		logTheThing("diary", null, src, "Failed Login: %target% - Banned", "access")
 		if (announce_banlogin) message_admins("<span style=\"color:blue\">Failed Login: <a href='?src=%admin_ref%;action=notes;target=[src.ckey]'>[src]</a> - Banned (IP: [src.address], ID: [src.computer_id])</span>")
@@ -1071,7 +1084,7 @@ var/global/curr_day = null
 	else
 		var/changelogHtml = grabResource("html/changelog.html")
 		var/data = changelog:html
-		changelogHtml = dd_replacetext(changelogHtml, "<!-- HTML GOES HERE -->", "[data]")
+		changelogHtml = replacetext(changelogHtml, "<!-- HTML GOES HERE -->", "[data]")
 		src.Browse(changelogHtml, "window=changes;size=500x650;title=Changelog;")
 		src.changes = 1
 

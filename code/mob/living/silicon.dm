@@ -147,7 +147,7 @@
 
 /mob/living/silicon/click(atom/target, params)
 	if (!src.stat && !src.restrained() && !src.weakened && !src.paralysis && !src.stunned)
-		if (params["ctrl"])
+		if (params["shift"])
 			if (istype(target, /obj/machinery/door/airlock))
 				var/obj/machinery/door/airlock/D = target
 				if (D.aiControlDisabled > 0)
@@ -174,7 +174,7 @@
 				D.updateUsrDialog()
 				return
 
-		if (params["shift"])
+		if (params["ctrl"])
 			if (istype(target, /obj/machinery/door/airlock))
 				var/obj/machinery/door/airlock/D = target
 				if (D.aiControlDisabled > 0)

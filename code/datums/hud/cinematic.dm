@@ -22,5 +22,5 @@
 					sleep(70)
 					anim.icon_state = "loss_malf"
 			if ("sadbuddy")
-				create_screen("cinematic", "", 'icons/effects/160x160.dmi', "sadbuddy", "CENTER-2,CENTER-2")
+				create_screen("cinematic", "", 'icons/effects/160x160.dmi', "sadbuddy", "CENTER-2,CENTER-2", 99)
 				clients << sound('sound/misc/sad_server_death.ogg')

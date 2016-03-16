@@ -111,8 +111,6 @@ var/global/disable_next_click = 0
 		return 0
 	if (!G.client)
 		return 0
-	if (G.mind && G.mind.dnr)
-		return 0
 	return 1
 
 #define GHOSTDRONE_BUILD_INTERVAL 3000

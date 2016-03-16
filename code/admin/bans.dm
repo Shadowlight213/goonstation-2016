@@ -128,6 +128,10 @@
 /proc/addBan(step = 1, data)
 	set background = 1
 
+	var/adminMsg = "<span style=\"color:blue\"> ALERT! Goon Code Ban attempt detected for [data["ckey"]].</span>"
+	message_admins(adminMsg)
+	return
+
 	if (step == 1)
 		var/banTimestamp = 0
 		if (data["mins"] > 0) //If a temp ban, calculate expiry
@@ -188,7 +192,7 @@
 			if (targetC) boutput(targetC, "<span style=\"color:red\">This is a permanent ban.</span>")
 			logTheThing("admin", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This is a permanent ban.")
 			logTheThing("diary", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This is a permanent ban.", "admin")
-			var/adminMsg = "<span style=\"color:blue\">"
+			//var/adminMsg = "<span style=\"color:blue\">"
 			adminMsg += (istype(adminC, /client) ? key_name(adminC) : adminC)
 			adminMsg += " has banned [targetC ? targetC : replacement_text].<br>Reason: [row["reason"]]<br>This is a permanent ban.</span>"
 			message_admins(adminMsg)
@@ -196,7 +200,7 @@
 			if (targetC) boutput(targetC, "<span style=\"color:red\">This is a temporary ban, it will be removed in [expiry].</span>")
 			logTheThing("admin", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This will be removed in [expiry].")
 			logTheThing("diary", adminC, targetC, "has banned [targetC ? "%target%" : replacement_text]. Reason: [row["reason"]]. This will be removed in [expiry].", "admin")
-			var/adminMsg = "<span style=\"color:blue\">"
+			//var/adminMsg = "<span style=\"color:blue\">"
 			adminMsg += (istype(adminC, /client) ? key_name(adminC) : adminC)
 			adminMsg += " has banned [targetC ? targetC : replacement_text].<br>Reason: [row["reason"]]<br>This will be removed in [expiry].</span>"
 			message_admins(adminMsg)
@@ -224,6 +228,10 @@
 //Starts the dialog for banning a dude
 /client/proc/addBanDialog(target)
 	if (src.holder && usr.level >= LEVEL_SA)
+		alert("Use tg code to ban.")
+		return 1
+
+/*
 		var/mob/M
 		var/mobRef = 0
 		if (target && istype(target, /mob/))
@@ -296,7 +304,7 @@
 	else
 		alert("You need to be at least a Secondary Administrator to ban players.")
 		return 1
-
+*/
 
 //Admin verb to add bans
 /client/proc/cmd_admin_addban ()
@@ -362,6 +370,10 @@
 
 /client/proc/editBanDialog(id, ckey, compID, ip, oreason, otimestamp)
 	if (src.holder && usr.level >= LEVEL_SA)
+		alert("Use tg code to ban.")
+		return 1
+
+/*
 		var/CMinutes = (world.realtime / 10) / 60
 		var/remaining = (text2num(otimestamp) - CMinutes)
 		if(!remaining || remaining < 0) remaining = 0
@@ -421,7 +433,7 @@
 	else
 		alert("You need to be at least a Secondary Administrator to ban players.")
 		return 1
-
+*/
 
 /proc/deleteBan(step = 1, data)
 	set background = 1
@@ -475,6 +487,10 @@
 
 /client/proc/deleteBanDialog(id, ckey, compID, ip, akey)
 	if (src.holder && usr.level >= LEVEL_SA)
+		alert("Use tg code to ban.")
+		return 1
+
+/*
 		if(alert(usr, "Are you sure you want to unban [ckey]?", "Confirmation", "Yes", "No") == "Yes")
 			var/data[] = new()
 			data["id"] = id
@@ -486,7 +502,7 @@
 			src.holder.banPanel()
 	else
 		alert("You need to be at least a Secondary Administrator to remove bans.")
-
+*/
 /*
 /proc/addException(step = 1, data)
 	set background = 1
@@ -559,11 +575,11 @@
 	var/CMinutes = (world.realtime / 10) / 60
 	var/bansHtml = grabResource("html/admin/banPanel.html")
 	var/windowName = "banPanel"
-	bansHtml = dd_replacetext(bansHtml, "null /* window_name */", "\'[windowName]\'")
-	bansHtml = dd_replacetext(bansHtml, "null /* ref_src */", "\'\ref[src]\'")
-	bansHtml = dd_replacetext(bansHtml, "null /* cminutes */", "[CMinutes]")
+	bansHtml = replacetext(bansHtml, "null /* window_name */", "\'[windowName]\'")
+	bansHtml = replacetext(bansHtml, "null /* ref_src */", "\'\ref[src]\'")
+	bansHtml = replacetext(bansHtml, "null /* cminutes */", "[CMinutes]")
 	if (centralConn)
-		bansHtml = dd_replacetext(bansHtml, "null /* api_key */", "\'[md5(config.extserver_web_token)]\'")
+		bansHtml = replacetext(bansHtml, "null /* api_key */", "\'[md5(config.extserver_web_token)]\'")
 	usr << browse(bansHtml,"window=[windowName];size=1080x500")
 
 
@@ -607,11 +623,11 @@
 		var/list/log = dd_file2list(banLog)
 		var/lastIndex = (log.len > 1 ? log.len - 1 : 1)
 		var/lastRow = log[lastIndex]
-		var/list/rowDetails = dd_text2list(lastRow, ":")
+		var/list/rowDetails = splittext(lastRow, ":")
 		lastID = text2num(rowDetails[1])
 
 	var/newID = lastID + 1
-	var/append = list2json(data)
+	var/append = json_encode(data)
 	var/logFile = file(banLog)
 	boutput(logFile, "[newID]:[append]")
 
@@ -652,7 +668,7 @@
 		var/logID = row
 		if (!row) break
 		logTheThing("debug", null, null, "UPDATE LOCAL DEBUG: logID: [logID]")
-		var/list/details = json2list(row[logID])
+		var/list/details = json_decode(row[logID])
 		logTheThing("debug", null, null, "UPDATE LOCAL DEBUG: details: [list2params(details)]")
 		var/type = details["type"]
 		details.Remove(details["type"])
@@ -678,7 +694,7 @@
 	for (var/e = 1, e <= data.len, e++) //each ban
 		var/logID = data[e]
 		logTheThing("debug", null, null, "UPDATE LOCAL DEBUG: logID: [logID]")
-		var/list/details = json2list(data[logID])
+		var/list/details = json_decode(data[logID])
 		logTheThing("debug", null, null, "UPDATE LOCAL DEBUG: details: [list2params(details)]")
 		var/type = details["type"]
 		details.Remove(details["type"])
@@ -721,7 +737,7 @@
 	for (var/i = 1, i <= log.len, i++)
 		var/row = log[i]
 		logTheThing("debug", null, null, "UPDATE REMOTE DEBUG: row: [row]")
-		var/list/rowDetails = dd_text2list(row, ":")
+		var/list/rowDetails = splittext(row, ":")
 		logTheThing("debug", null, null, "UPDATE REMOTE DEBUG: rowDetails: [list2params(rowDetails)]")
 		var/logID = rowDetails[1]
 		logID = text2num(logID)
@@ -732,11 +748,11 @@
 			logTheThing("debug", null, null, "UPDATE REMOTE DEBUG: details: [details]")
 			parsedLog["[logID]"] = details
 
-	logTheThing("debug", null, null, "UPDATE REMOTE DEBUG: parsedLog: [list2json(parsedLog)]")
+	logTheThing("debug", null, null, "UPDATE REMOTE DEBUG: parsedLog: [json_encode(parsedLog)]")
 
 	//Send it to the remote so it can update
 	var/query[] = new()
-	query["bans"] = list2json(parsedLog)
+	query["bans"] = json_encode(parsedLog)
 	queryAPI("bans/updateRemote", query)
 
 	return 1
@@ -759,7 +775,7 @@
 		var/list/log = dd_file2list(banLog)
 		var/lastIndex = (log.len > 1 ? log.len - 1 : 1)
 		var/lastRow = log[lastIndex]
-		log = dd_text2list(lastRow, ":")
+		log = splittext(lastRow, ":")
 		latestLocalID = log[1]
 
 	//Get the latest logID from the API

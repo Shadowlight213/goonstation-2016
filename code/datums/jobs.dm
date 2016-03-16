@@ -129,7 +129,7 @@
 	name = "Head of Security"
 	limit = 1
 	wages = 750
-	requires_whitelist = 1
+	requires_whitelist = 0
 	recieves_miranda = 1
 	allow_traitors = 0
 	cant_spawn_as_rev = 1
@@ -1244,7 +1244,7 @@
 			bee.beeMom = M
 			bee.beeMomCkey = M.ckey
 			bee.name = pick_string("bee_names.txt", "beename")
-			bee.name = dd_replacetext(bee.name, "larva", "bee")
+			bee.name = replacetext(bee.name, "larva", "bee")
 
 /datum/job/special/random/souschef
 	name = "Sous-Chef"
