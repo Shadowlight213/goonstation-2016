@@ -1,5 +1,12 @@
 var/datum/geneticsResearchManager/genResearch = new()
 
+
+/client/proc/debug_genetics_research()
+	set category = "Debug"
+	set name = "Edit Genetics research manager"
+
+	src.debug_variables(genResearch)
+
 /datum/geneticsResearchManager
 	var/researchMaterial = 100
 	var/max_material = 100
