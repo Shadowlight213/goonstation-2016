@@ -282,6 +282,7 @@ var/list/admin_verbs = list(
 
 7 = list(\
 // LEVEL_CODER, coder
+/client/proc/debug_genetics_research,\
 /client/proc/reestablish_db_connection,\
 /client/proc/cmd_job_controls,\
 /datum/admins/proc/pixelexplosion,\
