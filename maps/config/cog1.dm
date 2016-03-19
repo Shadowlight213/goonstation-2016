@@ -1,0 +1,5 @@
+#include "..\cogmap.dmm"
+#include "..\z2_cog1.dmm"
+#include "..\z3.dmm"
+#define MAP_MODE "standard"
+#define MAP_NAME "Cogmap1"

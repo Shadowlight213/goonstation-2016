@@ -63,6 +63,7 @@ var/list/admin_verbs = list(
 
 3 = list(\
 // LEVEL_SA, secondary administrator
+/client/proc/getserverlog,\
 /client/proc/stealth,\
 /datum/admins/proc/pixelexplosion,\
 /client/proc/alt_key,\
@@ -282,6 +283,7 @@ var/list/admin_verbs = list(
 
 7 = list(\
 // LEVEL_CODER, coder
+/client/proc/getruntimelog,\
 /client/proc/debug_genetics_research,\
 /client/proc/reestablish_db_connection,\
 /client/proc/cmd_job_controls,\

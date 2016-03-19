@@ -1,5 +1,8 @@
 // Compile-time config flags
 
+#define DEBUG
+
+
 // Enable if btime is installed
 //#define PRECISE_TIMER_AVAILABLE
 
