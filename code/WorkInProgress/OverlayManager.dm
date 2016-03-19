@@ -65,6 +65,7 @@
 	var/d_alpha = 255
 	var/customization_third_color = "#ffffff"
 	var/d_blend_mode = 1
+	var/d_plane = 0
 	var/d_layer = HUD_LAYER_UNDER_2		//18 is just below the ui but above everything else.
 	var/d_mouse_opacity = 0 //In case you want it to block clicks. For blindness and such.
 
@@ -84,6 +85,7 @@
 			S.color = D.customization_third_color
 			S.blend_mode = D.d_blend_mode
 			S.layer = D.d_layer
+			S.plane = D.d_plane
 			S.mouse_opacity = D.d_mouse_opacity
 			instances.Add(S)
 		return ..()
@@ -333,6 +335,7 @@
 		warp.d_icon = 'icons/effects/overlays/warp.dmi'
 		warp.d_icon_state = src.warp_dir
 		warp.d_blend_mode = 1
+		warp.d_plane = -1
 		warp.d_layer = TURF_LAYER-1
 		definitions.Add(warp)
 

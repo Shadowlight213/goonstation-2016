@@ -1,3 +1,4 @@
+var/map_name = "Unknown"
 world
 	mob = /mob/new_player
 	turf = /turf/space
@@ -341,7 +342,6 @@ var/f_color_selector_handler/F_Color_Selector
 		if (time2text(world.realtime,"DDD") == "Fri")
 			NT |= mentors
 
-	
 
 	spawn(world.tick_lag*30)
 		Optimize()
@@ -390,6 +390,13 @@ var/f_color_selector_handler/F_Color_Selector
 		world.log << "DB connection established"
 	else
 		world.log << "DB connect fail"
+
+
+	#ifdef MAP_NAME
+	map_name = "[MAP_NAME]"
+	#else
+	map_name = "Unknown"
+	#endif
 
 	return
 
@@ -571,6 +578,10 @@ var/f_color_selector_handler/F_Color_Selector
 			else shuttle = emergency_shuttle.timeleft()
 		else shuttle = "welp"
 		s["shuttle_time"] = shuttle
+		s["gamestate"] = 1
+		if(ticker)
+			s["gamestate"] = ticker.current_state
+		s["map_name"] = map_name ? map_name : "Unknown"
 		var/elapsed
 		if (ticker && ticker.current_state < GAME_STATE_FINISHED)
 			if (ticker.current_state == GAME_STATE_PREGAME) elapsed = "pre"
