@@ -46,6 +46,7 @@
 	var/hostedby = null
 	var/respawn = 1
 	var/no_round_ooc = 0
+	var/deadshuttle = 0 				// call the shuttle if there are too few living players.
 
 	// MySQL
 	var/sql_enabled = 0
@@ -64,6 +65,7 @@
 	var/crossban_password = null
 
 	//IRC Bot stuff
+	var/useircbot = 0
 	var/irclog_url = null
 	var/ircbot_api = null
 
@@ -173,10 +175,10 @@
 				config.log_vehicles = 1
 
 			if ("allow_vote_restart")
-				config.allow_vote_restart = 0
+				config.allow_vote_restart = 1
 
 			if ("allow_vote_mode")
-				config.allow_vote_mode = 0
+				config.allow_vote_mode = 1
 
 			if ("allow_admin_jump")
 				config.allow_admin_jump = 1
@@ -207,6 +209,9 @@
 
 			if ("disable_round_ooc")
 				config.no_round_ooc = 1
+
+			if ("deathshuttle")
+				config.deadshuttle = 1
 
 			if ("norespawn")
 				config.respawn = 0
@@ -275,6 +280,9 @@
 				config.crossbans = 1
 			if ("crossban_password")
 				config.crossban_password = trim(value)
+
+			if ("useircbot")
+				config.useircbot = 1
 
 			if ("irclog_url")
 				config.irclog_url = trim(value)

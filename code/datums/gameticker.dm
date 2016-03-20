@@ -286,7 +286,8 @@ var/global/datum/controller/gameticker/ticker
 					ircmsg["msg"] = "Server would have restarted now, but the restart has been delayed[game_end_delayer ? " by [game_end_delayer]" : null]."
 					ircbot.export("admin", ircmsg)
 				else
-					ircbot.event("roundend")
+					send2irc("Server", "Round just ended.")
+					//ircbot.event("roundend")
 					Reboot_server()
 
 		return 1

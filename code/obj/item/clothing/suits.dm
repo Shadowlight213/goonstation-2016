@@ -818,7 +818,7 @@
 	desc = "The HS looks a lot different today!"
 	icon_state = "c_box-HS"
 	item_state = "c_box-HS"
-	var/text2speech = 1
+	var/text2speech = 0
 
 	New()
 		..()

@@ -155,7 +155,8 @@ datum/shuttle_controller
 								S.establish_bridge()
 
 						boutput(world, "<B>The Emergency Shuttle has docked with the station! You have [timeleft()/60] minutes to board the Emergency Shuttle.</B>")
-						ircbot.event("shuttledock")
+						send2irc("Server", "The Emergency Shuttle has docked with the station.")
+						//ircbot.event("shuttledock")
 
 						return 1
 

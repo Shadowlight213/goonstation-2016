@@ -66,7 +66,7 @@
 	skin = "hs"
 	treatment_oxy = "perfluorodecalin"
 	access_lookup = "Head Surgeon"
-	text2speech = 1
+	text2speech = 0
 
 /obj/machinery/bot/medbot/head_surgeon/no_camera
 	no_camera = 1

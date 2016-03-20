@@ -162,22 +162,22 @@ var/global/admin_sound_channel = 660
 	if (!M.client.non_admin_dj)
 		M.client.non_admin_dj = 1
 		M.client.verbs += /client/proc/non_admin_dj
-		M.client.verbs += /client/proc/cmd_dectalk
+		//M.client.verbs += /client/proc/cmd_dectalk
 
-		logTheThing("admin", src, M, "has given %target% the ability to play music and use dectalk.")
-		logTheThing("diary", src, M, "has given %target% the ability to play music and use dectalk.", "admin")
-		message_admins("[key_name(src)] has given [key_name(M)] the ability to play music and use dectalk.")
+		logTheThing("admin", src, M, "has given %target% the ability to play music.")
+		logTheThing("diary", src, M, "has given %target% the ability to play music.", "admin")
+		message_admins("[key_name(src)] has given [key_name(M)] the ability to play music.")
 
-		boutput(M, "<span style=\"color:red\"><b>You can now play music with 'Play Music' and use text2speech with 'Dectalk' commands under 'Special Verbs'.</b></span>")
+		boutput(M, "<span style=\"color:red\"><b>You can now play music with 'Play Music' command under 'Special Verbs'.</b></span>")
 		return
 	else
 		M.client.non_admin_dj = 0
 		M.client.verbs -= /client/proc/non_admin_dj
-		M.client.verbs -= /client/proc/cmd_dectalk
+		//M.client.verbs -= /client/proc/cmd_dectalk
 
-		logTheThing("admin", src, M, "has removed %target%'s ability to play music and use dectalk.")
-		logTheThing("diary", src, M, "has removed %target%'s ability to play music and use dectalk.", "admin")
-		message_admins("[key_name(src)] has removed [key_name(M)]'s ability to play music and use dectalk.")
+		logTheThing("admin", src, M, "has removed %target%'s ability to play music.")
+		logTheThing("diary", src, M, "has removed %target%'s ability to play music.", "admin")
+		message_admins("[key_name(src)] has removed [key_name(M)]'s ability to play music.")
 
 		boutput(M, "<span style=\"color:red\"><b>You can no longer play music.</b></span>")
 		return
