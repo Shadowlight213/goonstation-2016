@@ -435,6 +435,7 @@ var/list/special_pa_observing_verbs = list(\
 
 		if ("Inactive")
 			src.holder.dispose()
+			src.control_freak = 1
 			src.holder = null
 			boutput(src, "<span style='color:red;font-size:150%'><b>You are set to Inactive admin status! Please join #ss13admin on irc.synirc.net if you would like to become active again!</b></span>")
 			return
@@ -444,11 +445,13 @@ var/list/special_pa_observing_verbs = list(\
 			return
 
 		else
+			src.control_freak = 1
 			src.holder.dispose()
 			src.holder = null
 			return
 
 	if (src.holder)
+		src.control_freak = CONTROL_FREAK_SKIN | CONTROL_FREAK_MACROS
 		src.holder.owner = src
 		for(var/i = 1; i < 9; i++)
 			if (src.holder.level + 2 >= i && admin_verbs.len >= i && !isnull(admin_verbs[i]))

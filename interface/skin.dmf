@@ -151,6 +151,10 @@ macro "macro"
 		name = "F3"
 		command = "mentorhelp"
 		is-disabled = false
+	elem 
+		name = "F6"
+		command = "Player-Panel"
+		is-disabled = false
 
 macro "wasd"
 	elem "togglewasd"
@@ -424,6 +428,10 @@ macro "wasd"
 	elem "mentorhelp_wasd"
 		name = "F3"
 		command = "mentorhelp"
+		is-disabled = false
+	elem 
+		name = "F6"
+		command = "Player-Panel"
 		is-disabled = false
 
 macro "zqsd"
