@@ -1,0 +1,5 @@
+#include "map_files\destiny.dmm"
+#include "map_files\z2_destiny.dmm"
+#include "map_files\z3.dmm"
+#define MAP_MODE "standard"
+#define MAP_NAME "Destiny"
