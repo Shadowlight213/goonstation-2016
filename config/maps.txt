@@ -1,0 +1,17 @@
+map cog1
+	friendlyname Cogmap
+	default
+
+endmap
+
+map standard
+	friendlyname Cogmap2
+endmap
+
+map destiny
+	friendlyname Destiny
+endmap
+
+map construction
+	friendlyname Construction
+endmap

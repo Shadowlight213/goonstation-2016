@@ -53,10 +53,9 @@ var/global/datum/ircbot/ircbot = new /datum/ircbot()
 
 		//Send a message to an irc bot! Yay!
 		export(iface, args)
-			return 0	//No irc bot.
 			if (src.debugging)
 				src.logDebug("Export called with <b>iface:</b> [iface]. <b>args:</b> [list2params(args)]. <b>src.interface:</b> [src.interface]. <b>src.loaded:</b> [src.loaded]")
-
+			return 0	//No irc bot. Calling after the debug log for future tg bot implementation
 			if (!config || !src.loaded)
 				src.queue += list(list("iface" = iface, "args" = args))
 

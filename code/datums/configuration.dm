@@ -79,6 +79,13 @@
 	var/cdn = ""
 	var/disableResourceCache = 0
 
+
+	//map stuff
+	var/list/datum/votablemap/maplist = list()
+	var/datum/votablemap/defaultmap = null
+	var/maprotation = 1
+	var/maprotatechancedelta = 0.75
+
 /datum/configuration/New()
 	var/list/L = typesof(/datum/game_mode) - /datum/game_mode
 	for (var/T in L)
@@ -227,6 +234,12 @@
 
 			if ("medalhub")
 				config.medal_hub = value
+
+			if ("maprotation")
+				config.maprotation = 1
+
+			if ("maprotationchancedelta")
+				config.maprotatechancedelta = text2num(value)
 
 			if ("medalpass")
 				config.medal_password = value

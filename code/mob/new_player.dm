@@ -132,6 +132,7 @@ mob/new_player
 							stat("[player.client.fakekey]", (player.ready)?("(Playing)"):(null)) // only show the fake key
 					else // are they a normal player or not in stealth mode/using a fake key?
 						stat("[player.key]", (player.ready)?("(Playing)"):(null)) // show them normally
+		stat("Map:", MAP_NAME)
 
 	Topic(href, href_list[])
 		if(href_list["show_preferences"])

@@ -1926,6 +1926,7 @@
 
 	statpanel("Status")
 	if (client.statpanel == "Status")
+		stat(null, "Map: [MAP_NAME]")
 		if (ticker)
 			if ((!src.client.holder) && (ticker.hide_mode || master_mode == "wizard"))
 				stat("Game Mode:", "secret")

@@ -16,6 +16,7 @@ var/datum/preMapLoad/preMapLoad = new
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
+#include "_maps\config\cog1.dm"
 #include "code\_build_config.dm"
 #include "code\_layer.dm"
 #include "code\_macros.dm"
@@ -1192,9 +1193,9 @@ var/datum/preMapLoad/preMapLoad = new
 #include "libs\Base64\binary.dm"
 #include "libs\Base64\hexadecimal.dm"
 #include "libs\Base64\text.dm"
-#include "maps\config\cog1.dm"
 #include "tgstationcode\dbcore.dm"
 #include "tgstationcode\files.dm"
 #include "tgstationcode\ircbottg.dm"
 #include "tgstationcode\IsBanned.dm"
+#include "tgstationcode\maprotation.dm"
 // END_INCLUDE

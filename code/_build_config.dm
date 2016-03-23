@@ -2,6 +2,10 @@
 
 #define DEBUG
 
+#ifndef SERVERTOOLS
+#define SERVERTOOLS 0
+#endif
+
 
 // Enable if btime is installed
 //#define PRECISE_TIMER_AVAILABLE

@@ -145,6 +145,7 @@
 			t = strip_html(t,500)
 		if (!( t ))
 			return
+		M << csound("tgstationcode/adminhelp.ogg")
 		if (usr.client && usr.client.holder)
 			boutput(M, "<span style=\"color:red\"><b>Admin PM from-<i>[key_name(usr, M, 0)]</i></b>: [t]</span>")
 			boutput(usr, "<span style=\"color:blue\">Admin PM to-<b>[key_name(M, usr, 1)]</b>: [t]</span>")

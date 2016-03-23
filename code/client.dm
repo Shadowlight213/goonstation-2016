@@ -82,7 +82,7 @@ proc/addclientmessage(var/ckey, var/message)
 	var/datum/chatOutput/chatOutput = null
 	var/resourcesLoaded = 0 //Has this client done the mass resource downloading yet?
 	var/datum/tooltip/tooltip = null
-	
+
 	var/delete_state = DELETE_STOP
 
 /client/Del()
@@ -179,6 +179,7 @@ var/global/list/hellbans = null
 	src.authorize()
 
 	if (admins.Find(src.ckey))
+		src.control_freak = CONTROL_FREAK_SKIN | CONTROL_FREAK_MACROS
 		src.holder = new /datum/admins(src)
 		src.holder.rank = admins[src.ckey]
 		update_admins(admins[src.ckey])

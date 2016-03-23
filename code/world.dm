@@ -242,6 +242,10 @@ var/f_color_selector_handler/F_Color_Selector
 		precache_unban_txt() //Wire: left in for now because jobbans still use the shitty system
 		precache_create_txt()
 
+	if (config.maprotation && SERVERTOOLS)
+		config.loadmaplist("config/maps.txt")
+
+
 	src.load_mode()
 	src.load_motd()
 	src.load_rules()
@@ -337,7 +341,7 @@ var/f_color_selector_handler/F_Color_Selector
 
 		SetupOccupationsList()
 		ircbot.event("serverstart")
-		
+
 		round_start_data() //Tell the hub site a round is starting
 		if (time2text(world.realtime,"DDD") == "Fri")
 			NT |= mentors

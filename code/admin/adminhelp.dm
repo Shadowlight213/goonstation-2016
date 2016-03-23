@@ -30,6 +30,7 @@
 			if (M.client.player_mode && !M.client.player_mode_ahelp)
 				continue
 			else
+				M << csound("tgstationcode/adminhelp.ogg")
 				boutput(M, "<span style=\"color:blue\"><font size='3'><b><span style='color: red'>HELP: </span>[key_name(src,0,0)][(src.real_name ? "/"+src.real_name : "")] <A HREF='?src=\ref[M.client.holder];action=adminplayeropts;targetckey=[src.client.ckey]' class='popt'><i class='icon-info-sign'></i></A></b>: [msg]</font></span>")
 
 #ifdef DATALOGGER
