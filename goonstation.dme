@@ -1079,6 +1079,7 @@ var/datum/preMapLoad/preMapLoad = new
 #include "code\WorkInProgress\MechanicMadness.dm"
 #include "code\WorkInProgress\MechanicMC14500.dm"
 #include "code\WorkInProgress\MechanicsNetworkCon.dm"
+#include "code\WorkInProgress\medalitems.dm"
 #include "code\WorkInProgress\NanneksStuff.dm"
 #include "code\WorkInProgress\node_network.dm"
 #include "code\WorkInProgress\numbersstation.dm"
