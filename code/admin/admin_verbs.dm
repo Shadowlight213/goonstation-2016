@@ -90,9 +90,6 @@ var/list/admin_verbs = list(
 /client/proc/narrator_mode,\
 /client/proc/admin_pick_random_player,\
 
-#ifdef SERVERTOOLS
-/client/proc/adminchangemap,\
-#endif
 
 /datum/admins/proc/delay_start,\
 /datum/admins/proc/delay_end,\
@@ -310,6 +307,10 @@ var/list/admin_verbs = list(
 /client/proc/export_banlist,\
 /client/proc/import_banlist,\
 */
+
+#ifdef SERVERTOOLS
+/client/proc/adminchangemap,\
+#endif
 
 /client/proc/ticklag,\
 /client/proc/cmd_debug_vox,\
