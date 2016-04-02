@@ -186,6 +186,7 @@
 
 // mob procs
 /mob/New()
+	see_invisible = 2
 	traitHolder = new(src)
 	. = ..()
 	mobs.Add(src)
