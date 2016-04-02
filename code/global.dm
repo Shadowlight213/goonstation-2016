@@ -9,7 +9,7 @@ var/global/list/detailed_machine_timings = list()
 #ifdef QUEUE_STAT_DEBUG
 var/global/list/queue_stat_list = list()
 #endif
-
+var/global/list/deadmins = list()
 /**
  * qdel
  *

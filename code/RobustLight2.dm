@@ -369,6 +369,7 @@ turf
 			if (!src.RL_MulOverlay)
 				var/obj/overlay/tile_effect/overlay = unpool(/obj/overlay/tile_effect)
 				overlay.set_loc(src)
+				overlay.invisibility = 1
 				overlay.blend_mode = BLEND_MULTIPLY
 				overlay.icon = 'icons/effects/light_overlay.dmi'
 				overlay.icon_state = src.RL_OverlayState

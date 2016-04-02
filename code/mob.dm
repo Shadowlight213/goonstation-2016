@@ -255,6 +255,9 @@
 	src.update_cursor()
 	src.client.mouse_pointer_icon = src.cursor
 
+	if(ckey in deadmins)
+		verbs += /client/proc/readmin
+
 	logTheThing("diary", null, src, "Login: %target% from [src.client.address]", "access")
 	src.lastKnownIP = src.client.address
 	src.computer_id = src.client.computer_id

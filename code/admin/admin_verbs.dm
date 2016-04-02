@@ -6,6 +6,7 @@ var/list/admin_verbs = list(
 1 = list(\
 // LEVEL_BABBY, goat fart, ayn rand's armpit
 /client/proc/cmd_admin_say,\
+/client/proc/deadmin,\
 /client/proc/cmd_admin_gib_self,\
 ),
 
@@ -443,7 +444,7 @@ var/list/special_pa_observing_verbs = list(\
 			src.holder.dispose()
 			control_freak = 1
 			src.holder = null
-			boutput(src, "<span style='color:red;font-size:150%'><b>You are set to Inactive admin status! Please join #ss13admin on irc.synirc.net if you would like to become active again!</b></span>")
+			boutput(src, "<span style='color:red;font-size:150%'><b>You are deadminned!</b></span>")
 			return
 
 		if ("Banned")
@@ -1251,3 +1252,30 @@ var/list/fun_images = list()
 		message_admins("Database connection failed: " + dbcon.ErrorMsg())
 	else
 		message_admins("Database connection re-established")
+
+
+/client/proc/deadmin()
+	set name = "Deadmin"
+	set category = "Admin"
+	set desc = "Shed your admin powers."
+	if(!holder)
+		return
+	update_admins("Inactive")
+	clear_admin_verbs()
+	deadmins += ckey
+	verbs += /client/proc/readmin
+	src << "<span class='interface'>You are now a normal player.</span>"
+	message_admins("[src] deadmined themself.")
+
+
+/client/proc/readmin()
+	set name = "Readmin"
+	set category = "Admin"
+	set desc = "Regain your admin powers."
+	update_admins(admins[src.ckey])
+	if(!holder) // Something went wrong...
+		return
+	deadmins -= ckey
+	verbs -= /client/proc/readmin
+	src << "<span class='interface'>You are now an admin.</span>"
+	message_admins("[src] re-adminned themselves.")

@@ -475,3 +475,17 @@
 	else if (src.client) //Wire: Fix for Cannot modify null.mob.
 		src.client.mob = newobs
 	set_loc(newobs)
+
+
+/mob/dead/observer/verb/toggle_dark()
+	set category = "Special Verbs"
+	set name = "Toggle-Darkness"
+	set desc= "see dark"
+	if((usr.stat != 2) || !istype(usr, /mob/dead))
+		boutput(usr, "Not when you're not dead!")
+		return
+
+	if(see_invisible >= 16)
+		see_invisible = 0
+	else
+		see_invisible = 16

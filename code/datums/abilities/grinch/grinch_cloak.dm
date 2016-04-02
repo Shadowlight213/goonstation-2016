@@ -26,7 +26,7 @@
 				boutput(M, __red("You are already invisible."))
 				return 1
 
-			M.invisibility = 2
+			M.invisibility = 4
 			M.UpdateOverlays(image('icons/mob/mob.dmi', "icon_state" = "shield"), "shield")
 			boutput(M, __blue("<b>Your cloak will remain active for the next [src.cloak_duration / 60] minutes.</b>"))
 

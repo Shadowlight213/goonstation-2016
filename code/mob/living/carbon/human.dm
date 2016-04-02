@@ -4830,7 +4830,7 @@
 				src.see_in_dark = SEE_DARK_HUMAN + 2
 			else
 				src.see_in_dark = SEE_DARK_HUMAN
-			src.see_invisible = 0
+			src.see_invisible = 2
 
 		if (isvampire(src))
 			var/turf/T = get_turf(src)
@@ -4839,12 +4839,12 @@
 				src.sight |= SEE_TURFS
 				src.sight |= SEE_OBJS
 				src.see_in_dark = SEE_DARK_FULL
-				src.see_invisible = 2
+				src.see_invisible = 3
 
 			else
 				if (src.check_vampire_power(1) == 1 && !isrestrictedz(src.z))
 					src.sight |= SEE_MOBS
-					src.see_invisible = 2
+					src.see_invisible = 3
 
 ////Dead sight
 	var/turf/T = src.eye ? get_turf(src.eye) : get_turf(src) //They might be in a closet or something idk
@@ -4856,7 +4856,7 @@
 		if (client && client.adventure_view)
 			src.see_invisible = 21
 		else
-			src.see_invisible = 2
+			src.see_invisible = 0
 		return
 
 ////Ship sight
@@ -4881,8 +4881,8 @@
 		src.sight |= SEE_TURFS
 		if (see_in_dark < initial(see_in_dark) + 1)
 			see_in_dark++
-		if (see_invisible < 1)
-			src.see_invisible = 1
+		if (see_invisible < 3)
+			src.see_invisible = 3
 		if (see_infrared < 1)
 			src.see_infrared = 1
 
@@ -4896,8 +4896,8 @@
 		//src.sight |= SEE_MOBS
 		if (see_in_dark < initial(see_in_dark) + 4)
 			see_in_dark += 4
-		if (see_invisible < 2)
-			src.see_invisible = 2
+		if (see_invisible < 4)
+			src.see_invisible = 4
 		if (see_infrared < 1)
 			src.see_infrared = 1
 
@@ -4905,8 +4905,8 @@
 		src.sight |= SEE_MOBS // Predators kinda need proper thermal vision, I've found in playtesting (Convair880).
 		if (see_in_dark < SEE_DARK_FULL)
 			src.see_in_dark = SEE_DARK_FULL
-		if (see_invisible < 2)
-			src.see_invisible = 2
+		if (see_invisible < 4)
+			src.see_invisible = 4
 
 	else if (istype(src.glasses, /obj/item/clothing/glasses/regular/ecto) || eye_istype(/obj/item/organ/eye/cyber/ecto))
 		if (see_in_dark != 1)
