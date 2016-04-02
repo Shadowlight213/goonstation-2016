@@ -18,56 +18,56 @@
 	speechverb_ask = "queries"
 	metabolizes = 0
 
-	death(var/gibbed)
-		if (!gibbed)
-			playsound(src.loc, "sound/effects/splat.ogg", 100, 1)
-			new /obj/decal/cleanable/oil(src.loc)
-			ghostize()
-			qdel(src)
-		else
-			playsound(src.loc, "sound/effects/splat.ogg", 100, 1)
-			new /obj/decal/cleanable/oil(src.loc)
-			..()
-
-	specific_emotes(var/act, var/param = null, var/voluntary = 0)
-		switch (act)
-			if ("scream")
-				if (src.emote_check(voluntary, 50))
-					playsound(get_turf(src), "sound/voice/robot_scream.ogg" , 80, 1)
-					return "<b>[src]</b> screams!"
-		return null
-
-	specific_emote_type(var/act)
-		switch (act)
-			if ("scream")
-				return 2
-		return ..()
-
-	setup_equipment_slots()
-		equipment += new /datum/equipmentHolder/ears/intercom(src)
-
-	setup_hands()
+/mob/living/critter/gunbot/death(var/gibbed)
+	if (!gibbed)
+		playsound(src.loc, "sound/effects/splat.ogg", 100, 1)
+		new /obj/decal/cleanable/oil(src.loc)
+		ghostize()
+		qdel(src)
+	else
+		playsound(src.loc, "sound/effects/splat.ogg", 100, 1)
+		new /obj/decal/cleanable/oil(src.loc)
 		..()
-		var/datum/handHolder/HH = hands[1]
-		HH.limb = new /datum/limb/gun/arm38
-		HH.name = ".38 Anti-Personnel Arm"
-		HH.icon = 'icons/mob/critter_ui.dmi'
-		HH.icon_state = "hand38"
-		HH.limb_name = ".38 Anti-Personnel Arm"
-		HH.can_hold_items = 0
-		HH.can_attack = 0
-		HH.can_range_attack = 1
 
-		HH = hands[2]
-		HH.limb = new /datum/limb/gun/abg
-		HH.name = "ABG Riot Suppression Appendage"
-		HH.icon = 'icons/mob/critter_ui.dmi'
-		HH.icon_state = "handabg"
-		HH.limb_name = "ABG Riot Suppression Appendage"
-		HH.can_hold_items = 0
-		HH.can_attack = 0
-		HH.can_range_attack = 1
+/mob/living/critter/gunbot/specific_emotes(var/act, var/param = null, var/voluntary = 0)
+	switch (act)
+		if ("scream")
+			if (src.emote_check(voluntary, 50))
+				playsound(get_turf(src), "sound/voice/robot_scream.ogg" , 80, 1)
+				return "<b>[src]</b> screams!"
+	return null
 
-	setup_healths()
-		add_hh_robot(-75, 75, 1)
-		add_hh_robot_burn(-50, 50, 1)
+/mob/living/critter/gunbot/specific_emote_type(var/act)
+	switch (act)
+		if ("scream")
+			return 2
+	return ..()
+
+/mob/living/critter/gunbot/setup_equipment_slots()
+	equipment += new /datum/equipmentHolder/ears/intercom(src)
+
+/mob/living/critter/gunbot/setup_hands()
+	..()
+	var/datum/handHolder/HH = hands[1]
+	HH.limb = new /datum/limb/gun/arm38
+	HH.name = ".38 Anti-Personnel Arm"
+	HH.icon = 'icons/mob/critter_ui.dmi'
+	HH.icon_state = "hand38"
+	HH.limb_name = ".38 Anti-Personnel Arm"
+	HH.can_hold_items = 0
+	HH.can_attack = 0
+	HH.can_range_attack = 1
+
+	HH = hands[2]
+	HH.limb = new /datum/limb/gun/abg
+	HH.name = "ABG Riot Suppression Appendage"
+	HH.icon = 'icons/mob/critter_ui.dmi'
+	HH.icon_state = "handabg"
+	HH.limb_name = "ABG Riot Suppression Appendage"
+	HH.can_hold_items = 0
+	HH.can_attack = 0
+	HH.can_range_attack = 1
+
+/mob/living/critter/gunbot/setup_healths()
+	add_hh_robot(-75, 75, 1)
+	add_hh_robot_burn(-50, 50, 1)

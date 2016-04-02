@@ -6,80 +6,80 @@
 
 	var/enabled = 1
 
-	proc/tick()
-		if (!current_task)
-			current_task = default_task
-		if (current_task)
-			current_task.tick()
+/datum/aiHolder/proc/tick()
+	if (!current_task)
+		current_task = default_task
+	if (current_task)
+		current_task.tick()
 
-			var/datum/aiTask/T = current_task.next_task()
-			if (T)
-				current_task = T
-				T.reset()
+		var/datum/aiTask/T = current_task.next_task()
+		if (T)
+			current_task = T
+			T.reset()
 
-	proc/get_instance(taskType, list/nparams)
-		if (taskType in task_cache)
-			return task_cache[taskType]
-		task_cache[taskType] = new taskType(arglist(nparams))
+/datum/aiHolder/proc/get_instance(taskType, list/nparams)
+	if (taskType in task_cache)
 		return task_cache[taskType]
+	task_cache[taskType] = new taskType(arglist(nparams))
+	return task_cache[taskType]
 
 /datum/aiTask
 	var/name = "task"
 	var/datum/aiHolder/holder = null
 
-	New(parentHolder)
-		..()
-		holder = parentHolder
+/datum/aiTask/New(parentHolder)
+	..()
+	holder = parentHolder
 
-		reset()
+	reset()
 
-	proc/on_tick()
+/datum/aiTask/proc/on_tick()
 
 
-	proc/next_task()
-		return null
+/datum/aiTask/proc/next_task()
+	return null
 
-	proc/on_reset()
+/datum/aiTask/proc/on_reset()
 
-	proc/evaluate() // evaluate the current environment and assign priority to switching to this task
-		return 0
+/datum/aiTask/proc/evaluate() // evaluate the current environment and assign priority to switching to this task
+	return 0
 
 	//     do not override procs below this line
 	// --------------------------------------------
 	// unless you are building a new direct subtype
 
-	proc/tick()
-		
-		on_tick()
+/datum/aiTask/proc/tick()
 
-	proc/reset()
-		on_reset()		
+	on_tick()
+
+/datum/aiTask/proc/reset()
+	on_reset()
 
 /datum/aiTask/prioritizer
 	var/list/transition_tasks = list()
 
-	proc/add_transition(transTask)
-		transition_tasks[transTask] = 0
+/datum/aiTask/prioritizer/proc/add_transition(transTask)
+	transition_tasks[transTask] = 0
 
-	next_task()
-		var/mp = -100
-		var/mT = null
-		for (var/T in transition_tasks)
-			if (!mT || transition_tasks[T] > mp || (transition_tasks[T] == mp && prob(50)))
-				mT = T
-				mp = transition_tasks[mT]
-		reset()
-		return mT
-
+/datum/aiTask/prioritizer/next_task()
+	var/mp = -100
+	var/mT = null
+	for (var/T in transition_tasks)
+		if (!mT || transition_tasks[T] > mp || (transition_tasks[T] == mp && prob(50)))
+			mT = T
+			mp = transition_tasks[mT]
 	reset()
-		..()
-		for (var/T in transition_tasks)
-			transition_tasks[T] = 0
+	return mT
 
-	tick()
-		..()
-		for (var/datum/aiTask/T in transition_tasks)
-			transition_tasks[T] = T.evaluate()
+/datum/aiTask/prioritizer/reset()
+	..()
+	for (var/T in transition_tasks)
+		transition_tasks[T] = 0
+
+/datum/aiTask/prioritizer/tick()
+	..()
+	for (var/datum/aiTask/T in transition_tasks)
+		transition_tasks[T] = T.evaluate()
 
 /datum/aiTask/timed
 	var/minimum_task_ticks = 20
@@ -90,27 +90,27 @@
 	var/frustration_threshold = 10
 	var/datum/aiTask/transition_task = null
 
-	New(parentHolder, transTask)
-		transition_task = transTask
-		..()
+/datum/aiTask/timed/New(parentHolder, transTask)
+	transition_task = transTask
+	..()
 
-	proc/frustration_check()
-		return 0
+/datum/aiTask/timed/proc/frustration_check()
+	return 0
 
-	next_task()
-		if (current_target_ticks <= elapsed_ticks || frustration >= frustration_threshold)
-			return transition_task
-		return null
+/datum/aiTask/timed/next_task()
+	if (current_target_ticks <= elapsed_ticks || frustration >= frustration_threshold)
+		return transition_task
+	return null
 
-	tick()
-		..()
-		if (frustration_check())
-			frustration++
-		else
-			frustration = 0
-			elapsed_ticks++
+/datum/aiTask/timed/tick()
+	..()
+	if (frustration_check())
+		frustration++
+	else
+		frustration = 0
+		elapsed_ticks++
 
-	reset()
-		..()
-		elapsed_ticks = 0
-		current_target_ticks = rand(minimum_task_ticks, maximum_task_ticks)
+/datum/aiTask/timed/reset()
+	..()
+	elapsed_ticks = 0
+	current_target_ticks = rand(minimum_task_ticks, maximum_task_ticks)

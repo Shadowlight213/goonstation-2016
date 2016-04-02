@@ -207,166 +207,166 @@
 	var/l_leg_bleed = 0
 	var/r_leg_bleed = 0
 
-	New(mob/new_holder)
-		..()
-		holder = new_holder
-		if (holder) create()
+/datum/human_limbs/New(mob/new_holder)
+	..()
+	holder = new_holder
+	if (holder) create()
 
-	dispose()
-		if (l_arm)
-			l_arm.holder = null
-		if (r_arm)
-			r_arm.holder = null
-		if (l_leg)
-			l_leg.holder = null
-		if (r_leg)
-			r_leg.holder = null
-		holder = null
-		..()
+/datum/human_limbs/dispose()
+	if (l_arm)
+		l_arm.holder = null
+	if (r_arm)
+		r_arm.holder = null
+	if (l_leg)
+		l_leg.holder = null
+	if (r_leg)
+		r_leg.holder = null
+	holder = null
+	..()
 
-	proc/create()
-		if (!l_arm) l_arm = new /obj/item/parts/human_parts/arm/left(holder)
-		if (!r_arm) r_arm = new /obj/item/parts/human_parts/arm/right(holder)
-		if (!l_leg) l_leg = new /obj/item/parts/human_parts/leg/left(holder)
-		if (!r_leg) r_leg = new /obj/item/parts/human_parts/leg/right(holder)
+/datum/human_limbs/proc/create()
+	if (!l_arm) l_arm = new /obj/item/parts/human_parts/arm/left(holder)
+	if (!r_arm) r_arm = new /obj/item/parts/human_parts/arm/right(holder)
+	if (!l_leg) l_leg = new /obj/item/parts/human_parts/leg/left(holder)
+	if (!r_leg) r_leg = new /obj/item/parts/human_parts/leg/right(holder)
 
-		spawn(50)
-			if (holder && !l_arm || !r_arm || !l_leg || !r_leg)
-				logTheThing("debug", holder, null, "<B>SpyGuy/Limbs:</B> [src] is missing limbs after creation for some reason - recreating.")
-				create()
-				if (holder)
-					// fix for "Cannot execute null.update body()".when mob is deleted too quickly after creation
-					holder.update_body()
-					if (holder.client)
-						holder.client.move_delay = world.time + 7
-						//Fix for not being able to move after you got new limbs.
+	spawn(50)
+		if (holder && !l_arm || !r_arm || !l_leg || !r_leg)
+			logTheThing("debug", holder, null, "<B>SpyGuy/Limbs:</B> [src] is missing limbs after creation for some reason - recreating.")
+			create()
+			if (holder)
+				// fix for "Cannot execute null.update body()".when mob is deleted too quickly after creation
+				holder.update_body()
+				if (holder.client)
+					holder.client.move_delay = world.time + 7
+					//Fix for not being able to move after you got new limbs.
 
-	proc/mend(var/howmany = 4)
-		if (!holder)
-			return
+/datum/human_limbs/proc/mend(var/howmany = 4)
+	if (!holder)
+		return
 
-		if (!l_arm && howmany > 0)
-			l_arm = new /obj/item/parts/human_parts/arm/left(holder)
-			l_arm.holder = holder
-			boutput(holder, "<span style=\"color:blue\">Your left arm regrows!</span>")
-			l_arm:original_holder = holder
-			l_arm:set_skin_tone()
-			howmany--
+	if (!l_arm && howmany > 0)
+		l_arm = new /obj/item/parts/human_parts/arm/left(holder)
+		l_arm.holder = holder
+		boutput(holder, "<span style=\"color:blue\">Your left arm regrows!</span>")
+		l_arm:original_holder = holder
+		l_arm:set_skin_tone()
+		howmany--
 
-		if (!r_arm && howmany > 0)
-			r_arm = new /obj/item/parts/human_parts/arm/right(holder)
-			r_arm.holder = holder
-			boutput(holder, "<span style=\"color:blue\">Your right arm regrows!</span>")
-			r_arm:original_holder = holder
-			r_arm:set_skin_tone()
-			howmany--
+	if (!r_arm && howmany > 0)
+		r_arm = new /obj/item/parts/human_parts/arm/right(holder)
+		r_arm.holder = holder
+		boutput(holder, "<span style=\"color:blue\">Your right arm regrows!</span>")
+		r_arm:original_holder = holder
+		r_arm:set_skin_tone()
+		howmany--
 
-		if (!l_leg && howmany > 0)
-			l_leg = new /obj/item/parts/human_parts/leg/left(holder)
-			l_leg.holder = holder
-			boutput(holder, "<span style=\"color:blue\">Your left leg regrows!</span>")
-			l_leg:original_holder = holder
-			l_leg:set_skin_tone()
-			howmany--
+	if (!l_leg && howmany > 0)
+		l_leg = new /obj/item/parts/human_parts/leg/left(holder)
+		l_leg.holder = holder
+		boutput(holder, "<span style=\"color:blue\">Your left leg regrows!</span>")
+		l_leg:original_holder = holder
+		l_leg:set_skin_tone()
+		howmany--
 
-		if (!r_leg && howmany > 0)
-			r_leg = new /obj/item/parts/human_parts/leg/right(holder)
-			r_leg.holder = holder
-			boutput(holder, "<span style=\"color:blue\">Your right leg regrows!</span>")
-			r_leg:original_holder = holder
-			r_leg:set_skin_tone()
-			howmany--
+	if (!r_leg && howmany > 0)
+		r_leg = new /obj/item/parts/human_parts/leg/right(holder)
+		r_leg.holder = holder
+		boutput(holder, "<span style=\"color:blue\">Your right leg regrows!</span>")
+		r_leg:original_holder = holder
+		r_leg:set_skin_tone()
+		howmany--
 
-		if (holder.client) holder.client.move_delay = world.time + 7 //Fix for not being able to move after you got new limbs.
+	if (holder.client) holder.client.move_delay = world.time + 7 //Fix for not being able to move after you got new limbs.
 
-	proc/reset_stone() // reset skintone to whatever the holder's s_tone is
-		if (l_arm && istype(l_arm, /obj/item/parts/human_parts))
-			l_arm:set_skin_tone()
-		if (r_arm && istype(r_arm, /obj/item/parts/human_parts))
-			r_arm:set_skin_tone()
-		if (l_leg && istype(l_leg, /obj/item/parts/human_parts))
-			l_leg:set_skin_tone()
-		if (r_leg && istype(r_leg, /obj/item/parts/human_parts))
-			r_leg:set_skin_tone()
+/datum/human_limbs/proc/reset_stone() // reset skintone to whatever the holder's s_tone is
+	if (l_arm && istype(l_arm, /obj/item/parts/human_parts))
+		l_arm:set_skin_tone()
+	if (r_arm && istype(r_arm, /obj/item/parts/human_parts))
+		r_arm:set_skin_tone()
+	if (l_leg && istype(l_leg, /obj/item/parts/human_parts))
+		l_leg:set_skin_tone()
+	if (r_leg && istype(r_leg, /obj/item/parts/human_parts))
+		r_leg:set_skin_tone()
 
-	proc/sever(var/target = "all", var/mob/user)
-		if (!target)
-			return 0
-		if (istext(target))
-			var/list/limbs_to_sever = list()
-			switch (target)
-				if ("all")
-					limbs_to_sever += list(src.l_arm, src.r_arm, src.l_leg, src.r_leg)
-				if ("both_arms")
-					limbs_to_sever += list(src.l_arm, src.r_arm)
-				if ("both_legs")
-					limbs_to_sever += list(src.l_leg, src.r_leg)
-				if ("l_arm")
-					limbs_to_sever += list(src.l_arm)
-				if ("r_arm")
-					limbs_to_sever += list(src.r_arm)
-				if ("l_leg")
-					limbs_to_sever += list(src.l_leg)
-				if ("r_leg")
-					limbs_to_sever += list(src.r_leg)
-			if (limbs_to_sever.len)
-				for (var/obj/item/parts/P in limbs_to_sever)
-					P.sever(user)
-				return 1
-		else if (istype(target, /obj/item/parts))
-			var/obj/item/parts/P = target
-			P.sever(user)
-			return 1
-
-	proc/replace_with(var/target, var/new_type, var/mob/user)
-		if (!target || !new_type || !src.holder)
-			return 0
-		if (istext(target) && ispath(new_type))
-			if (target == "both_arms" || target == "l_arm")
-				if (ispath(new_type, /obj/item/parts/human_parts/arm) || ispath(new_type, /obj/item/parts/robot_parts/arm))
-					qdel(src.l_arm)
-					src.l_arm = new new_type(src.holder)
-				else // need to make an item arm
-					qdel(src.l_arm)
-					src.l_arm = new /obj/item/parts/human_parts/arm/left/item(src.holder, new new_type(src.holder))
-				src.holder.show_message("<span style=\"color:blue\"><b>Your left arm [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.l_arm]!</b></span>")
-				if (user)
-					logTheThing("admin", user, src.holder, "replaced %target%'s left arm with [new_type]")
-				. ++
-
-			if (target == "both_arms" || target == "r_arm")
-				if (ispath(new_type, /obj/item/parts/human_parts/arm) || ispath(new_type, /obj/item/parts/robot_parts/arm))
-					qdel(src.r_arm)
-					src.r_arm = new new_type(src.holder)
-				else // need to make an item arm
-					qdel(src.r_arm)
-					src.r_arm = new /obj/item/parts/human_parts/arm/right/item(src.holder, new new_type(src.holder))
-				src.holder.show_message("<span style=\"color:blue\"><b>Your right arm [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.r_arm]!</b></span>")
-				if (user)
-					logTheThing("admin", user, src.holder, "replaced %target%'s right arm with [new_type]")
-				. ++
-
-			if (target == "both_legs" || target == "l_leg")
-				if (ispath(new_type, /obj/item/parts/human_parts/leg) || ispath(new_type, /obj/item/parts/robot_parts/leg))
-					qdel(src.l_leg)
-					src.l_leg = new new_type(src.holder)
-					src.holder.show_message("<span style=\"color:blue\"><b>Your left leg [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.l_leg]!</b></span>")
-					if (user)
-						logTheThing("admin", user, src.holder, "replaced %target%'s left leg with [new_type]")
-					. ++
-
-			if (target == "both_legs" || target == "r_leg")
-				if (ispath(new_type, /obj/item/parts/human_parts/leg) || ispath(new_type, /obj/item/parts/robot_parts/leg))
-					qdel(src.r_leg)
-					src.r_leg = new new_type(src.holder)
-					src.holder.show_message("<span style=\"color:blue\"><b>Your right leg [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.r_leg]!</b></span>")
-					if (user)
-						logTheThing("admin", user, src.holder, "replaced %target%'s right leg with [new_type]")
-					. ++
-			if (.)
-				src.holder.set_body_icon_dirty()
-			return
+/datum/human_limbs/proc/sever(var/target = "all", var/mob/user)
+	if (!target)
 		return 0
+	if (istext(target))
+		var/list/limbs_to_sever = list()
+		switch (target)
+			if ("all")
+				limbs_to_sever += list(src.l_arm, src.r_arm, src.l_leg, src.r_leg)
+			if ("both_arms")
+				limbs_to_sever += list(src.l_arm, src.r_arm)
+			if ("both_legs")
+				limbs_to_sever += list(src.l_leg, src.r_leg)
+			if ("l_arm")
+				limbs_to_sever += list(src.l_arm)
+			if ("r_arm")
+				limbs_to_sever += list(src.r_arm)
+			if ("l_leg")
+				limbs_to_sever += list(src.l_leg)
+			if ("r_leg")
+				limbs_to_sever += list(src.r_leg)
+		if (limbs_to_sever.len)
+			for (var/obj/item/parts/P in limbs_to_sever)
+				P.sever(user)
+			return 1
+	else if (istype(target, /obj/item/parts))
+		var/obj/item/parts/P = target
+		P.sever(user)
+		return 1
+
+/datum/human_limbs/proc/replace_with(var/target, var/new_type, var/mob/user)
+	if (!target || !new_type || !src.holder)
+		return 0
+	if (istext(target) && ispath(new_type))
+		if (target == "both_arms" || target == "l_arm")
+			if (ispath(new_type, /obj/item/parts/human_parts/arm) || ispath(new_type, /obj/item/parts/robot_parts/arm))
+				qdel(src.l_arm)
+				src.l_arm = new new_type(src.holder)
+			else // need to make an item arm
+				qdel(src.l_arm)
+				src.l_arm = new /obj/item/parts/human_parts/arm/left/item(src.holder, new new_type(src.holder))
+			src.holder.show_message("<span style=\"color:blue\"><b>Your left arm [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.l_arm]!</b></span>")
+			if (user)
+				logTheThing("admin", user, src.holder, "replaced %target%'s left arm with [new_type]")
+			. ++
+
+		if (target == "both_arms" || target == "r_arm")
+			if (ispath(new_type, /obj/item/parts/human_parts/arm) || ispath(new_type, /obj/item/parts/robot_parts/arm))
+				qdel(src.r_arm)
+				src.r_arm = new new_type(src.holder)
+			else // need to make an item arm
+				qdel(src.r_arm)
+				src.r_arm = new /obj/item/parts/human_parts/arm/right/item(src.holder, new new_type(src.holder))
+			src.holder.show_message("<span style=\"color:blue\"><b>Your right arm [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.r_arm]!</b></span>")
+			if (user)
+				logTheThing("admin", user, src.holder, "replaced %target%'s right arm with [new_type]")
+			. ++
+
+		if (target == "both_legs" || target == "l_leg")
+			if (ispath(new_type, /obj/item/parts/human_parts/leg) || ispath(new_type, /obj/item/parts/robot_parts/leg))
+				qdel(src.l_leg)
+				src.l_leg = new new_type(src.holder)
+				src.holder.show_message("<span style=\"color:blue\"><b>Your left leg [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.l_leg]!</b></span>")
+				if (user)
+					logTheThing("admin", user, src.holder, "replaced %target%'s left leg with [new_type]")
+				. ++
+
+		if (target == "both_legs" || target == "r_leg")
+			if (ispath(new_type, /obj/item/parts/human_parts/leg) || ispath(new_type, /obj/item/parts/robot_parts/leg))
+				qdel(src.r_leg)
+				src.r_leg = new new_type(src.holder)
+				src.holder.show_message("<span style=\"color:blue\"><b>Your right leg [pick("magically ", "weirdly ", "suddenly ", "grodily ", "")]becomes [src.r_leg]!</b></span>")
+				if (user)
+					logTheThing("admin", user, src.holder, "replaced %target%'s right leg with [new_type]")
+				. ++
+		if (.)
+			src.holder.set_body_icon_dirty()
+		return
+	return 0
 
 /mob/living/carbon/human/proc/is_changeling()
 	return get_ability_holder(/datum/abilityHolder/changeling)
@@ -3565,1494 +3565,1494 @@
 
 	if (!can_act(M=src,include_cuffs=0)) actions.interrupt(src, INTERRUPT_STUNNED)
 
-/mob/living/carbon/human
-	proc/clamp_values()
 
-		stunned = max(min(stunned, 15),0)
-		paralysis = max(min(paralysis, 20), 0)
-		weakened = max(min(weakened, 15), 0)
-		slowed = max(min(slowed, 15), 0)
-		sleeping = max(min(sleeping, 20), 0)
-		stuttering = max(stuttering, 0)
-		losebreath = max(min(losebreath,25),0) // stop going up into the thousands, goddamn
-		burning = max(min(burning, 100),0)
-//		bleeding = max(min(bleeding, 10),0)
-//		blood_volume = max(blood_volume, 0)
+/mob/living/carbon/human/proc/clamp_values()
 
-	proc/handle_burning()
-		if (src.burning)
-			var/damage = 0
-			//Normal equip gives you around ~212. Spacesuits ~362. Firesuits ~863.
-			var/damage_reduction = (round(add_fire_protection(0) / 100) - 2) //normal equip = 0, spacesuits = 1, firesuits = 6
-			if (src.burning <= 33)
-				damage = max(3-damage_reduction,0.75)
-			else if (src.burning > 33 && src.burning <= 66)
-				damage = max(4-damage_reduction,1.50)
-			else if (src.burning > 66)
-				damage = max(5-damage_reduction,2.00)
+	stunned = max(min(stunned, 15),0)
+	paralysis = max(min(paralysis, 20), 0)
+	weakened = max(min(weakened, 15), 0)
+	slowed = max(min(slowed, 15), 0)
+	sleeping = max(min(sleeping, 20), 0)
+	stuttering = max(stuttering, 0)
+	losebreath = max(min(losebreath,25),0) // stop going up into the thousands, goddamn
+	burning = max(min(burning, 100),0)
+//	bleeding = max(min(bleeding, 10),0)
+//	blood_volume = max(blood_volume, 0)
 
-			if (isturf(src.loc))
-				var/turf/location = src.loc
-				location.hotspot_expose(T0C + 100 + src.burning * 3, 400)
+/mob/living/carbon/human/proc/handle_burning()
+	if (src.burning)
+		var/damage = 0
+		//Normal equip gives you around ~212. Spacesuits ~362. Firesuits ~863.
+		var/damage_reduction = (round(add_fire_protection(0) / 100) - 2) //normal equip = 0, spacesuits = 1, firesuits = 6
+		if (src.burning <= 33)
+			damage = max(3-damage_reduction,0.75)
+		else if (src.burning > 33 && src.burning <= 66)
+			damage = max(4-damage_reduction,1.50)
+		else if (src.burning > 66)
+			damage = max(5-damage_reduction,2.00)
 
-			for (var/atom/A in src.contents)
-				if (A.material)
-					A.material.triggerTemp(A, T0C + 100 + src.burning * 3)
+		if (isturf(src.loc))
+			var/turf/location = src.loc
+			location.hotspot_expose(T0C + 100 + src.burning * 3, 400)
 
-			if (!src.is_heat_resistant())
-				src.TakeDamage("chest", 0, damage, 0, DAMAGE_BURN)
+		for (var/atom/A in src.contents)
+			if (A.material)
+				A.material.triggerTemp(A, T0C + 100 + src.burning * 3)
 
-			if(src.traitHolder && src.traitHolder.hasTrait("burning"))
-				if(prob(50)) src.update_burning(-1)
-			else
-				src.update_burning(-1)
+		if (!src.is_heat_resistant())
+			src.TakeDamage("chest", 0, damage, 0, DAMAGE_BURN)
 
-	proc/handle_decomposition()
-		var/turf/T = get_turf_loc(src)
-		if (!T) return
-		if (src.stat != 2 || src.mutantrace || src.reagents.has_reagent("formaldehyde"))
-			return
-
-		var/env_temp = 0
-		if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
-			return
-		if (istype(loc, /obj/morgue))
-			return
-		// cogwerks note: both the cryo cell and morgue things technically work, but the corpse rots instantly when removed
-		// if it has been in there longer than the next decomp time that was initiated before the corpses went in. fuck!
-		// will work out a fix for that soon, too tired right now
+		if(src.traitHolder && src.traitHolder.hasTrait("burning"))
+			if(prob(50)) src.update_burning(-1)
 		else
-			var/datum/gas_mixture/environment = T.return_air()
-			env_temp = environment.temperature
-		src.next_decomp_time -= min(30, max(round((env_temp - T20C)/10), -60))
-		if (world.time > src.next_decomp_time) // advances every 4-10 game minutes
-			src.decomp_stage = min(src.decomp_stage + 1, 4)
-			src.update_body()
-			src.update_face()
-			src.next_decomp_time = world.time + rand(240,600)*10
+			src.update_burning(-1)
 
-	proc/stink()
-		if (prob(15))
-			for (var/mob/living/carbon/C in view(6,get_turf(src)))
-				if (C == src || !C.client)
-					continue
+/mob/living/carbon/human/proc/handle_decomposition()
+	var/turf/T = get_turf_loc(src)
+	if (!T) return
+	if (src.stat != 2 || src.mutantrace || src.reagents.has_reagent("formaldehyde"))
+		return
+
+	var/env_temp = 0
+	if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
+		return
+	if (istype(loc, /obj/morgue))
+		return
+	// cogwerks note: both the cryo cell and morgue things technically work, but the corpse rots instantly when removed
+	// if it has been in there longer than the next decomp time that was initiated before the corpses went in. fuck!
+	// will work out a fix for that soon, too tired right now
+	else
+		var/datum/gas_mixture/environment = T.return_air()
+		env_temp = environment.temperature
+	src.next_decomp_time -= min(30, max(round((env_temp - T20C)/10), -60))
+	if (world.time > src.next_decomp_time) // advances every 4-10 game minutes
+		src.decomp_stage = min(src.decomp_stage + 1, 4)
+		src.update_body()
+		src.update_face()
+		src.next_decomp_time = world.time + rand(240,600)*10
+
+/mob/living/carbon/human/proc/stink()
+	if (prob(15))
+		for (var/mob/living/carbon/C in view(6,get_turf(src)))
+			if (C == src || !C.client)
+				continue
+			boutput(C, "<span style=\"color:red\">[stinkString()]</span>")
+			if (prob(30))
+				new/obj/decal/cleanable/vomit(C.loc)
+				C.stunned += 2
 				boutput(C, "<span style=\"color:red\">[stinkString()]</span>")
-				if (prob(30))
-					new/obj/decal/cleanable/vomit(C.loc)
-					C.stunned += 2
-					boutput(C, "<span style=\"color:red\">[stinkString()]</span>")
 
-	proc/handle_disabilities()
+/mob/living/carbon/human/proc/handle_disabilities()
 
-		// moved drowsy, confusion and such from handle_chemicals because it seems better here
-		if (src.drowsyness)
-			src.drowsyness--
-			src.change_eye_blurry(2)
-			if (prob(5))
-				src.sleeping = 1
-				src.paralysis = 5
+	// moved drowsy, confusion and such from handle_chemicals because it seems better here
+	if (src.drowsyness)
+		src.drowsyness--
+		src.change_eye_blurry(2)
+		if (prob(5))
+			src.sleeping = 1
+			src.paralysis = 5
 
-		if (misstep_chance > 0)
-			switch(misstep_chance)
-				if (50 to INFINITY)
-					change_misstep_chance(-2)
-				else
-					change_misstep_chance(-1)
+	if (misstep_chance > 0)
+		switch(misstep_chance)
+			if (50 to INFINITY)
+				change_misstep_chance(-2)
+			else
+				change_misstep_chance(-1)
 
-		// The value at which this stuff is capped at can be found in mob.dm
-		if (resting)
-			dizziness = max(0, dizziness - 5)
-			jitteriness = max(0, jitteriness - 5)
-		else
-			dizziness = max(0, dizziness - 2)
-			jitteriness = max(0, jitteriness - 2)
+	// The value at which this stuff is capped at can be found in mob.dm
+	if (resting)
+		dizziness = max(0, dizziness - 5)
+		jitteriness = max(0, jitteriness - 5)
+	else
+		dizziness = max(0, dizziness - 2)
+		jitteriness = max(0, jitteriness - 2)
 
-		if (!isnull(src.mind) && isvampire(src))
-			if (istype(get_area(src), /area/station/chapel) && src.check_vampire_power(3) != 1)
-				if (prob(33))
-					boutput(src, "<span style=\"color:red\">The holy ground burns you!</span>")
-				src.TakeDamage("chest", 0, 10, 0, DAMAGE_BURN)
-			if (src.loc && istype(src.loc, /turf/space))
-				if (prob(33))
-					boutput(src, "<span style=\"color:red\">The starlight burns you!</span>")
-				src.TakeDamage("chest", 0, 2, 0, DAMAGE_BURN)
+	if (!isnull(src.mind) && isvampire(src))
+		if (istype(get_area(src), /area/station/chapel) && src.check_vampire_power(3) != 1)
+			if (prob(33))
+				boutput(src, "<span style=\"color:red\">The holy ground burns you!</span>")
+			src.TakeDamage("chest", 0, 10, 0, DAMAGE_BURN)
+		if (src.loc && istype(src.loc, /turf/space))
+			if (prob(33))
+				boutput(src, "<span style=\"color:red\">The starlight burns you!</span>")
+			src.TakeDamage("chest", 0, 2, 0, DAMAGE_BURN)
 
-		if (src.loc && isarea(src.loc.loc))
-			if (src.loc.loc:irradiated)
-				if (src.wear_suit && src.wear_suit:radproof)
-					if (istype(wear_suit, /obj/item/clothing/suit/rad) && prob(33))
-						boutput(src, "<span style=\"color:red\">Your geiger counter ticks...</span>")
-					return
-				else
-					src.irradiate(src.loc.loc:irradiated * 10)
-					return
-
-		//GENETIC INSTABILITY FUN STUFF
-		if (src.is_changeling())
-			return
-
-		var/genetic_stability = 100
-		if (src.bioHolder)
-			genetic_stability = src.bioHolder.genetic_stability
-
-		if (src.reagents && src.reagents.has_reagent("mutadone"))
-			genetic_stability = 100
-
-		if (src.traitHolder && src.traitHolder.hasTrait("robustgenetics"))
-			genetic_stability += 20
-
-		if (genetic_stability < 51)
-			if (prob(1) && genetic_stability < 16) //Oh no!
-				src.visible_message("<span style=\"color:red\"><b>[src.name] bubbles and degenerates into a pile of living slop!</b></span>")
-				src.transforming = 1
-				src.invisibility = 101
-
-				var/bdna = null // For forensics (Convair880).
-				var/btype = null
-				if (src.bioHolder.Uid && src.bioHolder.bloodType)
-					bdna = src.bioHolder.Uid
-					btype = src.bioHolder.bloodType
-				gibs(get_turf(src), null, null, bdna, btype)
-
-				var/obj/critter/blobman/sucker = new (get_turf(src))
-				sucker.name = src.real_name
-				sucker.desc = "Science really HAS gone too far this time!"
-				if (prob(30))
-					sucker.atkcarbon = 0
-					sucker.atksilicon = 0
-
-				src.ghostize()
-				qdel(src)
+	if (src.loc && isarea(src.loc.loc))
+		if (src.loc.loc:irradiated)
+			if (src.wear_suit && src.wear_suit:radproof)
+				if (istype(wear_suit, /obj/item/clothing/suit/rad) && prob(33))
+					boutput(src, "<span style=\"color:red\">Your geiger counter ticks...</span>")
 				return
-				//src.make_meatcube(60)
+			else
+				src.irradiate(src.loc.loc:irradiated * 10)
+				return
 
-			if (prob(5) && genetic_stability < 31)
-				boutput(src, "<span style=\"color:red\">Some of your skin bubbles right off. Eugh!</span>")
-				src.TakeDamage("chest", 10, 0, 0, DAMAGE_BURN)
-			if (prob(5) && genetic_stability < 31)
-				boutput(src, "<span style=\"color:red\">Some of your skin melts off. Gross!</span>")
-				bleed(src, rand(8,14), 5)
-			if (prob(2) && genetic_stability < 31)
-				boutput(src, "<span style=\"color:red\">You feel grody as hell!</span>")
-				src.take_toxin_damage(5)
+	//GENETIC INSTABILITY FUN STUFF
+	if (src.is_changeling())
+		return
 
-		//	if (prob(2))                 //maybe let's not bake in something that makes people go blind if they're fat
-		//		boutput(src, "<span style=\"color:red\">Your flesh bubbles and writhes!</span>")
-		//		src.bioHolder.RandomEffect("bad",1)
-			if (prob(5))
-				src.take_toxin_damage(1)
-			if (prob(5))
-				src.take_brain_damage(1)
+	var/genetic_stability = 100
+	if (src.bioHolder)
+		genetic_stability = src.bioHolder.genetic_stability
 
-	proc/update_objectives()
-		if (!src.mind)
+	if (src.reagents && src.reagents.has_reagent("mutadone"))
+		genetic_stability = 100
+
+	if (src.traitHolder && src.traitHolder.hasTrait("robustgenetics"))
+		genetic_stability += 20
+
+	if (genetic_stability < 51)
+		if (prob(1) && genetic_stability < 16) //Oh no!
+			src.visible_message("<span style=\"color:red\"><b>[src.name] bubbles and degenerates into a pile of living slop!</b></span>")
+			src.transforming = 1
+			src.invisibility = 101
+
+			var/bdna = null // For forensics (Convair880).
+			var/btype = null
+			if (src.bioHolder.Uid && src.bioHolder.bloodType)
+				bdna = src.bioHolder.Uid
+				btype = src.bioHolder.bloodType
+			gibs(get_turf(src), null, null, bdna, btype)
+
+			var/obj/critter/blobman/sucker = new (get_turf(src))
+			sucker.name = src.real_name
+			sucker.desc = "Science really HAS gone too far this time!"
+			if (prob(30))
+				sucker.atkcarbon = 0
+				sucker.atksilicon = 0
+
+			src.ghostize()
+			qdel(src)
 			return
-		if (!src.mind.objectives)
-			return
-		if (!istype(src.mind.objectives, /list))
-			return
-		for (var/datum/objective/O in src.mind.objectives)
-			spawn(0)
-				if (istype(O, /datum/objective/specialist/stealth))
-					var/turf/T = get_turf_loc(src)
-					if (T && isturf(T) && (istype(T, /turf/space) || T.loc.name == "Space" || T.z != 1))
-						O:score = max(0, O:score - 1)
-						if (prob(20))
-							boutput(src, "<span style=\"color:red\"><B>Being away from the station is making you lose your composure...</B></span>")
-						src << sound('sound/effects/env_damage.ogg')
-						continue
-					if (T && isturf(T) && T.RL_GetBrightness() < 0.2)
+			//src.make_meatcube(60)
+
+		if (prob(5) && genetic_stability < 31)
+			boutput(src, "<span style=\"color:red\">Some of your skin bubbles right off. Eugh!</span>")
+			src.TakeDamage("chest", 10, 0, 0, DAMAGE_BURN)
+		if (prob(5) && genetic_stability < 31)
+			boutput(src, "<span style=\"color:red\">Some of your skin melts off. Gross!</span>")
+			bleed(src, rand(8,14), 5)
+		if (prob(2) && genetic_stability < 31)
+			boutput(src, "<span style=\"color:red\">You feel grody as hell!</span>")
+			src.take_toxin_damage(5)
+
+	//	if (prob(2))                 //maybe let's not bake in something that makes people go blind if they're fat
+	//		boutput(src, "<span style=\"color:red\">Your flesh bubbles and writhes!</span>")
+	//		src.bioHolder.RandomEffect("bad",1)
+		if (prob(5))
+			src.take_toxin_damage(1)
+		if (prob(5))
+			src.take_brain_damage(1)
+
+/mob/living/carbon/human/proc/update_objectives()
+	if (!src.mind)
+		return
+	if (!src.mind.objectives)
+		return
+	if (!istype(src.mind.objectives, /list))
+		return
+	for (var/datum/objective/O in src.mind.objectives)
+		spawn(0)
+			if (istype(O, /datum/objective/specialist/stealth))
+				var/turf/T = get_turf_loc(src)
+				if (T && isturf(T) && (istype(T, /turf/space) || T.loc.name == "Space" || T.z != 1))
+					O:score = max(0, O:score - 1)
+					if (prob(20))
+						boutput(src, "<span style=\"color:red\"><B>Being away from the station is making you lose your composure...</B></span>")
+					src << sound('sound/effects/env_damage.ogg')
+					continue
+				if (T && isturf(T) && T.RL_GetBrightness() < 0.2)
+					O:score++
+				else
+					var/spotted_by_mob = 0
+					for (var/mob/living/M in oviewers(src, 5))
+						if (M.client && M.sight_check(1))
+							O:score = max(0, O:score - 5)
+							spotted_by_mob = 1
+							break
+					if (!spotted_by_mob)
 						O:score++
-					else
-						var/spotted_by_mob = 0
-						for (var/mob/living/M in oviewers(src, 5))
-							if (M.client && M.sight_check(1))
-								O:score = max(0, O:score - 5)
-								spotted_by_mob = 1
-								break
-						if (!spotted_by_mob)
-							O:score++
 
 
-	proc/handle_pathogens()
-		if (src.stat == 2)
-			if (src.pathogens.len)
-				for (var/uid in src.pathogens)
-					if (prob(5))
-						src.cured(src.pathogens[uid])
-			return
-		for (var/uid in src.pathogens)
-			var/datum/pathogen/P = src.pathogens[uid]
-			P.disease_act()
+/mob/living/carbon/human/proc/handle_pathogens()
+	if (src.stat == 2)
+		if (src.pathogens.len)
+			for (var/uid in src.pathogens)
+				if (prob(5))
+					src.cured(src.pathogens[uid])
+		return
+	for (var/uid in src.pathogens)
+		var/datum/pathogen/P = src.pathogens[uid]
+		P.disease_act()
 
-	proc/handle_mutations_and_radiation()
-		if (src.radiation)
-			switch(src.radiation)
-				if (1 to 49)
-					src.irradiate(-1)
-					if (prob(25))
-						src.take_toxin_damage(1)
-						src.TakeDamage("chest", 0, 1, 0, DAMAGE_BURN)
-						src.updatehealth()
-
-				if (50 to 74)
-					src.irradiate(-2)
+/mob/living/carbon/human/proc/handle_mutations_and_radiation()
+	if (src.radiation)
+		switch(src.radiation)
+			if (1 to 49)
+				src.irradiate(-1)
+				if (prob(25))
 					src.take_toxin_damage(1)
 					src.TakeDamage("chest", 0, 1, 0, DAMAGE_BURN)
-					if (prob(5))
-						src.radiation -= 5
-						if (src.bioHolder && !src.bioHolder.HasEffect("revenant"))
-							src.weakened = 3
-							boutput(src, "<span style=\"color:red\">You feel weak.</span>")
-							emote("collapse")
 					src.updatehealth()
 
-				if (75 to 100)
-					src.irradiate(-2)
-					src.take_toxin_damage(2)
-					src.TakeDamage("chest", 0, 2, 0, DAMAGE_BURN)
-					var/mutChance = 2
-					if (src.traitHolder && src.traitHolder.hasTrait("stablegenes"))
-						mutChance = 1
-					if (prob(mutChance) && (src.bioHolder && !src.bioHolder.HasEffect("revenant")))
-						boutput(src, "<span style=\"color:red\">You mutate!</span>")
-						src:bioHolder:RandomEffect("bad")
-					src.updatehealth()
-
-				if (101 to 150)
-					src.irradiate(-3)
-					src.take_toxin_damage(2)
-					src.TakeDamage("chest", 0, 3, 0, DAMAGE_BURN)
-					var/mutChance = 4
-					if (src.traitHolder && src.traitHolder.hasTrait("stablegenes"))
-						mutChance = 2
-					if (prob(mutChance) && (src.bioHolder && !src.bioHolder.HasEffect("revenant")))
-						boutput(src, "<span style=\"color:red\">You mutate!</span>")
-						src:bioHolder:RandomEffect("bad")
-					src.updatehealth()
-
-				if (151 to INFINITY)
-					// only goes up to 200 but we might as well catch exceptions just in case
-					src.irradiate(-3)
-					src.take_toxin_damage(2)
-					src.TakeDamage("chest", 0, 3, 0, DAMAGE_BURN)
-					var/mutChance = 6
-					if (src.traitHolder && src.traitHolder.hasTrait("stablegenes"))
-						mutChance = 3
+			if (50 to 74)
+				src.irradiate(-2)
+				src.take_toxin_damage(1)
+				src.TakeDamage("chest", 0, 1, 0, DAMAGE_BURN)
+				if (prob(5))
+					src.radiation -= 5
 					if (src.bioHolder && !src.bioHolder.HasEffect("revenant"))
-						src.drowsyness = max(src.drowsyness, 5)
-						if (prob(mutChance))
-							boutput(src, "<span style=\"color:red\">You mutate!</span>")
-							src:bioHolder:RandomEffect("bad")
-					src.updatehealth()
+						src.weakened = 3
+						boutput(src, "<span style=\"color:red\">You feel weak.</span>")
+						emote("collapse")
+				src.updatehealth()
 
-		if (bioHolder) bioHolder.OnLife()
+			if (75 to 100)
+				src.irradiate(-2)
+				src.take_toxin_damage(2)
+				src.TakeDamage("chest", 0, 2, 0, DAMAGE_BURN)
+				var/mutChance = 2
+				if (src.traitHolder && src.traitHolder.hasTrait("stablegenes"))
+					mutChance = 1
+				if (prob(mutChance) && (src.bioHolder && !src.bioHolder.HasEffect("revenant")))
+					boutput(src, "<span style=\"color:red\">You mutate!</span>")
+					src:bioHolder:RandomEffect("bad")
+				src.updatehealth()
 
-		if (src.bomberman == 1)
-			spawn(10)
-				new /obj/bomberman(get_turf(src))
+			if (101 to 150)
+				src.irradiate(-3)
+				src.take_toxin_damage(2)
+				src.TakeDamage("chest", 0, 3, 0, DAMAGE_BURN)
+				var/mutChance = 4
+				if (src.traitHolder && src.traitHolder.hasTrait("stablegenes"))
+					mutChance = 2
+				if (prob(mutChance) && (src.bioHolder && !src.bioHolder.HasEffect("revenant")))
+					boutput(src, "<span style=\"color:red\">You mutate!</span>")
+					src:bioHolder:RandomEffect("bad")
+				src.updatehealth()
 
-	proc/breathe()
-		if (!loc)
-			return
-		if (src.reagents)
-			if (src.reagents.has_reagent("lexorin")) return
-		if (istype(loc, /mob/living/object)) return // no breathing inside possessed objects
-		if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell)) return
-		//if (istype(loc, /obj/machinery/clonepod)) return
-		if (src.bioHolder && src.bioHolder.HasEffect("breathless")) return
+			if (151 to INFINITY)
+				// only goes up to 200 but we might as well catch exceptions just in case
+				src.irradiate(-3)
+				src.take_toxin_damage(2)
+				src.TakeDamage("chest", 0, 3, 0, DAMAGE_BURN)
+				var/mutChance = 6
+				if (src.traitHolder && src.traitHolder.hasTrait("stablegenes"))
+					mutChance = 3
+				if (src.bioHolder && !src.bioHolder.HasEffect("revenant"))
+					src.drowsyness = max(src.drowsyness, 5)
+					if (prob(mutChance))
+						boutput(src, "<span style=\"color:red\">You mutate!</span>")
+						src:bioHolder:RandomEffect("bad")
+				src.updatehealth()
 
-		// Changelings generally can't take OXY/LOSEBREATH damage...except when they do.
-		// And because they're excluded from the breathing procs, said damage didn't heal
-		// on its own, making them essentially mute and perpetually gasping for air.
-		// Didn't seem like a feature to me (Convair880).
-		if (src.is_changeling())
-			if (src.losebreath)
-				src.losebreath = 0
-			if (src.get_oxygen_deprivation())
-				src.take_oxygen_deprivation(-50)
-			return
+	if (bioHolder) bioHolder.OnLife()
 
-		var/datum/gas_mixture/environment = loc.return_air()
-		var/datum/air_group/breath
-		// HACK NEED CHANGING LATER
-		//if (src.oxymax == 0 || (breathtimer > 15))
-		if (breathtimer > 15)
-			src.losebreath++
+	if (src.bomberman == 1)
+		spawn(10)
+			new /obj/bomberman(get_turf(src))
 
-		if (losebreath>0) //Suffocating so do not take a breath
-			src.losebreath--
-			if (prob(75)) //High chance of gasping for air
-				spawn emote("gasp")
+/mob/living/carbon/human/proc/breathe()
+	if (!loc)
+		return
+	if (src.reagents)
+		if (src.reagents.has_reagent("lexorin")) return
+	if (istype(loc, /mob/living/object)) return // no breathing inside possessed objects
+	if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell)) return
+	//if (istype(loc, /obj/machinery/clonepod)) return
+	if (src.bioHolder && src.bioHolder.HasEffect("breathless")) return
+
+	// Changelings generally can't take OXY/LOSEBREATH damage...except when they do.
+	// And because they're excluded from the breathing procs, said damage didn't heal
+	// on its own, making them essentially mute and perpetually gasping for air.
+	// Didn't seem like a feature to me (Convair880).
+	if (src.is_changeling())
+		if (src.losebreath)
+			src.losebreath = 0
+		if (src.get_oxygen_deprivation())
+			src.take_oxygen_deprivation(-50)
+		return
+
+	var/datum/gas_mixture/environment = loc.return_air()
+	var/datum/air_group/breath
+	// HACK NEED CHANGING LATER
+	//if (src.oxymax == 0 || (breathtimer > 15))
+	if (breathtimer > 15)
+		src.losebreath++
+
+	if (losebreath>0) //Suffocating so do not take a breath
+		src.losebreath--
+		if (prob(75)) //High chance of gasping for air
+			spawn emote("gasp")
+		if (istype(loc, /obj/))
+			var/obj/location_as_object = loc
+			location_as_object.handle_internal_lifeform(src, 0)
+	else
+		//First, check for air from internal atmosphere (using an air tank and mask generally)
+		breath = get_breath_from_internal(BREATH_VOLUME)
+
+		//No breath from internal atmosphere so get breath from location
+		if (!breath)
+			if (istype(loc, /obj/))
+				var/obj/location_as_object = loc
+				breath = location_as_object.handle_internal_lifeform(src, BREATH_VOLUME)
+			else if (istype(loc, /turf/))
+				var/breath_moles = environment.total_moles()*BREATH_PERCENTAGE
+
+				breath = loc.remove_air(breath_moles)
+
+		else //Still give containing object the chance to interact
 			if (istype(loc, /obj/))
 				var/obj/location_as_object = loc
 				location_as_object.handle_internal_lifeform(src, 0)
-		else
-			//First, check for air from internal atmosphere (using an air tank and mask generally)
-			breath = get_breath_from_internal(BREATH_VOLUME)
 
-			//No breath from internal atmosphere so get breath from location
-			if (!breath)
-				if (istype(loc, /obj/))
-					var/obj/location_as_object = loc
-					breath = location_as_object.handle_internal_lifeform(src, BREATH_VOLUME)
-				else if (istype(loc, /turf/))
-					var/breath_moles = environment.total_moles()*BREATH_PERCENTAGE
+	handle_breath(breath)
 
-					breath = loc.remove_air(breath_moles)
-
-			else //Still give containing object the chance to interact
-				if (istype(loc, /obj/))
-					var/obj/location_as_object = loc
-					location_as_object.handle_internal_lifeform(src, 0)
-
-		handle_breath(breath)
-
-		if (breath)
-			loc.assume_air(breath)
+	if (breath)
+		loc.assume_air(breath)
 
 
-	proc/get_breath_from_internal(volume_needed)
+/mob/living/carbon/human/proc/get_breath_from_internal(volume_needed)
+	if (internal)
+		if (!contents.Find(src.internal))
+			internal = null
+		if (!wear_mask || !(wear_mask.c_flags & MASKINTERNALS) )
+			internal = null
 		if (internal)
-			if (!contents.Find(src.internal))
-				internal = null
-			if (!wear_mask || !(wear_mask.c_flags & MASKINTERNALS) )
-				internal = null
-			if (internal)
-				if (src.internals)
-					src.internals.icon_state = "internal1"
-				for (var/obj/ability_button/tank_valve_toggle/T in internal.ability_buttons)
-					T.icon_state = "airon"
-				return internal.remove_air_volume(volume_needed)
+			if (src.internals)
+				src.internals.icon_state = "internal1"
+			for (var/obj/ability_button/tank_valve_toggle/T in internal.ability_buttons)
+				T.icon_state = "airon"
+			return internal.remove_air_volume(volume_needed)
+		else
+			if (src.internals)
+				src.internals.icon_state = "internal0"
+	return null
+
+/mob/living/carbon/human/proc/update_canmove()
+	if (paralysis || stunned || weakened)
+		canmove = 0
+		return
+
+	var/datum/abilityHolder/changeling/C = get_ability_holder(/datum/abilityHolder/changeling)
+	if (C && C.in_fakedeath)
+		canmove = 0
+		return
+
+	if (buckled && buckled.anchored)
+		canmove = 0
+		return
+
+	canmove = 1
+
+/mob/living/carbon/human/proc/handle_breath(datum/gas_mixture/breath)
+	if (src.nodamage) return
+
+	// Looks like we're in space
+	// or with recent atmos changes, in a room that's had a hole in it for any amount of time, so now we check src.loc
+	if (!breath || (breath.total_moles() == 0))
+		if (istype(src.loc, /turf/space))
+			take_oxygen_deprivation(10)
+		else
+			take_oxygen_deprivation(5)
+		hud.update_oxy_indicator(1)
+
+		return 0
+
+	if (src.health < 0) //We aren't breathing.
+		return 0
+
+	var/safe_oxygen_min = 17 // Minimum safe partial pressure of O2, in kPa
+	//var/safe_oxygen_max = 140 // Maximum safe partial pressure of O2, in kPa (Not used for now)
+	var/safe_co2_max = 9 // Yes it's an arbitrary value who cares?
+	var/safe_toxins_max = 0.4
+	var/SA_para_min = 1
+	var/SA_sleep_min = 5
+	var/oxygen_used = 0
+	var/breath_pressure = (breath.total_moles()*R_IDEAL_GAS_EQUATION*breath.temperature)/BREATH_VOLUME
+
+	//Partial pressure of the O2 in our breath
+	var/O2_pp = (breath.oxygen/breath.total_moles())*breath_pressure
+	// Same, but for the toxins
+	var/Toxins_pp = (breath.toxins/breath.total_moles())*breath_pressure
+	// And CO2, lets say a PP of more than 10 will be bad (It's a little less really, but eh, being passed out all round aint no fun)
+	var/CO2_pp = (breath.carbon_dioxide/breath.total_moles())*breath_pressure
+
+	if (O2_pp < safe_oxygen_min) 			// Too little oxygen
+		if (prob(20))
+			spawn(0) emote("gasp")
+		if (O2_pp > 0)
+			var/ratio = round(safe_oxygen_min/(O2_pp + 0.1))
+			take_oxygen_deprivation(min(5*ratio, 5)) // Don't fuck them up too fast (space only does 7 after all!)
+			oxygen_used = breath.oxygen*ratio/6
+		else
+			take_oxygen_deprivation(5)
+		hud.update_oxy_indicator(1)
+	else 									// We're in safe limits
+		take_oxygen_deprivation(-5)
+		oxygen_used = breath.oxygen/6
+		hud.update_oxy_indicator(0)
+
+	breath.oxygen -= oxygen_used
+	breath.carbon_dioxide += oxygen_used
+
+	if (CO2_pp > safe_co2_max)
+		if (!co2overloadtime) // If it's the first breath with too much CO2 in it, lets start a counter, then have them pass out after 12s or so.
+			co2overloadtime = world.time
+		else if (world.time - co2overloadtime > 120)
+			src.paralysis = max(src.paralysis, 3)
+			take_oxygen_deprivation(5) // Lets hurt em a little, let them know we mean business
+			if (world.time - co2overloadtime > 300) // They've been in here 30s now, lets start to kill them for their own good!
+				take_oxygen_deprivation(15)
+		if (prob(20)) // Lets give them some chance to know somethings not right though I guess.
+			spawn(0) emote("cough")
+
+	else
+		co2overloadtime = 0
+
+	if (Toxins_pp > safe_toxins_max) // Too much toxins
+		var/ratio = breath.toxins/safe_toxins_max
+		take_toxin_damage(ratio * 325,15)
+		hud.update_tox_indicator(1)
+	else
+		hud.update_tox_indicator(0)
+
+	if (breath.trace_gases && breath.trace_gases.len)	// If there's some other shit in the air lets deal with it here.
+		for (var/datum/gas/sleeping_agent/SA in breath.trace_gases)
+			var/SA_pp = (SA.moles/breath.total_moles())*breath_pressure
+			if (SA_pp > SA_para_min) // Enough to make us paralysed for a bit
+				src.paralysis = max(src.paralysis, 3) // 3 gives them one second to wake up and run away a bit!
+				if (SA_pp > SA_sleep_min) // Enough to make us sleep as well
+					src.sleeping = max(src.sleeping, 2)
+			else if (SA_pp > 0.01)	// There is sleeping gas in their lungs, but only a little, so give them a bit of a warning
+				if (prob(20))
+					spawn(0) emote(pick("giggle", "laugh"))
+		for (var/datum/gas/rad_particles/RV in breath.trace_gases)
+			src.irradiate(RV.moles/10,1)
+
+	if (breath.temperature > (T0C+66) && !src.is_heat_resistant()) // Hot air hurts :(
+		if (prob(20))
+			boutput(src, "<span style=\"color:red\">You feel a searing heat in your lungs!</span>")
+		TakeDamage("chest", 0, min((breath.temperature - (T0C+66)) / 3,10) + 6, 0, DAMAGE_BURN)
+		hud.update_fire_indicator(1)
+		if (prob(4))
+			boutput(src, "<span style=\"color:red\">Your lungs hurt like hell! This can't be good!</span>")
+			//src.contract_disease(new/datum/ailment/disability/cough, 1, 0) // cogwerks ailment project - lung damage from fire
+	else
+		hud.update_fire_indicator(0)
+
+
+	//Temporary fixes to the alerts.
+
+	return 1
+
+/mob/living/carbon/human/proc/handle_environment(datum/gas_mixture/environment)
+	if (!environment)
+		return
+	var/environment_heat_capacity = environment.heat_capacity()
+	var/loc_temp = T0C
+	if (istype(loc, /turf/space))
+		environment_heat_capacity = loc:heat_capacity
+		loc_temp = 2.7
+	else if (istype(src.loc, /obj/machinery/vehicle))
+		var/obj/machinery/vehicle/ship = src.loc
+		if (ship.life_support)
+			if (ship.life_support.active)
+				loc_temp = ship.life_support.tempreg
 			else
-				if (src.internals)
-					src.internals.icon_state = "internal0"
-		return null
+				loc_temp = environment.temperature
+	// why am i repeating this shit?
+	else if (istype(src.loc, /obj/vehicle))
+		var/obj/vehicle/V = src.loc
+		if (V.sealed_cabin)
+			loc_temp = T20C // hardcoded honkytonk nonsense
+	else if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
+		loc_temp = loc:air_contents.temperature
+	else if (istype(loc, /obj/machinery/colosseum_putt))
+		loc_temp = T20C
+	else
+		loc_temp = environment.temperature
 
-	proc/update_canmove()
-		if (paralysis || stunned || weakened)
-			canmove = 0
+	var/thermal_protection
+	if (stat < 2)
+		src.bodytemperature = adjustBodyTemp(src.bodytemperature,src.base_body_temp,1,src.thermoregulation_mult)
+	if (loc_temp < src.base_body_temp) // a cold place -> add in cold protection
+		if (src.is_cold_resistant())
 			return
-
-		var/datum/abilityHolder/changeling/C = get_ability_holder(/datum/abilityHolder/changeling)
-		if (C && C.in_fakedeath)
-			canmove = 0
+		thermal_protection = get_cold_protection()
+	else // a hot place -> add in heat protection
+		if (src.is_heat_resistant())
 			return
+		thermal_protection = get_heat_protection()
+	var/thermal_divisor = (100 - thermal_protection) * 0.01
+	src.bodytemperature = adjustBodyTemp(src.bodytemperature,loc_temp,thermal_divisor,src.innate_temp_resistance)
 
-		if (buckled && buckled.anchored)
-			canmove = 0
-			return
+	if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
+		return
 
-		canmove = 1
+	// lets give them a fair bit of leeway so they don't just start dying
+	//as that may be realistic but it's no fun
+	if ((src.bodytemperature > src.base_body_temp + (src.temp_tolerance * 2) && environment.temperature > src.base_body_temp + (src.temp_tolerance * 2)) || (src.bodytemperature < src.base_body_temp - (src.temp_tolerance * 2) && environment.temperature < src.base_body_temp - (src.temp_tolerance * 2)))
+		var/transfer_coefficient
 
-	proc/handle_breath(datum/gas_mixture/breath)
-		if (src.nodamage) return
+		transfer_coefficient = 1
+		if (head && (head.body_parts_covered & HEAD) && (environment.temperature < head.protective_temperature))
+			transfer_coefficient *= head.heat_transfer_coefficient
+		if (wear_mask && (wear_mask.body_parts_covered & HEAD) && (environment.temperature < wear_mask.protective_temperature))
+			transfer_coefficient *= wear_mask.heat_transfer_coefficient
+		if (wear_suit && (wear_suit.body_parts_covered & HEAD) && (environment.temperature < wear_suit.protective_temperature))
+			transfer_coefficient *= wear_suit.heat_transfer_coefficient
 
-		// Looks like we're in space
-		// or with recent atmos changes, in a room that's had a hole in it for any amount of time, so now we check src.loc
-		if (!breath || (breath.total_moles() == 0))
-			if (istype(src.loc, /turf/space))
-				take_oxygen_deprivation(10)
-			else
-				take_oxygen_deprivation(5)
-			hud.update_oxy_indicator(1)
+		handle_temperature_damage(HEAD, environment.temperature, environment_heat_capacity*transfer_coefficient)
 
-			return 0
+		transfer_coefficient = 1
+		if (wear_suit && (wear_suit.body_parts_covered & TORSO) && (environment.temperature < wear_suit.protective_temperature))
+			transfer_coefficient *= wear_suit.heat_transfer_coefficient
+		if (w_uniform && (w_uniform.body_parts_covered & TORSO) && (environment.temperature < w_uniform.protective_temperature))
+			transfer_coefficient *= w_uniform.heat_transfer_coefficient
 
-		if (src.health < 0) //We aren't breathing.
-			return 0
+		handle_temperature_damage(TORSO, environment.temperature, environment_heat_capacity*transfer_coefficient)
 
-		var/safe_oxygen_min = 17 // Minimum safe partial pressure of O2, in kPa
-		//var/safe_oxygen_max = 140 // Maximum safe partial pressure of O2, in kPa (Not used for now)
-		var/safe_co2_max = 9 // Yes it's an arbitrary value who cares?
-		var/safe_toxins_max = 0.4
-		var/SA_para_min = 1
-		var/SA_sleep_min = 5
-		var/oxygen_used = 0
-		var/breath_pressure = (breath.total_moles()*R_IDEAL_GAS_EQUATION*breath.temperature)/BREATH_VOLUME
+		transfer_coefficient = 1
+		if (wear_suit && (wear_suit.body_parts_covered & LEGS) && (environment.temperature < wear_suit.protective_temperature))
+			transfer_coefficient *= wear_suit.heat_transfer_coefficient
+		if (w_uniform && (w_uniform.body_parts_covered & LEGS) && (environment.temperature < w_uniform.protective_temperature))
+			transfer_coefficient *= w_uniform.heat_transfer_coefficient
 
-		//Partial pressure of the O2 in our breath
-		var/O2_pp = (breath.oxygen/breath.total_moles())*breath_pressure
-		// Same, but for the toxins
-		var/Toxins_pp = (breath.toxins/breath.total_moles())*breath_pressure
-		// And CO2, lets say a PP of more than 10 will be bad (It's a little less really, but eh, being passed out all round aint no fun)
-		var/CO2_pp = (breath.carbon_dioxide/breath.total_moles())*breath_pressure
+		handle_temperature_damage(LEGS, environment.temperature, environment_heat_capacity*transfer_coefficient)
 
-		if (O2_pp < safe_oxygen_min) 			// Too little oxygen
-			if (prob(20))
-				spawn(0) emote("gasp")
-			if (O2_pp > 0)
-				var/ratio = round(safe_oxygen_min/(O2_pp + 0.1))
-				take_oxygen_deprivation(min(5*ratio, 5)) // Don't fuck them up too fast (space only does 7 after all!)
-				oxygen_used = breath.oxygen*ratio/6
-			else
-				take_oxygen_deprivation(5)
-			hud.update_oxy_indicator(1)
-		else 									// We're in safe limits
-			take_oxygen_deprivation(-5)
-			oxygen_used = breath.oxygen/6
-			hud.update_oxy_indicator(0)
+		transfer_coefficient = 1
+		if (wear_suit && (wear_suit.body_parts_covered & ARMS) && (environment.temperature < wear_suit.protective_temperature))
+			transfer_coefficient *= wear_suit.heat_transfer_coefficient
+		if (w_uniform && (w_uniform.body_parts_covered & ARMS) && (environment.temperature < w_uniform.protective_temperature))
+			transfer_coefficient *= w_uniform.heat_transfer_coefficient
 
-		breath.oxygen -= oxygen_used
-		breath.carbon_dioxide += oxygen_used
+		handle_temperature_damage(ARMS, environment.temperature, environment_heat_capacity*transfer_coefficient)
 
-		if (CO2_pp > safe_co2_max)
-			if (!co2overloadtime) // If it's the first breath with too much CO2 in it, lets start a counter, then have them pass out after 12s or so.
-				co2overloadtime = world.time
-			else if (world.time - co2overloadtime > 120)
-				src.paralysis = max(src.paralysis, 3)
-				take_oxygen_deprivation(5) // Lets hurt em a little, let them know we mean business
-				if (world.time - co2overloadtime > 300) // They've been in here 30s now, lets start to kill them for their own good!
-					take_oxygen_deprivation(15)
-			if (prob(20)) // Lets give them some chance to know somethings not right though I guess.
-				spawn(0) emote("cough")
+		for (var/atom/A in src.contents)
+			if (A.material)
+				A.material.triggerTemp(A, environment.temperature)
 
-		else
-			co2overloadtime = 0
+	// decoupled this from environmental temp - this should be more for hypothermia/heatstroke stuff
+	//if (src.bodytemperature > src.base_body_temp || src.bodytemperature < src.base_body_temp)
 
-		if (Toxins_pp > safe_toxins_max) // Too much toxins
-			var/ratio = breath.toxins/safe_toxins_max
-			take_toxin_damage(ratio * 325,15)
-			hud.update_tox_indicator(1)
-		else
-			hud.update_tox_indicator(0)
+	//Account for massive pressure differences
+	return //TODO: DEFERRED
 
-		if (breath.trace_gases && breath.trace_gases.len)	// If there's some other shit in the air lets deal with it here.
-			for (var/datum/gas/sleeping_agent/SA in breath.trace_gases)
-				var/SA_pp = (SA.moles/breath.total_moles())*breath_pressure
-				if (SA_pp > SA_para_min) // Enough to make us paralysed for a bit
-					src.paralysis = max(src.paralysis, 3) // 3 gives them one second to wake up and run away a bit!
-					if (SA_pp > SA_sleep_min) // Enough to make us sleep as well
-						src.sleeping = max(src.sleeping, 2)
-				else if (SA_pp > 0.01)	// There is sleeping gas in their lungs, but only a little, so give them a bit of a warning
-					if (prob(20))
-						spawn(0) emote(pick("giggle", "laugh"))
-			for (var/datum/gas/rad_particles/RV in breath.trace_gases)
-				src.irradiate(RV.moles/10,1)
+/mob/living/carbon/human/proc/get_cold_protection()
+	// calculate 0-100% insulation from cold environments
+	if (!src)
+		return 0
 
-		if (breath.temperature > (T0C+66) && !src.is_heat_resistant()) // Hot air hurts :(
-			if (prob(20))
-				boutput(src, "<span style=\"color:red\">You feel a searing heat in your lungs!</span>")
-			TakeDamage("chest", 0, min((breath.temperature - (T0C+66)) / 3,10) + 6, 0, DAMAGE_BURN)
-			hud.update_fire_indicator(1)
-			if (prob(4))
-				boutput(src, "<span style=\"color:red\">Your lungs hurt like hell! This can't be good!</span>")
-				//src.contract_disease(new/datum/ailment/disability/cough, 1, 0) // cogwerks ailment project - lung damage from fire
-		else
-			hud.update_fire_indicator(0)
+	// Sealed space suit? If so, consider it to be full protection
+	if (src.protected_from_space())
+		return 100
 
+	var/thermal_protection = 10 // base value
 
-		//Temporary fixes to the alerts.
-
-		return 1
-
-	proc/handle_environment(datum/gas_mixture/environment)
-		if (!environment)
-			return
-		var/environment_heat_capacity = environment.heat_capacity()
-		var/loc_temp = T0C
-		if (istype(loc, /turf/space))
-			environment_heat_capacity = loc:heat_capacity
-			loc_temp = 2.7
-		else if (istype(src.loc, /obj/machinery/vehicle))
-			var/obj/machinery/vehicle/ship = src.loc
-			if (ship.life_support)
-				if (ship.life_support.active)
-					loc_temp = ship.life_support.tempreg
-				else
-					loc_temp = environment.temperature
-		// why am i repeating this shit?
-		else if (istype(src.loc, /obj/vehicle))
-			var/obj/vehicle/V = src.loc
-			if (V.sealed_cabin)
-				loc_temp = T20C // hardcoded honkytonk nonsense
-		else if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
-			loc_temp = loc:air_contents.temperature
-		else if (istype(loc, /obj/machinery/colosseum_putt))
-			loc_temp = T20C
-		else
-			loc_temp = environment.temperature
-
-		var/thermal_protection
-		if (stat < 2)
-			src.bodytemperature = adjustBodyTemp(src.bodytemperature,src.base_body_temp,1,src.thermoregulation_mult)
-		if (loc_temp < src.base_body_temp) // a cold place -> add in cold protection
-			if (src.is_cold_resistant())
-				return
-			thermal_protection = get_cold_protection()
-		else // a hot place -> add in heat protection
-			if (src.is_heat_resistant())
-				return
-			thermal_protection = get_heat_protection()
-		var/thermal_divisor = (100 - thermal_protection) * 0.01
-		src.bodytemperature = adjustBodyTemp(src.bodytemperature,loc_temp,thermal_divisor,src.innate_temp_resistance)
-
-		if (istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
-			return
-
-		// lets give them a fair bit of leeway so they don't just start dying
-		//as that may be realistic but it's no fun
-		if ((src.bodytemperature > src.base_body_temp + (src.temp_tolerance * 2) && environment.temperature > src.base_body_temp + (src.temp_tolerance * 2)) || (src.bodytemperature < src.base_body_temp - (src.temp_tolerance * 2) && environment.temperature < src.base_body_temp - (src.temp_tolerance * 2)))
-			var/transfer_coefficient
-
-			transfer_coefficient = 1
-			if (head && (head.body_parts_covered & HEAD) && (environment.temperature < head.protective_temperature))
-				transfer_coefficient *= head.heat_transfer_coefficient
-			if (wear_mask && (wear_mask.body_parts_covered & HEAD) && (environment.temperature < wear_mask.protective_temperature))
-				transfer_coefficient *= wear_mask.heat_transfer_coefficient
-			if (wear_suit && (wear_suit.body_parts_covered & HEAD) && (environment.temperature < wear_suit.protective_temperature))
-				transfer_coefficient *= wear_suit.heat_transfer_coefficient
-
-			handle_temperature_damage(HEAD, environment.temperature, environment_heat_capacity*transfer_coefficient)
-
-			transfer_coefficient = 1
-			if (wear_suit && (wear_suit.body_parts_covered & TORSO) && (environment.temperature < wear_suit.protective_temperature))
-				transfer_coefficient *= wear_suit.heat_transfer_coefficient
-			if (w_uniform && (w_uniform.body_parts_covered & TORSO) && (environment.temperature < w_uniform.protective_temperature))
-				transfer_coefficient *= w_uniform.heat_transfer_coefficient
-
-			handle_temperature_damage(TORSO, environment.temperature, environment_heat_capacity*transfer_coefficient)
-
-			transfer_coefficient = 1
-			if (wear_suit && (wear_suit.body_parts_covered & LEGS) && (environment.temperature < wear_suit.protective_temperature))
-				transfer_coefficient *= wear_suit.heat_transfer_coefficient
-			if (w_uniform && (w_uniform.body_parts_covered & LEGS) && (environment.temperature < w_uniform.protective_temperature))
-				transfer_coefficient *= w_uniform.heat_transfer_coefficient
-
-			handle_temperature_damage(LEGS, environment.temperature, environment_heat_capacity*transfer_coefficient)
-
-			transfer_coefficient = 1
-			if (wear_suit && (wear_suit.body_parts_covered & ARMS) && (environment.temperature < wear_suit.protective_temperature))
-				transfer_coefficient *= wear_suit.heat_transfer_coefficient
-			if (w_uniform && (w_uniform.body_parts_covered & ARMS) && (environment.temperature < w_uniform.protective_temperature))
-				transfer_coefficient *= w_uniform.heat_transfer_coefficient
-
-			handle_temperature_damage(ARMS, environment.temperature, environment_heat_capacity*transfer_coefficient)
-
-			for (var/atom/A in src.contents)
-				if (A.material)
-					A.material.triggerTemp(A, environment.temperature)
-
-		// decoupled this from environmental temp - this should be more for hypothermia/heatstroke stuff
-		//if (src.bodytemperature > src.base_body_temp || src.bodytemperature < src.base_body_temp)
-
-		//Account for massive pressure differences
-		return //TODO: DEFERRED
-
-	proc/get_cold_protection()
-		// calculate 0-100% insulation from cold environments
-		if (!src)
-			return 0
-
-		// Sealed space suit? If so, consider it to be full protection
-		if (src.protected_from_space())
-			return 100
-
-		var/thermal_protection = 10 // base value
-
-		// Resistance from Bio Effects
-		if (src.bioHolder)
-			if (src.bioHolder.HasEffect("fat"))
-				thermal_protection += 10
-			if (src.bioHolder.HasEffect("dwarf"))
-				thermal_protection += 10
-
-		// Resistance from Clothing
-		for (var/obj/item/clothing/C in src.get_equipped_items())
-			thermal_protection += C.cold_resistance
-
-		// Resistance from covered body parts
-		if (w_uniform && (w_uniform.body_parts_covered & TORSO))
+	// Resistance from Bio Effects
+	if (src.bioHolder)
+		if (src.bioHolder.HasEffect("fat"))
+			thermal_protection += 10
+		if (src.bioHolder.HasEffect("dwarf"))
 			thermal_protection += 10
 
-		if (wear_suit)
-			if (wear_suit.body_parts_covered & TORSO)
-				thermal_protection += 10
-			if (wear_suit.body_parts_covered & LEGS)
-				thermal_protection += 10
-			if (wear_suit.body_parts_covered & ARMS)
-				thermal_protection += 10
+	// Resistance from Clothing
+	for (var/obj/item/clothing/C in src.get_equipped_items())
+		thermal_protection += C.cold_resistance
 
-		thermal_protection = max(0,min(thermal_protection,100))
-		return thermal_protection
+	// Resistance from covered body parts
+	if (w_uniform && (w_uniform.body_parts_covered & TORSO))
+		thermal_protection += 10
 
-	proc/get_heat_protection()
-		// calculate 0-100% insulation from cold environments
-		if (!src)
-			return 0
-
-		var/thermal_protection = 10 // base value
-
-		// Resistance from Bio Effects
-		if (src.bioHolder)
-			if (src.bioHolder.HasEffect("dwarf"))
-				thermal_protection += 10
-
-		// Resistance from Clothing
-		for (var/obj/item/clothing/C in src.get_equipped_items())
-			thermal_protection += C.heat_resistance
-
-		// Resistance from covered body parts
-		if (w_uniform && (w_uniform.body_parts_covered & TORSO))
+	if (wear_suit)
+		if (wear_suit.body_parts_covered & TORSO)
+			thermal_protection += 10
+		if (wear_suit.body_parts_covered & LEGS)
+			thermal_protection += 10
+		if (wear_suit.body_parts_covered & ARMS)
 			thermal_protection += 10
 
-		if (wear_suit)
-			if (wear_suit.body_parts_covered & TORSO)
-				thermal_protection += 10
-			if (wear_suit.body_parts_covered & LEGS)
-				thermal_protection += 10
-			if (wear_suit.body_parts_covered & ARMS)
-				thermal_protection += 10
+	thermal_protection = max(0,min(thermal_protection,100))
+	return thermal_protection
 
-		thermal_protection = max(0,min(thermal_protection,100))
-		return thermal_protection
+/mob/living/carbon/human/proc/get_heat_protection()
+	// calculate 0-100% insulation from cold environments
+	if (!src)
+		return 0
 
-	proc/add_fire_protection(var/temp)
-		var/fire_prot = 0
-		if (head)
-			if (head.protective_temperature > temp)
-				fire_prot += (head.protective_temperature/10)
-		if (wear_mask)
-			if (wear_mask.protective_temperature > temp)
-				fire_prot += (wear_mask.protective_temperature/10)
-		if (glasses)
-			if (glasses.protective_temperature > temp)
-				fire_prot += (glasses.protective_temperature/10)
-		if (ears)
-			if (ears.protective_temperature > temp)
-				fire_prot += (ears.protective_temperature/10)
-		if (wear_suit)
-			if (wear_suit.protective_temperature > temp)
-				fire_prot += (wear_suit.protective_temperature/10)
-		if (w_uniform)
-			if (w_uniform.protective_temperature > temp)
-				fire_prot += (w_uniform.protective_temperature/10)
-		if (gloves)
-			if (gloves.protective_temperature > temp)
-				fire_prot += (gloves.protective_temperature/10)
-		if (shoes)
-			if (shoes.protective_temperature > temp)
-				fire_prot += (shoes.protective_temperature/10)
+	var/thermal_protection = 10 // base value
 
-		return fire_prot
+	// Resistance from Bio Effects
+	if (src.bioHolder)
+		if (src.bioHolder.HasEffect("dwarf"))
+			thermal_protection += 10
 
-	proc/handle_temperature_damage(body_part, exposed_temperature, exposed_intensity)
-		if (exposed_temperature > src.base_body_temp && src.is_heat_resistant())
-			return
-		if (exposed_temperature < src.base_body_temp && src.is_cold_resistant())
-			return
-		var/discomfort = min(abs(exposed_temperature - bodytemperature)*(exposed_intensity)/2000000, 1)
+	// Resistance from Clothing
+	for (var/obj/item/clothing/C in src.get_equipped_items())
+		thermal_protection += C.heat_resistance
 
-		switch(body_part)
-			if (HEAD)
-				TakeDamage("head", 0, 2.5*discomfort, 0, DAMAGE_BURN)
-			if (TORSO)
-				TakeDamage("chest", 0, 2.5*discomfort, 0, DAMAGE_BURN)
-			if (LEGS)
-				TakeDamage("l_leg", 0, 0.6*discomfort, 0, DAMAGE_BURN)
-				TakeDamage("r_leg", 0, 0.6*discomfort, 0, DAMAGE_BURN)
-			if (ARMS)
-				TakeDamage("l_arm", 0, 0.4*discomfort, 0, DAMAGE_BURN)
-				TakeDamage("r_arm", 0, 0.4*discomfort, 0, DAMAGE_BURN)
+	// Resistance from covered body parts
+	if (w_uniform && (w_uniform.body_parts_covered & TORSO))
+		thermal_protection += 10
 
-	proc/handle_chemicals_in_body()
-		if (src.nodamage) return
+	if (wear_suit)
+		if (wear_suit.body_parts_covered & TORSO)
+			thermal_protection += 10
+		if (wear_suit.body_parts_covered & LEGS)
+			thermal_protection += 10
+		if (wear_suit.body_parts_covered & ARMS)
+			thermal_protection += 10
 
-//			var/datum/reagent/blood/blood = null
-		if (reagents)
-			reagents.temperature_reagents(src.bodytemperature-30, 100)
-			if (blood_system && reagents.get_reagent("blood"))
-				var/blood2absorb = min(src.blood_absorption_rate, src.reagents.get_reagent_amount("blood"))
-				reagents.remove_reagent("blood", blood2absorb)
-				if (src.blood_volume <= (500 - blood2absorb))
-					src.blood_volume += blood2absorb
-			reagents.metabolize(src)
-//				blood = reagents.get_reagent("blood")
+	thermal_protection = max(0,min(thermal_protection,100))
+	return thermal_protection
 
-		if (src.nutrition > 0)
-			src.nutrition--
+/mob/living/carbon/human/proc/add_fire_protection(var/temp)
+	var/fire_prot = 0
+	if (head)
+		if (head.protective_temperature > temp)
+			fire_prot += (head.protective_temperature/10)
+	if (wear_mask)
+		if (wear_mask.protective_temperature > temp)
+			fire_prot += (wear_mask.protective_temperature/10)
+	if (glasses)
+		if (glasses.protective_temperature > temp)
+			fire_prot += (glasses.protective_temperature/10)
+	if (ears)
+		if (ears.protective_temperature > temp)
+			fire_prot += (ears.protective_temperature/10)
+	if (wear_suit)
+		if (wear_suit.protective_temperature > temp)
+			fire_prot += (wear_suit.protective_temperature/10)
+	if (w_uniform)
+		if (w_uniform.protective_temperature > temp)
+			fire_prot += (w_uniform.protective_temperature/10)
+	if (gloves)
+		if (gloves.protective_temperature > temp)
+			fire_prot += (gloves.protective_temperature/10)
+	if (shoes)
+		if (shoes.protective_temperature > temp)
+			fire_prot += (shoes.protective_temperature/10)
 
-		src.updatehealth()
+	return fire_prot
 
-		return //TODO: DEFERRED
+/mob/living/carbon/human/proc/handle_temperature_damage(body_part, exposed_temperature, exposed_intensity)
+	if (exposed_temperature > src.base_body_temp && src.is_heat_resistant())
+		return
+	if (exposed_temperature < src.base_body_temp && src.is_cold_resistant())
+		return
+	var/discomfort = min(abs(exposed_temperature - bodytemperature)*(exposed_intensity)/2000000, 1)
 
-	proc/handle_blood() // hopefully this won't cause too much lag?
-		if (!blood_system) // I dunno if this'll do what I want but hopefully it will
-			return
+	switch(body_part)
+		if (HEAD)
+			TakeDamage("head", 0, 2.5*discomfort, 0, DAMAGE_BURN)
+		if (TORSO)
+			TakeDamage("chest", 0, 2.5*discomfort, 0, DAMAGE_BURN)
+		if (LEGS)
+			TakeDamage("l_leg", 0, 0.6*discomfort, 0, DAMAGE_BURN)
+			TakeDamage("r_leg", 0, 0.6*discomfort, 0, DAMAGE_BURN)
+		if (ARMS)
+			TakeDamage("l_arm", 0, 0.4*discomfort, 0, DAMAGE_BURN)
+			TakeDamage("r_arm", 0, 0.4*discomfort, 0, DAMAGE_BURN)
 
-		if (src.stat == 2 || src.nodamage || !src.can_bleed || isvampire(src)) // if we're dead or immortal or have otherwise been told not to bleed, don't bother
-			if (src.bleeding)
-				src.bleeding = 0 // also stop bleeding if we happen to be doing that
-			return
+/mob/living/carbon/human/proc/handle_chemicals_in_body()
+	if (src.nodamage) return
 
-		if (src.blood_volume < 500 && src.blood_volume > 0) // if we're full or empty, don't bother v
-			if (prob(66))
-				src.blood_volume ++ // maybe get a little blood back ^
+//	var/datum/reagent/blood/blood = null
+	if (reagents)
+		reagents.temperature_reagents(src.bodytemperature-30, 100)
+		if (blood_system && reagents.get_reagent("blood"))
+			var/blood2absorb = min(src.blood_absorption_rate, src.reagents.get_reagent_amount("blood"))
+			reagents.remove_reagent("blood", blood2absorb)
+			if (src.blood_volume <= (500 - blood2absorb))
+				src.blood_volume += blood2absorb
+		reagents.metabolize(src)
+//		blood = reagents.get_reagent("blood")
 
+	if (src.nutrition > 0)
+		src.nutrition--
+
+	src.updatehealth()
+
+	return //TODO: DEFERRED
+
+/mob/living/carbon/human/proc/handle_blood() // hopefully this won't cause too much lag?
+	if (!blood_system) // I dunno if this'll do what I want but hopefully it will
+		return
+
+	if (src.stat == 2 || src.nodamage || !src.can_bleed || isvampire(src)) // if we're dead or immortal or have otherwise been told not to bleed, don't bother
 		if (src.bleeding)
-			var/fluff = pick("better", "like they're healing a bit", "a little better", "itchy", "less tender", "less painful", "like they're closing", "like they're closing up a bit", "like they're closing up a little")
-			if (src.bleeding <= 3 && prob(2)) // blood does clot and all, but we want bleeding to maybe not stop entirely on its own TOO easily
-				src.bleeding --
-				boutput(src, "<span style=\"color:blue\">Your wounds feel [fluff].</span>")
-			else if (src.bleeding >= 4 && src.bleeding <= 7 && prob(5)) // higher bleeding gets a better chance to drop down
-				src.bleeding --
-				boutput(src, "<span style=\"color:blue\">Your wounds feel [fluff].</span>")
-			else if (src.bleeding >= 8 && prob(2)) // but there's only so much clotting can do when all your blood is falling out at once
-				src.bleeding --
-				boutput(src, "<span style=\"color:blue\">Your wounds feel [fluff].</span>")
+			src.bleeding = 0 // also stop bleeding if we happen to be doing that
+		return
 
-		if (!src.bleeding && src.get_surgery_status())
-			src.bleeding ++
+	if (src.blood_volume < 500 && src.blood_volume > 0) // if we're full or empty, don't bother v
+		if (prob(66))
+			src.blood_volume ++ // maybe get a little blood back ^
 
-		if (src.bleeding && src.blood_volume)
+	if (src.bleeding)
+		var/fluff = pick("better", "like they're healing a bit", "a little better", "itchy", "less tender", "less painful", "like they're closing", "like they're closing up a bit", "like they're closing up a little")
+		if (src.bleeding <= 3 && prob(2)) // blood does clot and all, but we want bleeding to maybe not stop entirely on its own TOO easily
+			src.bleeding --
+			boutput(src, "<span style=\"color:blue\">Your wounds feel [fluff].</span>")
+		else if (src.bleeding >= 4 && src.bleeding <= 7 && prob(5)) // higher bleeding gets a better chance to drop down
+			src.bleeding --
+			boutput(src, "<span style=\"color:blue\">Your wounds feel [fluff].</span>")
+		else if (src.bleeding >= 8 && prob(2)) // but there's only so much clotting can do when all your blood is falling out at once
+			src.bleeding --
+			boutput(src, "<span style=\"color:blue\">Your wounds feel [fluff].</span>")
 
-			var/final_bleed = minmax(src.bleeding, 0, 10) // still don't want this above 10
+	if (!src.bleeding && src.get_surgery_status())
+		src.bleeding ++
 
-			if (prob(max(0, min(final_bleed, 10)) * 5)) // up to 50% chance to make a big bloodsplatter
-				bleed(src, final_bleed, 5)
+	if (src.bleeding && src.blood_volume)
 
-			else
-				switch (src.bleeding)
-					if (1 to 2)
-						bleed(src, final_bleed, 1) // this proc creates a bloodsplatter on src's tile
-					if (3 to 4)
-						bleed(src, final_bleed, 2) // it takes care of removing blood, and transferring reagents, color and ling status to the blood
-					if (5 to 7)
-						bleed(src, final_bleed, 3) // see blood_system.dm for the proc
-					if (8 to 10)
-						bleed(src, final_bleed, 4)
+		var/final_bleed = minmax(src.bleeding, 0, 10) // still don't want this above 10
 
+		if (prob(max(0, min(final_bleed, 10)) * 5)) // up to 50% chance to make a big bloodsplatter
+			bleed(src, final_bleed, 5)
+
+		else
+			switch (src.bleeding)
+				if (1 to 2)
+					bleed(src, final_bleed, 1) // this proc creates a bloodsplatter on src's tile
+				if (3 to 4)
+					bleed(src, final_bleed, 2) // it takes care of removing blood, and transferring reagents, color and ling status to the blood
+				if (5 to 7)
+					bleed(src, final_bleed, 3) // see blood_system.dm for the proc
+				if (8 to 10)
+					bleed(src, final_bleed, 4)
+
+	if (!src.is_changeling())
+
+		switch (src.blood_volume)
+
+			if (-INFINITY to 0)
+				src.take_oxygen_deprivation(1)
+				src.take_brain_damage(2)
+				src.losebreath ++
+				src.drowsyness = max(src.drowsyness, 4)
+				if (prob(10))
+					src.change_misstep_chance(3)
+				if (prob(10))
+					src.emote(pick("faint", "collapse", "pale", "shudder", "shiver", "gasp", "moan"))
+				if (prob(18))
+					var/extreme = pick("", "really ", "very ", "extremely ", "terribly ", "insanely ")
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]terrible", "[extreme]awful", "like death", "like you're dying", "[extreme]tingly", "like you're going to pass out", "[extreme]faint")]!</b></span>")
+					src.weakened +=4
+				src.contract_disease(/datum/ailment/disease/shock, null, null, 1) // if you have no blood you're gunna be in shock
+
+			if (1 to 100)
+				src.take_oxygen_deprivation(1)
+				src.take_brain_damage(1)
+				src.losebreath ++
+				src.drowsyness = max(src.drowsyness, 3)
+				if (prob(6))
+					src.change_misstep_chance(2)
+				if (prob(8))
+					src.emote(pick("faint", "collapse", "pale", "shudder", "shiver", "gasp", "moan"))
+				if (prob(14))
+					var/extreme = pick("", "really ", "very ", "extremely ", "terribly ", "insanely ")
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]terrible", "[extreme]awful", "like death", "like you're dying", "[extreme]tingly", "like you're going to pass out", "[extreme]faint")]!</b></span>")
+					src.weakened +=3
+				if (prob(25))
+					src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
+
+			if (101 to 200)
+				src.drowsyness = max(src.drowsyness, 2)
+				if (prob(4))
+					src.change_misstep_chance(1)
+				if (prob(6))
+					src.emote(pick("faint", "collapse", "pale", "shudder", "shiver"))
+				if (prob(10))
+					var/extreme = pick("", "really ", "very ", "extremely ", "terribly ", "insanely ")
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]terrible", "[extreme]awful", "like death", "like you're dying", "[extreme]tingly", "like you're going to pass out", "[extreme]faint")]!</b></span>")
+					src.weakened +=2
+				if (prob(25))
+					src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
+
+			if (201 to 300)
+				src.drowsyness = max(src.drowsyness, 1)
+				if (prob(4))
+					src.emote(pick("pale", "shudder", "shiver"))
+				if (prob(7))
+					var/extreme = pick("", "really ", "very ", "quite ", "sorta ")
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]tingly", "[extreme]faint")]!</b></span>")
+					src.weakened +=1
+				if (prob(10))
+					src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
+
+			if (301 to 400)
+				if (prob(2))
+					src.emote(pick("pale", "shudder", "shiver"))
+				if (prob(5))
+					var/extreme = pick("", "kinda ", "a little ", "sorta ", "a bit ")
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]tingly", "[extreme]faint")]!</b></span>")
+				if (prob(5))
+					src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
+
+/mob/living/carbon/human/proc/handle_organs() // is this even where this should go???  ??????  haine gud codr
+
+	if (src.ignore_organs)
+		return
+
+	if (!src.organHolder)
+		src.organHolder = new(src)
+		sleep(10)
+
+	if (!src.organHolder.head && !src.nodamage)
+		src.death()
+
+	if (!src.organHolder.skull && !src.nodamage) // look okay it's close enough to an organ and there's no other place for it right now shut up
+		if (src.organHolder.head)
+			src.death()
+			src.visible_message("<span style=\"color:red\"><b>[src]</b>'s head collapses into a useless pile of skin mush with no skull to keep it in its proper shape!</span>",\
+			"<span style=\"color:red\">Your head collapses into a useless pile of skin mush with no skull to keep it in its proper shape!</span>")
+	else
+		if (src.organHolder.skull.loc != src)
+			src.organHolder.skull = null
+
+	if (!src.organHolder.brain && !src.nodamage)
+		/*var/obj/item/organ/brain/myBrain = locate(/obj/item/organ/brain) in src
+		if (myBrain)
+			src.brain = myBrain
+		else*/
+		src.death()
+	else
+		if (src.organHolder.brain.loc != src)
+			src.organHolder.brain = null
+
+	if (!src.organHolder.heart && !src.nodamage)
+		/*var/obj/item/organ/heart/myHeart = locate(/obj/item/organ/heart) in src
+		if (myHeart)
+			src.heart = myHeart
+		else */
 		if (!src.is_changeling())
+			if (src.get_oxygen_deprivation())
+				src.take_brain_damage(3)
+			else if (prob(10))
+				src.take_brain_damage(1)
 
-			switch (src.blood_volume)
+			src.weakened = max(src.weakened, 5)
+			src.losebreath += 20
+			src.take_oxygen_deprivation(20)
+			src.updatehealth()
+	else
+		if (src.organHolder.heart.loc != src)
+			src.organHolder.heart = null
+		else if (src.organHolder.heart.robotic && src.organHolder.heart.emagged && !src.organHolder.heart.broken)
+			src.drowsyness = max (src.drowsyness - 8, 0)
+			if (src.paralysis) src.paralysis -= 2
+			if (src.stunned) src.stunned -= 2
+			if (src.weakened) src.weakened -= 2
+			if (src.sleeping) src.sleeping = 0
+		else if (src.organHolder.heart.robotic && !src.organHolder.heart.broken)
+			src.drowsyness = max (src.drowsyness - 4, 0)
+			if (src.paralysis) src.paralysis -= 1
+			if (src.stunned) src.stunned -= 1
+			if (src.weakened) src.weakened -= 1
+			if (src.sleeping) src.sleeping = 0
+		else if (src.organHolder.heart.broken)
+			if (src.get_oxygen_deprivation())
+				src.take_brain_damage(3)
+			else if (prob(10))
+				src.take_brain_damage(1)
 
-				if (-INFINITY to 0)
-					src.take_oxygen_deprivation(1)
-					src.take_brain_damage(2)
-					src.losebreath ++
-					src.drowsyness = max(src.drowsyness, 4)
-					if (prob(10))
-						src.change_misstep_chance(3)
-					if (prob(10))
-						src.emote(pick("faint", "collapse", "pale", "shudder", "shiver", "gasp", "moan"))
-					if (prob(18))
-						var/extreme = pick("", "really ", "very ", "extremely ", "terribly ", "insanely ")
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]terrible", "[extreme]awful", "like death", "like you're dying", "[extreme]tingly", "like you're going to pass out", "[extreme]faint")]!</b></span>")
-						src.weakened +=4
-					src.contract_disease(/datum/ailment/disease/shock, null, null, 1) // if you have no blood you're gunna be in shock
+			src.weakened = max(src.weakened, 5)
+			src.losebreath += 20
+			src.take_oxygen_deprivation(20)
+			src.updatehealth()
 
-				if (1 to 100)
-					src.take_oxygen_deprivation(1)
-					src.take_brain_damage(1)
-					src.losebreath ++
-					src.drowsyness = max(src.drowsyness, 3)
-					if (prob(6))
-						src.change_misstep_chance(2)
-					if (prob(8))
-						src.emote(pick("faint", "collapse", "pale", "shudder", "shiver", "gasp", "moan"))
-					if (prob(14))
-						var/extreme = pick("", "really ", "very ", "extremely ", "terribly ", "insanely ")
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]terrible", "[extreme]awful", "like death", "like you're dying", "[extreme]tingly", "like you're going to pass out", "[extreme]faint")]!</b></span>")
-						src.weakened +=3
-					if (prob(25))
-						src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
-
-				if (101 to 200)
-					src.drowsyness = max(src.drowsyness, 2)
-					if (prob(4))
-						src.change_misstep_chance(1)
-					if (prob(6))
-						src.emote(pick("faint", "collapse", "pale", "shudder", "shiver"))
-					if (prob(10))
-						var/extreme = pick("", "really ", "very ", "extremely ", "terribly ", "insanely ")
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]terrible", "[extreme]awful", "like death", "like you're dying", "[extreme]tingly", "like you're going to pass out", "[extreme]faint")]!</b></span>")
-						src.weakened +=2
-					if (prob(25))
-						src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
-
-				if (201 to 300)
-					src.drowsyness = max(src.drowsyness, 1)
-					if (prob(4))
-						src.emote(pick("pale", "shudder", "shiver"))
-					if (prob(7))
-						var/extreme = pick("", "really ", "very ", "quite ", "sorta ")
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]tingly", "[extreme]faint")]!</b></span>")
-						src.weakened +=1
-					if (prob(10))
-						src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
-
-				if (301 to 400)
-					if (prob(2))
-						src.emote(pick("pale", "shudder", "shiver"))
-					if (prob(5))
-						var/extreme = pick("", "kinda ", "a little ", "sorta ", "a bit ")
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("[extreme]ill", "[extreme]sick", "[extreme]numb", "[extreme]cold", "[extreme]dizzy", "[extreme]out of it", "[extreme]confused", "[extreme]off-balance", "[extreme]tingly", "[extreme]faint")]!</b></span>")
-					if (prob(5))
-						src.contract_disease(/datum/ailment/disease/shock, null, null, 1)
-
-	proc/handle_organs() // is this even where this should go???  ??????  haine gud codr
-
-		if (src.ignore_organs)
-			return
-
-		if (!src.organHolder)
-			src.organHolder = new(src)
-			sleep(10)
-
-		if (!src.organHolder.head && !src.nodamage)
-			src.death()
-
-		if (!src.organHolder.skull && !src.nodamage) // look okay it's close enough to an organ and there's no other place for it right now shut up
-			if (src.organHolder.head)
-				src.death()
-				src.visible_message("<span style=\"color:red\"><b>[src]</b>'s head collapses into a useless pile of skin mush with no skull to keep it in its proper shape!</span>",\
-				"<span style=\"color:red\">Your head collapses into a useless pile of skin mush with no skull to keep it in its proper shape!</span>")
-		else
-			if (src.organHolder.skull.loc != src)
-				src.organHolder.skull = null
-
-		if (!src.organHolder.brain && !src.nodamage)
-			/*var/obj/item/organ/brain/myBrain = locate(/obj/item/organ/brain) in src
-			if (myBrain)
-				src.brain = myBrain
-			else*/
-			src.death()
-		else
-			if (src.organHolder.brain.loc != src)
-				src.organHolder.brain = null
-
-		if (!src.organHolder.heart && !src.nodamage)
-			/*var/obj/item/organ/heart/myHeart = locate(/obj/item/organ/heart) in src
-			if (myHeart)
-				src.heart = myHeart
-			else */
-			if (!src.is_changeling())
-				if (src.get_oxygen_deprivation())
-					src.take_brain_damage(3)
-				else if (prob(10))
-					src.take_brain_damage(1)
-
-				src.weakened = max(src.weakened, 5)
-				src.losebreath += 20
-				src.take_oxygen_deprivation(20)
-				src.updatehealth()
-		else
-			if (src.organHolder.heart.loc != src)
-				src.organHolder.heart = null
-			else if (src.organHolder.heart.robotic && src.organHolder.heart.emagged && !src.organHolder.heart.broken)
-				src.drowsyness = max (src.drowsyness - 8, 0)
-				if (src.paralysis) src.paralysis -= 2
-				if (src.stunned) src.stunned -= 2
-				if (src.weakened) src.weakened -= 2
-				if (src.sleeping) src.sleeping = 0
-			else if (src.organHolder.heart.robotic && !src.organHolder.heart.broken)
-				src.drowsyness = max (src.drowsyness - 4, 0)
-				if (src.paralysis) src.paralysis -= 1
-				if (src.stunned) src.stunned -= 1
-				if (src.weakened) src.weakened -= 1
-				if (src.sleeping) src.sleeping = 0
-			else if (src.organHolder.heart.broken)
-				if (src.get_oxygen_deprivation())
-					src.take_brain_damage(3)
-				else if (prob(10))
-					src.take_brain_damage(1)
-
-				src.weakened = max(src.weakened, 5)
-				src.losebreath += 20
-				src.take_oxygen_deprivation(20)
-				src.updatehealth()
-
-		// lungs are skipped until they can be removed/whatever
-		if (!src.organHolder.left_eye && src.organHolder.right_eye) // we have no left eye, but we also don't have the blind overlay (presumably)
-			if (!src.hasOverlayComposition(/datum/overlayComposition/blinded))
-				src.addOverlayComposition(/datum/overlayComposition/blinded_l_eye)
-				src.removeOverlayComposition(/datum/overlayComposition/blinded_r_eye)
-
-		else if (!src.organHolder.right_eye && src.organHolder.left_eye) // we have no right eye, but we also don't have the blind overlay (presumably)
-			if (!src.hasOverlayComposition(/datum/overlayComposition/blinded))
-				src.addOverlayComposition(/datum/overlayComposition/blinded_r_eye)
-				src.removeOverlayComposition(/datum/overlayComposition/blinded_l_eye)
-
-		else
+	// lungs are skipped until they can be removed/whatever
+	if (!src.organHolder.left_eye && src.organHolder.right_eye) // we have no left eye, but we also don't have the blind overlay (presumably)
+		if (!src.hasOverlayComposition(/datum/overlayComposition/blinded))
+			src.addOverlayComposition(/datum/overlayComposition/blinded_l_eye)
 			src.removeOverlayComposition(/datum/overlayComposition/blinded_r_eye)
+
+	else if (!src.organHolder.right_eye && src.organHolder.left_eye) // we have no right eye, but we also don't have the blind overlay (presumably)
+		if (!src.hasOverlayComposition(/datum/overlayComposition/blinded))
+			src.addOverlayComposition(/datum/overlayComposition/blinded_r_eye)
 			src.removeOverlayComposition(/datum/overlayComposition/blinded_l_eye)
 
-	proc/handle_regular_status_updates(datum/controller/process/mobs/parent)
+	else
+		src.removeOverlayComposition(/datum/overlayComposition/blinded_r_eye)
+		src.removeOverlayComposition(/datum/overlayComposition/blinded_l_eye)
 
-		health = max_health - (get_oxygen_deprivation() + get_toxin_damage() + get_burn_damage() + get_brute_damage())
+/mob/living/carbon/human/proc/handle_regular_status_updates(datum/controller/process/mobs/parent)
 
-		// I don't think the revenant needs any of this crap - Marq
-		if (src.bioHolder && src.bioHolder.HasEffect("revenant") || src.stat == 2) //You also don't need to do a whole lot of this if the dude's dead.
-			return
+	health = max_health - (get_oxygen_deprivation() + get_toxin_damage() + get_burn_damage() + get_brute_damage())
 
-		if (stamina == STAMINA_NEG_CAP)
-			paralysis = max(paralysis, 10)
+	// I don't think the revenant needs any of this crap - Marq
+	if (src.bioHolder && src.bioHolder.HasEffect("revenant") || src.stat == 2) //You also don't need to do a whole lot of this if the dude's dead.
+		return
 
-		//maximum modifiers.
-		stamina_max = max((STAMINA_MAX + src.get_stam_mod_max()), 0)
-		stamina = min(stamina, stamina_max)
+	if (stamina == STAMINA_NEG_CAP)
+		paralysis = max(paralysis, 10)
 
-		//Modify stamina.
-		var/final_mod = (src.stamina_regen + src.get_stam_mod_regen())
-		if (final_mod > 0)
-			src.add_stamina(abs(final_mod))
-		else if (final_mod < 0)
-			src.remove_stamina(abs(final_mod))
+	//maximum modifiers.
+	stamina_max = max((STAMINA_MAX + src.get_stam_mod_max()), 0)
+	stamina = min(stamina, stamina_max)
 
-		parent.setLastTask("status_updates implant check", src)
-		for (var/obj/item/implant/I in src.implant)
-			if (istype(I, /obj/item/implant/robust))
-				var/obj/item/implant/robust/R = I
-				if (src.health < 0)
-					R.inactive = 1
-					src.reagents.add_reagent("salbutamol", 20) // changed this from dexP // cogwerks
-					src.reagents.add_reagent("inaprovaline", 15)
-					src.reagents.add_reagent("omnizine", 25)
-					src.reagents.add_reagent("teporone", 20)
-					if (src.mind) boutput(src, "<span style=\"color:blue\">Your Robusttec-Implant uses all of its remaining energy to save you and deactivates.</span>")
-					src.implant -= I
-				else if (src.health < 40 && !R.inactive)
-					if (!src.reagents.has_reagent("omnizine", 10))
-						src.reagents.add_reagent("omnizine", 10)
-					R.inactive = 1
-					spawn(300) R.inactive = 0
+	//Modify stamina.
+	var/final_mod = (src.stamina_regen + src.get_stam_mod_regen())
+	if (final_mod > 0)
+		src.add_stamina(abs(final_mod))
+	else if (final_mod < 0)
+		src.remove_stamina(abs(final_mod))
 
-			if (istype(I, /obj/item/implant/health))
-				if (!src.mini_health_hud)
-					src.mini_health_hud = 1
-				var/obj/item/implant/health/H = I
-				var/datum/data/record/probably_my_record = null
-				for (var/datum/data/record/R in data_core.medical)
-					if (R.fields["name"] == src.real_name)
-						probably_my_record = R
-						break
-				if (probably_my_record)
-					probably_my_record.fields["h_imp"] = "[H.sensehealth()]"
-				if (src.health <= 0 && !H.reported_health)
-					DEBUG("[src] calling to report crit")
-					H.health_alert()
+	parent.setLastTask("status_updates implant check", src)
+	for (var/obj/item/implant/I in src.implant)
+		if (istype(I, /obj/item/implant/robust))
+			var/obj/item/implant/robust/R = I
+			if (src.health < 0)
+				R.inactive = 1
+				src.reagents.add_reagent("salbutamol", 20) // changed this from dexP // cogwerks
+				src.reagents.add_reagent("inaprovaline", 15)
+				src.reagents.add_reagent("omnizine", 25)
+				src.reagents.add_reagent("teporone", 20)
+				if (src.mind) boutput(src, "<span style=\"color:blue\">Your Robusttec-Implant uses all of its remaining energy to save you and deactivates.</span>")
+				src.implant -= I
+			else if (src.health < 40 && !R.inactive)
+				if (!src.reagents.has_reagent("omnizine", 10))
+					src.reagents.add_reagent("omnizine", 10)
+				R.inactive = 1
+				spawn(300) R.inactive = 0
 
-				if (src.health > 0 && H.reported_health) // we're out of crit, let our implant alert people again
-					H.reported_health = 0
-				if (src.stat != 2 && H.reported_death) // we're no longer dead, let our implant alert people again
-					H.reported_death = 0
+		if (istype(I, /obj/item/implant/health))
+			if (!src.mini_health_hud)
+				src.mini_health_hud = 1
+			var/obj/item/implant/health/H = I
+			var/datum/data/record/probably_my_record = null
+			for (var/datum/data/record/R in data_core.medical)
+				if (R.fields["name"] == src.real_name)
+					probably_my_record = R
+					break
+			if (probably_my_record)
+				probably_my_record.fields["h_imp"] = "[H.sensehealth()]"
+			if (src.health <= 0 && !H.reported_health)
+				DEBUG("[src] calling to report crit")
+				H.health_alert()
 
-		//parent.setLastTask("status_updates max value calcs", src)
+			if (src.health > 0 && H.reported_health) // we're out of crit, let our implant alert people again
+				H.reported_health = 0
+			if (src.stat != 2 && H.reported_death) // we're no longer dead, let our implant alert people again
+				H.reported_death = 0
 
-		parent.setLastTask("status_updates sleep and paralysis calcs", src)
-		if (src.asleep) src.sleeping = 4
+	//parent.setLastTask("status_updates max value calcs", src)
 
-		if (src.sleeping)
-			src.paralysis = max(src.paralysis, 3)
-			if (prob(10) && (health > 0)) spawn(0) emote("snore")
-			if (!src.asleep) src.sleeping--
+	parent.setLastTask("status_updates sleep and paralysis calcs", src)
+	if (src.asleep) src.sleeping = 4
 
-		if (src.resting)
-			src.weakened = max(src.weakened, 2)
+	if (src.sleeping)
+		src.paralysis = max(src.paralysis, 3)
+		if (prob(10) && (health > 0)) spawn(0) emote("snore")
+		if (!src.asleep) src.sleeping--
 
-		parent.setLastTask("status_updates health calcs", src)
-		var/is_chg = is_changeling()
-		//if (src.brain_op_stage == 4.0) // handled above in handle_organs() now
-			//death()
-		if (src.get_brain_damage() >= 120 || (src.health + (src.get_oxygen_deprivation() / 2)) <= -500) //-200) a shitty test here // let's lower the weight of oxy
-			if (!is_chg)
-				death()
-			else if (src.suiciding)
-				death()
+	if (src.resting)
+		src.weakened = max(src.weakened, 2)
 
-		if (src.get_brain_damage() >= 100) // braindeath
-			if (!is_chg)
-				src.losebreath+=10
-				src.weakened = 30
-		if (src.health <= -100)
-			var/deathchance = min(99, ((src.get_brain_damage() * -5) + (src.health + (src.get_oxygen_deprivation() / 2))) * -0.01)
-			if (prob(deathchance))
-				death()
+	parent.setLastTask("status_updates health calcs", src)
+	var/is_chg = is_changeling()
+	//if (src.brain_op_stage == 4.0) // handled above in handle_organs() now
+		//death()
+	if (src.get_brain_damage() >= 120 || (src.health + (src.get_oxygen_deprivation() / 2)) <= -500) //-200) a shitty test here // let's lower the weight of oxy
+		if (!is_chg)
+			death()
+		else if (src.suiciding)
+			death()
 
-		/////////////////////////////////////////////
-		//// cogwerks - critical health rewrite /////
-		/////////////////////////////////////////////
-		//// goal: make crit a medical emergency ////
-		//// instead of game over black screen time /
-		/////////////////////////////////////////////
+	if (src.get_brain_damage() >= 100) // braindeath
+		if (!is_chg)
+			src.losebreath+=10
+			src.weakened = 30
+	if (src.health <= -100)
+		var/deathchance = min(99, ((src.get_brain_damage() * -5) + (src.health + (src.get_oxygen_deprivation() / 2))) * -0.01)
+		if (prob(deathchance))
+			death()
+
+	/////////////////////////////////////////////
+	//// cogwerks - critical health rewrite /////
+	/////////////////////////////////////////////
+	//// goal: make crit a medical emergency ////
+	//// instead of game over black screen time /
+	/////////////////////////////////////////////
 
 
-		if (src.health < 0 && src.stat != 2)
-			if (prob(5))
-				src.emote(pick("faint", "collapse", "cry","moan","gasp","shudder","shiver"))
-			if (src.stuttering <= 5)
-				src.stuttering+=5
-			if (src.get_eye_blurry() <= 5)
-				src.change_eye_blurry(5)
-			if (prob(7))
-				src.change_misstep_chance(2)
-			if (prob(5))
-				src.paralysis = max(src.paralysis, 2)
-			switch(src.health)
-				if (-INFINITY to -100)
-					src.take_oxygen_deprivation(1)
-					/*if (src.reagents)
-						if (!src.reagents.has_reagent("inaprovaline"))
-							src.take_oxygen_deprivation(1)*/
-					if (prob(src.health * -0.1))
-						src.contract_disease(/datum/ailment/disease/flatline,null,null,1)
-						//boutput(world, "\b LOG: ADDED FLATLINE TO [src].")
-					if (prob(src.health * -0.2))
-						src.contract_disease(/datum/ailment/disease/heartfailure,null,null,1)
-						//boutput(world, "\b LOG: ADDED HEART FAILURE TO [src].")
-					if (src.stat == 0)
-						sleep(0)
-						if (src && src.mind)
-							src.lastgasp() // if they were ok before dropping below zero health, call lastgasp() before setting them unconscious
-					if (src.stat != 2)
-						src.stat = 1
-					//src.paralysis = max(src.paralysis, 5)
-					// losebreath can handle this part
-				if (-99 to -80)
-					src.take_oxygen_deprivation(1)
-					/*if (src.reagents)
-						if (!src.reagents.has_reagent("inaprovaline"))
-							src.take_oxygen_deprivation(1)*/
-					if (prob(4))
-						boutput(src, "<span style=\"color:red\"><b>Your chest hurts...</b></span>")
-						src.paralysis++
-						src.contract_disease(/datum/ailment/disease/heartfailure,null,null,1)
-				if (-79 to -51)
-					/*if (src.reagents)
-						if (!src.reagents.has_reagent("inaprovaline")) src.take_oxygen_deprivation(1)*/
-					if (prob(10)) // shock added back to crit because it wasn't working as a bloodloss-only thing
-						src.contract_disease(/datum/ailment/disease/shock,null,null,1)
-						//boutput(world, "\b LOG: ADDED SHOCK TO [src].")
-					if (prob(src.health * -0.08))
-						src.contract_disease(/datum/ailment/disease/heartfailure,null,null,1)
-						//boutput(world, "\b LOG: ADDED HEART FAILURE TO [src].")
-					if (prob(6))
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("horrible pain", "awful", "like shit", "absolutely awful", "like death", "like you are dying", "nothing", "warm", "sweaty", "tingly", "really, really bad", "horrible")]</b>!</span>")
-						src.weakened +=3
-					if (prob(3))
-						src.paralysis++
-				if (-50 to 0)
-					src.take_oxygen_deprivation(1)
-					/*if (src.reagents)
-						if (!src.reagents.has_reagent("inaprovaline") && prob(50))
-							src.take_oxygen_deprivation(1)*/
-					if (prob(3))
-						src.contract_disease(/datum/ailment/disease/shock,null,null,1)
-						//boutput(world, "\b LOG: ADDED SHOCK TO [src].")
-					if (prob(5))
-						boutput(src, "<span style=\"color:red\"><b>You feel [pick("terrible", "awful", "like shit", "sick", "numb", "cold", "sweaty", "tingly", "horrible")]!</b></span>")
-						src.weakened +=3
-
-		parent.setLastTask("status_updates blindness checks", src)
-		if (istype(src.glasses, /obj/item/clothing/glasses/))
-			var/obj/item/clothing/glasses/G = src.glasses
-			if (G.block_vision)
-				src.blinded = 1
-
-		//A ghost costume without eyeholes is a bad idea.
-		if (istype(src.wear_suit, /obj/item/clothing/suit/bedsheet))
-			var/obj/item/clothing/suit/bedsheet/B = src.wear_suit
-			if (!B.eyeholes && !B.cape)
-				src.blinded = 1
-
-		else if (istype(src.wear_suit, /obj/item/clothing/suit/cardboard_box))
-			var/obj/item/clothing/suit/cardboard_box/B = src.wear_suit
-			if (!B.eyeholes)
-				src.blinded = 1
-
-		if (manualblinking)
-			var/showmessages = 1
-			var/tempblind = src.get_eye_damage(1)
-
-			if (src.find_ailment_by_type(/datum/ailment/disability/blind))
-				showmessages = 0
-
-			src.blinktimer++
-			switch(src.blinktimer)
-				if (20)
-					if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes feel slightly uncomfortable!</span>")
-				if (30)
-					if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes feel quite dry!</span>")
-				if (40)
-					if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes feel very dry and uncomfortable, it's getting difficult to see!</span>")
-					src.change_eye_blurry(3, 3)
-				if (41 to 59)
-					src.change_eye_blurry(3, 3)
-				if (60)
-					if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes are so dry that you can't see a thing!</span>")
-					src.take_eye_damage(max(0, min(3, 3 - tempblind)), 1)
-				if (61 to 99)
-					src.take_eye_damage(max(0, min(3, 3 - tempblind)), 1)
-				if (100) //blinking won't save you now, buddy
-					if (showmessages) boutput(src, "<span style=\"color:red\">You feel a horrible pain in your eyes. That can't be good.</span>")
-					src.contract_disease(/datum/ailment/disability/blind,null,null,1)
-
-			if (src.blinkstate) src.take_eye_damage(max(0, min(1, 1 - tempblind)), 1)
-
-		if (src.get_eye_damage(1)) // Temporary blindness.
-			src.take_eye_damage(-1, 1)
-			src.blinded = 1
-
-		// drsingh :wtc: why was there a runtime error about comparing "" to 50 here? varedit or something?
-		// welp thisll fix it
-		parent.setLastTask("status_updates disability checks", src)
-		src.stuttering = isnum(src.stuttering) ? min(src.stuttering, 50) : 0
-		if (src.stuttering) src.stuttering--
-
-		if (src.get_ear_damage(1)) // Temporary deafness.
-			src.take_ear_damage(-1, 1)
-
-		if (src.get_ear_damage() && (src.get_ear_damage() <= src.get_ear_damage_natural_healing_threshold()))
-			src.take_ear_damage(-0.05)
-
-		if (src.get_eye_blurry())
-			src.change_eye_blurry(-1)
-
-		if (src.druggy > 0)
-			src.druggy--
-			src.druggy = max(0, src.druggy)
-
-		if (src.nodamage)
-			parent.setLastTask("status_updates nodamage reset", src)
-			src.HealDamage("All", 10000, 10000)
-			src.take_toxin_damage(-5000)
-			src.take_oxygen_deprivation(-5000)
-			src.take_brain_damage(-120)
-			src.irradiate(-100)
-			src.paralysis = 0
-			src.weakened = 0
-			src.stunned = 0
-			src.stuttering = 0
-			src.take_ear_damage(-INFINITY)
-			src.take_ear_damage(-INFINITY, 1)
-			src.change_eye_blurry(-INFINITY)
-			src.druggy = 0
-			src.blinded = null
-
-		return 1
-
-	proc/handle_stuns_lying(datum/controller/process/mobs/parent)
-		parent.setLastTask("status_updates lying/standing checks")
-		var/tmp/lying_old = src.lying
-		var/cant_lie = (src.limbs && istype(src.limbs.l_leg, /obj/item/parts/robot_parts/leg/left/treads) && istype(src.limbs.r_leg, /obj/item/parts/robot_parts/leg/right/treads) && !locate(/obj/table, src.loc) && !locate(/obj/machinery/optable, src.loc))
-
-		var/must_lie = (!cant_lie && src.limbs && !src.limbs.l_leg && !src.limbs.r_leg) //hasn't got a leg to stand on... haaa
-
-		var/changeling_fakedeath = 0
-		var/datum/abilityHolder/changeling/C = get_ability_holder(/datum/abilityHolder/changeling)
-		if (C && C.in_fakedeath)
-			changeling_fakedeath = 1
-
-		if (src.stat != 2) //Alive.
-			if (src.paralysis || src.stunned || src.weakened || changeling_fakedeath || src.slowed) //Stunned etc.
-				parent.setLastTask("status_updates lying/standing checks stun calcs")
-				var/setStat = src.stat
-				var/oldStat = src.stat
-				if (src.stunned > 0)
-					src.stunned--
-					setStat = 0
-				if (src.slowed > 0)
-					src.slowed--
-					setStat = 0
-				if (src.weakened > 0 && !src.fakedead)
-					src.weakened--
-					if (!cant_lie) src.lying = 1
-					setStat = 0
-				if (src.paralysis > 0)
-					src.paralysis--
-					src.blinded = 1
-					if (!cant_lie) src.lying = 1
-					setStat = 1
-				if (src.stat == 0 && setStat == 1)
-					parent.setLastTask("status_updates lying/standing checks last gasp")
+	if (src.health < 0 && src.stat != 2)
+		if (prob(5))
+			src.emote(pick("faint", "collapse", "cry","moan","gasp","shudder","shiver"))
+		if (src.stuttering <= 5)
+			src.stuttering+=5
+		if (src.get_eye_blurry() <= 5)
+			src.change_eye_blurry(5)
+		if (prob(7))
+			src.change_misstep_chance(2)
+		if (prob(5))
+			src.paralysis = max(src.paralysis, 2)
+		switch(src.health)
+			if (-INFINITY to -100)
+				src.take_oxygen_deprivation(1)
+				/*if (src.reagents)
+					if (!src.reagents.has_reagent("inaprovaline"))
+						src.take_oxygen_deprivation(1)*/
+				if (prob(src.health * -0.1))
+					src.contract_disease(/datum/ailment/disease/flatline,null,null,1)
+					//boutput(world, "\b LOG: ADDED FLATLINE TO [src].")
+				if (prob(src.health * -0.2))
+					src.contract_disease(/datum/ailment/disease/heartfailure,null,null,1)
+					//boutput(world, "\b LOG: ADDED HEART FAILURE TO [src].")
+				if (src.stat == 0)
 					sleep(0)
-					if (src && src.mind) src.lastgasp() // calling lastgasp() here because we just got knocked out
-				if (must_lie)
-					src.lying = 1
+					if (src && src.mind)
+						src.lastgasp() // if they were ok before dropping below zero health, call lastgasp() before setting them unconscious
+				if (src.stat != 2)
+					src.stat = 1
+				//src.paralysis = max(src.paralysis, 5)
+				// losebreath can handle this part
+			if (-99 to -80)
+				src.take_oxygen_deprivation(1)
+				/*if (src.reagents)
+					if (!src.reagents.has_reagent("inaprovaline"))
+						src.take_oxygen_deprivation(1)*/
+				if (prob(4))
+					boutput(src, "<span style=\"color:red\"><b>Your chest hurts...</b></span>")
+					src.paralysis++
+					src.contract_disease(/datum/ailment/disease/heartfailure,null,null,1)
+			if (-79 to -51)
+				/*if (src.reagents)
+					if (!src.reagents.has_reagent("inaprovaline")) src.take_oxygen_deprivation(1)*/
+				if (prob(10)) // shock added back to crit because it wasn't working as a bloodloss-only thing
+					src.contract_disease(/datum/ailment/disease/shock,null,null,1)
+					//boutput(world, "\b LOG: ADDED SHOCK TO [src].")
+				if (prob(src.health * -0.08))
+					src.contract_disease(/datum/ailment/disease/heartfailure,null,null,1)
+					//boutput(world, "\b LOG: ADDED HEART FAILURE TO [src].")
+				if (prob(6))
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("horrible pain", "awful", "like shit", "absolutely awful", "like death", "like you are dying", "nothing", "warm", "sweaty", "tingly", "really, really bad", "horrible")]</b>!</span>")
+					src.weakened +=3
+				if (prob(3))
+					src.paralysis++
+			if (-50 to 0)
+				src.take_oxygen_deprivation(1)
+				/*if (src.reagents)
+					if (!src.reagents.has_reagent("inaprovaline") && prob(50))
+						src.take_oxygen_deprivation(1)*/
+				if (prob(3))
+					src.contract_disease(/datum/ailment/disease/shock,null,null,1)
+					//boutput(world, "\b LOG: ADDED SHOCK TO [src].")
+				if (prob(5))
+					boutput(src, "<span style=\"color:red\"><b>You feel [pick("terrible", "awful", "like shit", "sick", "numb", "cold", "sweaty", "tingly", "horrible")]!</b></span>")
+					src.weakened +=3
 
-				src.stat = setStat
-
-				parent.setLastTask("status_updates lying/standing checks item dropping")
-				var/h = src.hand
-				src.hand = 0
-				drop_item()
-				src.hand = 1
-				drop_item()
-				src.hand = h
-				if (src.juggling())
-					src.drop_juggle()
-
-				parent.setLastTask("status_updates lying/standing checks recovery checks")
-				if (world.time - last_recovering_msg >= 60 || last_recovering_msg == 0)
-					if ( ((paralysis && paralysis <= 3) && stunned <= paralysis && weakened <= paralysis) || ((stunned && stunned <= 3) && paralysis <= stunned && weakened <= stunned) || ((weakened && weakened <= 3) && paralysis <= weakened && stunned <= weakened) )
-						last_recovering_msg = world.time
-						if (src.mind && !src.asleep)
-							if (src.resting)
-								boutput(src, "<span style=\"color:green\">You are resting. Click 'rest' to toggle back to stand.</span>")
-							else
-								boutput(src, "<span style=\"color:green\">You begin to recover.</span>")
-				//		for (var/mob/V in viewers(7,src))
-				//			boutput(V, "<span style=\"color:red\">[name] begins to recover.</span>")
-				else if ((oldStat == 1) && (!paralysis && !stunned && !src.weakened && !changeling_fakedeath))
-					parent.setLastTask("status updates lying/standing checks wakeup ogg")
-					src << sound('sound/misc/molly_revived.ogg', volume=50)
-
-			else	//Not stunned.
-				if (must_lie) src.lying = 1
-				else src.lying = 0
-				src.stat = 0
-
-		else //Dead.
-			if ((src.reagents && src.reagents.has_reagent("montaguone_extra")) || cant_lie) src.lying = 0
-			else src.lying = 1
+	parent.setLastTask("status_updates blindness checks", src)
+	if (istype(src.glasses, /obj/item/clothing/glasses/))
+		var/obj/item/clothing/glasses/G = src.glasses
+		if (G.block_vision)
 			src.blinded = 1
-			src.stat = 2
 
-		if (src.lying != lying_old)
-			// Update clothing - Taken out of Life() to reduce icon overhead
-			parent.setLastTask("status_updates lying/standing checks update clothing")
-			update_clothing()
-			src.density = !( src.lying )
+	//A ghost costume without eyeholes is a bad idea.
+	if (istype(src.wear_suit, /obj/item/clothing/suit/bedsheet))
+		var/obj/item/clothing/suit/bedsheet/B = src.wear_suit
+		if (!B.eyeholes && !B.cape)
+			src.blinded = 1
+
+	else if (istype(src.wear_suit, /obj/item/clothing/suit/cardboard_box))
+		var/obj/item/clothing/suit/cardboard_box/B = src.wear_suit
+		if (!B.eyeholes)
+			src.blinded = 1
+
+	if (manualblinking)
+		var/showmessages = 1
+		var/tempblind = src.get_eye_damage(1)
+
+		if (src.find_ailment_by_type(/datum/ailment/disability/blind))
+			showmessages = 0
+
+		src.blinktimer++
+		switch(src.blinktimer)
+			if (20)
+				if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes feel slightly uncomfortable!</span>")
+			if (30)
+				if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes feel quite dry!</span>")
+			if (40)
+				if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes feel very dry and uncomfortable, it's getting difficult to see!</span>")
+				src.change_eye_blurry(3, 3)
+			if (41 to 59)
+				src.change_eye_blurry(3, 3)
+			if (60)
+				if (showmessages) boutput(src, "<span style=\"color:red\">Your eyes are so dry that you can't see a thing!</span>")
+				src.take_eye_damage(max(0, min(3, 3 - tempblind)), 1)
+			if (61 to 99)
+				src.take_eye_damage(max(0, min(3, 3 - tempblind)), 1)
+			if (100) //blinking won't save you now, buddy
+				if (showmessages) boutput(src, "<span style=\"color:red\">You feel a horrible pain in your eyes. That can't be good.</span>")
+				src.contract_disease(/datum/ailment/disability/blind,null,null,1)
+
+		if (src.blinkstate) src.take_eye_damage(max(0, min(1, 1 - tempblind)), 1)
+
+	if (src.get_eye_damage(1)) // Temporary blindness.
+		src.take_eye_damage(-1, 1)
+		src.blinded = 1
+
+	// drsingh :wtc: why was there a runtime error about comparing "" to 50 here? varedit or something?
+	// welp thisll fix it
+	parent.setLastTask("status_updates disability checks", src)
+	src.stuttering = isnum(src.stuttering) ? min(src.stuttering, 50) : 0
+	if (src.stuttering) src.stuttering--
+
+	if (src.get_ear_damage(1)) // Temporary deafness.
+		src.take_ear_damage(-1, 1)
+
+	if (src.get_ear_damage() && (src.get_ear_damage() <= src.get_ear_damage_natural_healing_threshold()))
+		src.take_ear_damage(-0.05)
+
+	if (src.get_eye_blurry())
+		src.change_eye_blurry(-1)
+
+	if (src.druggy > 0)
+		src.druggy--
+		src.druggy = max(0, src.druggy)
+
+	if (src.nodamage)
+		parent.setLastTask("status_updates nodamage reset", src)
+		src.HealDamage("All", 10000, 10000)
+		src.take_toxin_damage(-5000)
+		src.take_oxygen_deprivation(-5000)
+		src.take_brain_damage(-120)
+		src.irradiate(-100)
+		src.paralysis = 0
+		src.weakened = 0
+		src.stunned = 0
+		src.stuttering = 0
+		src.take_ear_damage(-INFINITY)
+		src.take_ear_damage(-INFINITY, 1)
+		src.change_eye_blurry(-INFINITY)
+		src.druggy = 0
+		src.blinded = null
+
+	return 1
+
+/mob/living/carbon/human/proc/handle_stuns_lying(datum/controller/process/mobs/parent)
+	parent.setLastTask("status_updates lying/standing checks")
+	var/tmp/lying_old = src.lying
+	var/cant_lie = (src.limbs && istype(src.limbs.l_leg, /obj/item/parts/robot_parts/leg/left/treads) && istype(src.limbs.r_leg, /obj/item/parts/robot_parts/leg/right/treads) && !locate(/obj/table, src.loc) && !locate(/obj/machinery/optable, src.loc))
+
+	var/must_lie = (!cant_lie && src.limbs && !src.limbs.l_leg && !src.limbs.r_leg) //hasn't got a leg to stand on... haaa
+
+	var/changeling_fakedeath = 0
+	var/datum/abilityHolder/changeling/C = get_ability_holder(/datum/abilityHolder/changeling)
+	if (C && C.in_fakedeath)
+		changeling_fakedeath = 1
+
+	if (src.stat != 2) //Alive.
+		if (src.paralysis || src.stunned || src.weakened || changeling_fakedeath || src.slowed) //Stunned etc.
+			parent.setLastTask("status_updates lying/standing checks stun calcs")
+			var/setStat = src.stat
+			var/oldStat = src.stat
+			if (src.stunned > 0)
+				src.stunned--
+				setStat = 0
+			if (src.slowed > 0)
+				src.slowed--
+				setStat = 0
+			if (src.weakened > 0 && !src.fakedead)
+				src.weakened--
+				if (!cant_lie) src.lying = 1
+				setStat = 0
+			if (src.paralysis > 0)
+				src.paralysis--
+				src.blinded = 1
+				if (!cant_lie) src.lying = 1
+				setStat = 1
+			if (src.stat == 0 && setStat == 1)
+				parent.setLastTask("status_updates lying/standing checks last gasp")
+				sleep(0)
+				if (src && src.mind) src.lastgasp() // calling lastgasp() here because we just got knocked out
+			if (must_lie)
+				src.lying = 1
+
+			src.stat = setStat
+
+			parent.setLastTask("status_updates lying/standing checks item dropping")
+			var/h = src.hand
+			src.hand = 0
+			drop_item()
+			src.hand = 1
+			drop_item()
+			src.hand = h
+			if (src.juggling())
+				src.drop_juggle()
+
+			parent.setLastTask("status_updates lying/standing checks recovery checks")
+			if (world.time - last_recovering_msg >= 60 || last_recovering_msg == 0)
+				if ( ((paralysis && paralysis <= 3) && stunned <= paralysis && weakened <= paralysis) || ((stunned && stunned <= 3) && paralysis <= stunned && weakened <= stunned) || ((weakened && weakened <= 3) && paralysis <= weakened && stunned <= weakened) )
+					last_recovering_msg = world.time
+					if (src.mind && !src.asleep)
+						if (src.resting)
+							boutput(src, "<span style=\"color:green\">You are resting. Click 'rest' to toggle back to stand.</span>")
+						else
+							boutput(src, "<span style=\"color:green\">You begin to recover.</span>")
+			//		for (var/mob/V in viewers(7,src))
+			//			boutput(V, "<span style=\"color:red\">[name] begins to recover.</span>")
+			else if ((oldStat == 1) && (!paralysis && !stunned && !src.weakened && !changeling_fakedeath))
+				parent.setLastTask("status updates lying/standing checks wakeup ogg")
+				src << sound('sound/misc/molly_revived.ogg', volume=50)
+
+		else	//Not stunned.
+			if (must_lie) src.lying = 1
+			else src.lying = 0
+			src.stat = 0
+
+	else //Dead.
+		if ((src.reagents && src.reagents.has_reagent("montaguone_extra")) || cant_lie) src.lying = 0
+		else src.lying = 1
+		src.blinded = 1
+		src.stat = 2
+
+	if (src.lying != lying_old)
+		// Update clothing - Taken out of Life() to reduce icon overhead
+		parent.setLastTask("status_updates lying/standing checks update clothing")
+		update_clothing()
+		src.density = !( src.lying )
 
 
-	proc/handle_regular_sight_updates()
+/mob/living/carbon/human/proc/handle_regular_sight_updates()
 
 ////Mutrace and normal sight
-		if (src.stat != 2)
-			src.sight &= ~SEE_TURFS
-			src.sight &= ~SEE_MOBS
-			src.sight &= ~SEE_OBJS
+	if (src.stat != 2)
+		src.sight &= ~SEE_TURFS
+		src.sight &= ~SEE_MOBS
+		src.sight &= ~SEE_OBJS
 
-			if (src.mutantrace)
-				src.mutantrace.sight_modifier()
+		if (src.mutantrace)
+			src.mutantrace.sight_modifier()
+		else
+			if(src.traitHolder && src.traitHolder.hasTrait("cateyes"))
+				src.see_in_dark = SEE_DARK_HUMAN + 2
 			else
-				if(src.traitHolder && src.traitHolder.hasTrait("cateyes"))
-					src.see_in_dark = SEE_DARK_HUMAN + 2
-				else
-					src.see_in_dark = SEE_DARK_HUMAN
-				src.see_invisible = 0
+				src.see_in_dark = SEE_DARK_HUMAN
+			src.see_invisible = 0
 
-			if (isvampire(src))
-				var/turf/T = get_turf(src)
-				if (src.check_vampire_power(2) == 1 && (T && !isrestrictedz(T.z)))
+		if (isvampire(src))
+			var/turf/T = get_turf(src)
+			if (src.check_vampire_power(2) == 1 && (T && !isrestrictedz(T.z)))
+				src.sight |= SEE_MOBS
+				src.sight |= SEE_TURFS
+				src.sight |= SEE_OBJS
+				src.see_in_dark = SEE_DARK_FULL
+				src.see_invisible = 2
+
+			else
+				if (src.check_vampire_power(1) == 1 && !isrestrictedz(src.z))
 					src.sight |= SEE_MOBS
-					src.sight |= SEE_TURFS
-					src.sight |= SEE_OBJS
-					src.see_in_dark = SEE_DARK_FULL
 					src.see_invisible = 2
 
-				else
-					if (src.check_vampire_power(1) == 1 && !isrestrictedz(src.z))
-						src.sight |= SEE_MOBS
-						src.see_invisible = 2
-
 ////Dead sight
-		var/turf/T = src.eye ? get_turf(src.eye) : get_turf(src) //They might be in a closet or something idk
-		if ((src.stat == 2 ||( src.bioHolder && src.bioHolder.HasEffect("xray"))) && (T && !isrestrictedz(T.z)))
-			src.sight |= SEE_TURFS
-			src.sight |= SEE_MOBS
-			src.sight |= SEE_OBJS
-			src.see_in_dark = SEE_DARK_FULL
-			if (client && client.adventure_view)
-				src.see_invisible = 21
-			else
-				src.see_invisible = 2
-			return
-
-////Ship sight
-		if (istype(src.loc, /obj/machinery/vehicle))
-			var/obj/machinery/vehicle/ship = src.loc
-			if (ship.sensors)
-				if (ship.sensors.active)
-					src.sight |= ship.sensors.sight
-					src.see_in_dark = ship.sensors.see_in_dark
-					if (client && client.adventure_view)
-						src.see_invisible = 21
-					else
-						src.see_invisible = ship.sensors.see_invisible
-					return
-
-		if (src.traitHolder && src.traitHolder.hasTrait("infravision"))
-			if (see_infrared < 1)
-				src.see_infrared = 1
-
-////Glasses
-		if ((istype(src.glasses, /obj/item/clothing/glasses/meson) || src.eye_istype(/obj/item/organ/eye/cyber/meson)) && !isrestrictedz(T.z))
-			src.sight |= SEE_TURFS
-			if (see_in_dark < initial(see_in_dark) + 1)
-				see_in_dark++
-			if (see_invisible < 1)
-				src.see_invisible = 1
-			if (see_infrared < 1)
-				src.see_infrared = 1
-
-		else if (istype(src.glasses, /obj/item/clothing/glasses/construction) && !isrestrictedz(T.z))
-			if (see_in_dark < initial(see_in_dark) + 1)
-				see_in_dark++
-			if (see_invisible < 8)
-				src.see_invisible = 8
-
-		else if ((istype(src.glasses, /obj/item/clothing/glasses/thermal) || src.eye_istype(/obj/item/organ/eye/cyber/thermal)) && !isrestrictedz(T.z))
-			//src.sight |= SEE_MOBS
-			if (see_in_dark < initial(see_in_dark) + 4)
-				see_in_dark += 4
-			if (see_invisible < 2)
-				src.see_invisible = 2
-			if (see_infrared < 1)
-				src.see_infrared = 1
-
-		else if (istype(src.wear_mask, /obj/item/clothing/mask/predator) && !isrestrictedz(T.z))
-			src.sight |= SEE_MOBS // Predators kinda need proper thermal vision, I've found in playtesting (Convair880).
-			if (see_in_dark < SEE_DARK_FULL)
-				src.see_in_dark = SEE_DARK_FULL
-			if (see_invisible < 2)
-				src.see_invisible = 2
-
-		else if (istype(src.glasses, /obj/item/clothing/glasses/regular/ecto) || eye_istype(/obj/item/organ/eye/cyber/ecto))
-			if (see_in_dark != 1)
-				see_in_dark = 1
-			if (see_invisible < 15)
-				src.see_invisible = 15
-
-////Reagents
-		if (src.reagents.has_reagent("green_goop") && !isrestrictedz(T.z))
-			if (see_in_dark != 1)
-				see_in_dark = 1
-			if (see_invisible < 15)
-				src.see_invisible = 15
-
+	var/turf/T = src.eye ? get_turf(src.eye) : get_turf(src) //They might be in a closet or something idk
+	if ((src.stat == 2 ||( src.bioHolder && src.bioHolder.HasEffect("xray"))) && (T && !isrestrictedz(T.z)))
+		src.sight |= SEE_TURFS
+		src.sight |= SEE_MOBS
+		src.sight |= SEE_OBJS
+		src.see_in_dark = SEE_DARK_FULL
 		if (client && client.adventure_view)
 			src.see_invisible = 21
-
-	proc/handle_regular_hud_updates()
-		if (src.stamina_bar) src.stamina_bar.update_value(src)
-		//hud.update_indicators()
-		hud.update_health_indicator()
-		hud.update_temp_indicator()
-		hud.update_blood_indicator()
-		hud.update_pulling()
-
-		var/color_mod_r = 255
-		var/color_mod_g = 255
-		var/color_mod_b = 255
-		if (istype(src.glasses, /obj/item/clothing/glasses/thermal) || src.eye_istype(/obj/item/organ/eye/cyber/thermal))
-			color_mod_g *= 0.8 // red tint
-			color_mod_b *= 0.8
-		if (istype(src.wear_mask, /obj/item/clothing/mask/gas))
-			color_mod_r *= 0.8 // green tint
-			color_mod_b *= 0.8
-		if (istype(src.glasses, /obj/item/clothing/glasses/sunglasses) || src.eye_istype(/obj/item/organ/eye/cyber/sunglass))
-			color_mod_r *= 0.95 // darken a little
-			color_mod_g *= 0.95
-			color_mod_b *= 0.9
-		if (istype(src.head, /obj/item/clothing/head/helmet/welding) && !src.head:up)
-			color_mod_r *= 0.3 // darken
-			color_mod_g *= 0.3
-			color_mod_b *= 0.3
-		if (src.druggy)
-			vision.animate_color_mod(rgb(rand(0, 255), rand(0, 255), rand(0, 255)), 15)
 		else
-			vision.set_color_mod(rgb(color_mod_r, color_mod_g, color_mod_b))
+			src.see_invisible = 2
+		return
 
-		if (istype(src.glasses, /obj/item/clothing/glasses/visor))
-			vision.set_scan(1)
-		else
-			vision.set_scan(0)
-
-		if (istype(src.glasses, /obj/item/clothing/glasses/healthgoggles))
-			var/obj/item/clothing/glasses/healthgoggles/G = src.glasses
-			if (src.client && !(G.assigned || G.assigned == src.client))
-				G.assigned = src.client
-				if (!(G in processing_items))
-					processing_items.Add(G)
-				//G.updateIcons()
-
-		else if (src.organHolder && istype(src.organHolder.left_eye, /obj/item/organ/eye/cyber/prodoc))
-			var/obj/item/organ/eye/cyber/prodoc/G = src.organHolder.left_eye
-			if (src.client && !(G.assigned || G.assigned == src.client))
-				G.assigned = src.client
-				if (!(G in processing_items))
-					processing_items.Add(G)
-				//G.updateIcons()
-		else if (src.organHolder && istype(src.organHolder.right_eye, /obj/item/organ/eye/cyber/prodoc))
-			var/obj/item/organ/eye/cyber/prodoc/G = src.organHolder.right_eye
-			if (src.client && !(G.assigned || G.assigned == src.client))
-				G.assigned = src.client
-				if (!(G in processing_items))
-					processing_items.Add(G)
-				//G.updateIcons()
-
-		if (!src.sight_check(1) && src.stat != 2)
-			src.addOverlayComposition(/datum/overlayComposition/blinded) //ov1
-		else
-			src.removeOverlayComposition(/datum/overlayComposition/blinded) //ov1
-		vision.animate_dither_alpha(src.get_eye_blurry() / 10 * 255, 15) // animate it so that it doesnt "jump" as much
-		return 1
-
-	proc/handle_random_events()
-		if (prob(1) && prob(2))
-			spawn(0)
-				emote("sneeze")
+////Ship sight
+	if (istype(src.loc, /obj/machinery/vehicle))
+		var/obj/machinery/vehicle/ship = src.loc
+		if (ship.sensors)
+			if (ship.sensors.active)
+				src.sight |= ship.sensors.sight
+				src.see_in_dark = ship.sensors.see_in_dark
+				if (client && client.adventure_view)
+					src.see_invisible = 21
+				else
+					src.see_invisible = ship.sensors.see_invisible
 				return
 
-	proc/handle_virus_updates()
-		if (prob(40))
-			for (var/mob/living/carbon/M in oviewers(4, src))
-				M.viral_transmission(src,"Airborne",0)
+	if (src.traitHolder && src.traitHolder.hasTrait("infravision"))
+		if (see_infrared < 1)
+			src.see_infrared = 1
 
-			for (var/obj/decal/cleanable/blood/B in view(4, src))
-				for (var/datum/ailment_data/disease/virus in B.diseases)
-					if (virus.spread == "Airborne")
-						src.contract_disease(null,null,virus,0)
-		if (prob(40))
-			for (var/mob/living/carbon/M in oviewers(6, src))
-				if (prob(10))
-					M.viral_transmission(src, "Sight", 0)
+////Glasses
+	if ((istype(src.glasses, /obj/item/clothing/glasses/meson) || src.eye_istype(/obj/item/organ/eye/cyber/meson)) && !isrestrictedz(T.z))
+		src.sight |= SEE_TURFS
+		if (see_in_dark < initial(see_in_dark) + 1)
+			see_in_dark++
+		if (see_invisible < 1)
+			src.see_invisible = 1
+		if (see_infrared < 1)
+			src.see_infrared = 1
 
-		if (src.stat != 2)
-			for (var/datum/ailment_data/am in src.ailments)
-				am.stage_act()
+	else if (istype(src.glasses, /obj/item/clothing/glasses/construction) && !isrestrictedz(T.z))
+		if (see_in_dark < initial(see_in_dark) + 1)
+			see_in_dark++
+		if (see_invisible < 8)
+			src.see_invisible = 8
 
-	proc/check_if_buckled()
-		if (src.buckled)
-			if (src.buckled.loc != src.loc)
-				src.buckled = null
-				return
-			src.lying = istype(src.buckled, /obj/stool/bed) || istype(src.buckled, /obj/machinery/conveyor)
-			if (src.lying)
-				src.drop_item()
-			src.density = 1
-		else
-			src.density = !src.lying
+	else if ((istype(src.glasses, /obj/item/clothing/glasses/thermal) || src.eye_istype(/obj/item/organ/eye/cyber/thermal)) && !isrestrictedz(T.z))
+		//src.sight |= SEE_MOBS
+		if (see_in_dark < initial(see_in_dark) + 4)
+			see_in_dark += 4
+		if (see_invisible < 2)
+			src.see_invisible = 2
+		if (see_infrared < 1)
+			src.see_infrared = 1
 
-	proc/handle_stomach()
+	else if (istype(src.wear_mask, /obj/item/clothing/mask/predator) && !isrestrictedz(T.z))
+		src.sight |= SEE_MOBS // Predators kinda need proper thermal vision, I've found in playtesting (Convair880).
+		if (see_in_dark < SEE_DARK_FULL)
+			src.see_in_dark = SEE_DARK_FULL
+		if (see_invisible < 2)
+			src.see_invisible = 2
+
+	else if (istype(src.glasses, /obj/item/clothing/glasses/regular/ecto) || eye_istype(/obj/item/organ/eye/cyber/ecto))
+		if (see_in_dark != 1)
+			see_in_dark = 1
+		if (see_invisible < 15)
+			src.see_invisible = 15
+
+////Reagents
+	if (src.reagents.has_reagent("green_goop") && !isrestrictedz(T.z))
+		if (see_in_dark != 1)
+			see_in_dark = 1
+		if (see_invisible < 15)
+			src.see_invisible = 15
+
+	if (client && client.adventure_view)
+		src.see_invisible = 21
+
+/mob/living/carbon/human/proc/handle_regular_hud_updates()
+	if (src.stamina_bar) src.stamina_bar.update_value(src)
+	//hud.update_indicators()
+	hud.update_health_indicator()
+	hud.update_temp_indicator()
+	hud.update_blood_indicator()
+	hud.update_pulling()
+
+	var/color_mod_r = 255
+	var/color_mod_g = 255
+	var/color_mod_b = 255
+	if (istype(src.glasses, /obj/item/clothing/glasses/thermal) || src.eye_istype(/obj/item/organ/eye/cyber/thermal))
+		color_mod_g *= 0.8 // red tint
+		color_mod_b *= 0.8
+	if (istype(src.wear_mask, /obj/item/clothing/mask/gas))
+		color_mod_r *= 0.8 // green tint
+		color_mod_b *= 0.8
+	if (istype(src.glasses, /obj/item/clothing/glasses/sunglasses) || src.eye_istype(/obj/item/organ/eye/cyber/sunglass))
+		color_mod_r *= 0.95 // darken a little
+		color_mod_g *= 0.95
+		color_mod_b *= 0.9
+	if (istype(src.head, /obj/item/clothing/head/helmet/welding) && !src.head:up)
+		color_mod_r *= 0.3 // darken
+		color_mod_g *= 0.3
+		color_mod_b *= 0.3
+	if (src.druggy)
+		vision.animate_color_mod(rgb(rand(0, 255), rand(0, 255), rand(0, 255)), 15)
+	else
+		vision.set_color_mod(rgb(color_mod_r, color_mod_g, color_mod_b))
+
+	if (istype(src.glasses, /obj/item/clothing/glasses/visor))
+		vision.set_scan(1)
+	else
+		vision.set_scan(0)
+
+	if (istype(src.glasses, /obj/item/clothing/glasses/healthgoggles))
+		var/obj/item/clothing/glasses/healthgoggles/G = src.glasses
+		if (src.client && !(G.assigned || G.assigned == src.client))
+			G.assigned = src.client
+			if (!(G in processing_items))
+				processing_items.Add(G)
+			//G.updateIcons()
+
+	else if (src.organHolder && istype(src.organHolder.left_eye, /obj/item/organ/eye/cyber/prodoc))
+		var/obj/item/organ/eye/cyber/prodoc/G = src.organHolder.left_eye
+		if (src.client && !(G.assigned || G.assigned == src.client))
+			G.assigned = src.client
+			if (!(G in processing_items))
+				processing_items.Add(G)
+			//G.updateIcons()
+	else if (src.organHolder && istype(src.organHolder.right_eye, /obj/item/organ/eye/cyber/prodoc))
+		var/obj/item/organ/eye/cyber/prodoc/G = src.organHolder.right_eye
+		if (src.client && !(G.assigned || G.assigned == src.client))
+			G.assigned = src.client
+			if (!(G in processing_items))
+				processing_items.Add(G)
+			//G.updateIcons()
+
+	if (!src.sight_check(1) && src.stat != 2)
+		src.addOverlayComposition(/datum/overlayComposition/blinded) //ov1
+	else
+		src.removeOverlayComposition(/datum/overlayComposition/blinded) //ov1
+	vision.animate_dither_alpha(src.get_eye_blurry() / 10 * 255, 15) // animate it so that it doesnt "jump" as much
+	return 1
+
+/mob/living/carbon/human/proc/handle_random_events()
+	if (prob(1) && prob(2))
 		spawn(0)
-			for (var/mob/M in stomach_contents)
-				if (M.loc != src)
-					stomach_contents.Remove(M)
-					continue
-				if (iscarbon(M) && src.stat != 2)
-					if (M.stat == 2)
-						M.death(1)
-						stomach_contents.Remove(M)
-						if (M.client)
-							var/mob/dead/observer/newmob = new(M)
-							M:client:mob = newmob
-							M.mind.transfer_to(newmob)
-						qdel(M)
-						emote("burp")
-						playsound(src.loc, "sound/misc/burp.ogg", 50, 1)
-						continue
-					if (air_master.current_cycle%3==1)
-						if (!M.nodamage)
-							M.TakeDamage("chest", 5, 0)
-						src.nutrition += 10
-
-	proc/handle_random_emotes()
-		if (!islist(src.random_emotes) || !src.random_emotes.len || src.stat)
+			emote("sneeze")
 			return
-		var/emote2do = pick(src.random_emotes)
-		src.emote(emote2do)
+
+/mob/living/carbon/human/proc/handle_virus_updates()
+	if (prob(40))
+		for (var/mob/living/carbon/M in oviewers(4, src))
+			M.viral_transmission(src,"Airborne",0)
+
+		for (var/obj/decal/cleanable/blood/B in view(4, src))
+			for (var/datum/ailment_data/disease/virus in B.diseases)
+				if (virus.spread == "Airborne")
+					src.contract_disease(null,null,virus,0)
+	if (prob(40))
+		for (var/mob/living/carbon/M in oviewers(6, src))
+			if (prob(10))
+				M.viral_transmission(src, "Sight", 0)
+
+	if (src.stat != 2)
+		for (var/datum/ailment_data/am in src.ailments)
+			am.stage_act()
+
+/mob/living/carbon/human/proc/check_if_buckled()
+	if (src.buckled)
+		if (src.buckled.loc != src.loc)
+			src.buckled = null
+			return
+		src.lying = istype(src.buckled, /obj/stool/bed) || istype(src.buckled, /obj/machinery/conveyor)
+		if (src.lying)
+			src.drop_item()
+		src.density = 1
+	else
+		src.density = !src.lying
+
+/mob/living/carbon/human/proc/handle_stomach()
+	spawn(0)
+		for (var/mob/M in stomach_contents)
+			if (M.loc != src)
+				stomach_contents.Remove(M)
+				continue
+			if (iscarbon(M) && src.stat != 2)
+				if (M.stat == 2)
+					M.death(1)
+					stomach_contents.Remove(M)
+					if (M.client)
+						var/mob/dead/observer/newmob = new(M)
+						M:client:mob = newmob
+						M.mind.transfer_to(newmob)
+					qdel(M)
+					emote("burp")
+					playsound(src.loc, "sound/misc/burp.ogg", 50, 1)
+					continue
+				if (air_master.current_cycle%3==1)
+					if (!M.nodamage)
+						M.TakeDamage("chest", 5, 0)
+					src.nutrition += 10
+
+/mob/living/carbon/human/proc/handle_random_emotes()
+	if (!islist(src.random_emotes) || !src.random_emotes.len || src.stat)
+		return
+	var/emote2do = pick(src.random_emotes)
+	src.emote(emote2do)
 
 /mob/living/carbon/human/Login()
 	..()

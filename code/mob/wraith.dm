@@ -23,495 +23,493 @@
 	// Wraith Overrides
 	//////////////
 
-	proc/make_name()
-		var/len = rand(4, 8)
-		var/vowel_prob = 0
-		var/list/con = list("x", "z", "n", "k", "s", "l", "t", "r", "sh", "m", "d")
-		var/list/vow = list("y", "o", "a", "ae", "u", "ou")
-		var/theName = ""
-		for (var/i = 1, i <= len, i++)
-			if (prob(vowel_prob))
-				vowel_prob = 0
-				theName += pick(vow)
-			else
-				vowel_prob += rand(15, 40)
-				theName += pick(con)
-		var/fc = copytext(theName, 1, 2)
-		theName = "[uppertext(fc)][copytext(theName, 2)]"
-		return theName
+/mob/wraith/proc/make_name()
+	var/len = rand(4, 8)
+	var/vowel_prob = 0
+	var/list/con = list("x", "z", "n", "k", "s", "l", "t", "r", "sh", "m", "d")
+	var/list/vow = list("y", "o", "a", "ae", "u", "ou")
+	var/theName = ""
+	for (var/i = 1, i <= len, i++)
+		if (prob(vowel_prob))
+			vowel_prob = 0
+			theName += pick(vow)
+		else
+			vowel_prob += rand(15, 40)
+			theName += pick(con)
+	var/fc = copytext(theName, 1, 2)
+	theName = "[uppertext(fc)][copytext(theName, 2)]"
+	return theName
 
 
-	New(var/mob/M)
-		. = ..()
-		src.invisibility = 16
-		//src.sight |= SEE_TURFS | SEE_MOBS | SEE_OBJS | SEE_SELF
-		src.sight |= SEE_SELF // let's not make it see through walls
-		src.see_invisible = 16
-		src.a_intent = "disarm"
-		src.see_in_dark = SEE_DARK_FULL
+/mob/wraith/New(var/mob/M)
+	. = ..()
+	src.invisibility = 16
+	//src.sight |= SEE_TURFS | SEE_MOBS | SEE_OBJS | SEE_SELF
+	src.sight |= SEE_SELF // let's not make it see through walls
+	src.see_invisible = 16
+	src.a_intent = "disarm"
+	src.see_in_dark = SEE_DARK_FULL
+	src.abilityHolder = new /datum/abilityHolder/wraith(src)
+	src.abilityHolder.points = 50
+
+	name = make_name() + "[pick(" the Impaler", " the Tormentor", " the Forsaken", " the Destroyer", " the Devourer", " the Tyrant", " the Overlord", " the Damned", " the Desolator", " the Exiled")]"
+	real_name = name
+
+/mob/wraith/is_spacefaring()
+	return !density
+
+/mob/wraith/movement_delay()
+	if (density)
+		return 4
+	return -1
+
+/mob/wraith/meteorhit()
+	return
+
+/mob/wraith/Login()
+	..()
+	src.updateButtons()
+
+
+/mob/wraith/disposing()
+	..()
+
+/mob/wraith/Stat()
+	..()
+	stat("Health:", src.health)
+
+/mob/wraith/Life(parent)
+	if (..(parent))
+		return 1
+
+	if (src.client)
+		src.antagonist_overlay_refresh(0, 0)
+
+	if (!src.abilityHolder)
 		src.abilityHolder = new /datum/abilityHolder/wraith(src)
-		src.abilityHolder.points = 50
 
-		name = make_name() + "[pick(" the Impaler", " the Tormentor", " the Forsaken", " the Destroyer", " the Devourer", " the Tyrant", " the Overlord", " the Damned", " the Desolator", " the Exiled")]"
-		real_name = name
+	if (src.haunting)
+		src.hauntBonus = 0
+		for (var/mob/living/carbon/human/H in viewers(6, src))
+			if (!H.stat && !H.bioHolder.HasEffect("revenant"))
+				src.hauntBonus += 5
+		src.abilityHolder.addBonus(src.hauntBonus)
 
-	is_spacefaring()
-		return !density
+	src.abilityHolder.generatePoints()
 
-	movement_delay()
-		if (density)
-			return 4
-		return -1
-
-	meteorhit()
+	if (src.health < 1)
+		src.death(0)
 		return
-
-	Login()
-		..()
-		src.updateButtons()
-
-
-	disposing()
-		..()
-
-	Stat()
-		..()
-		stat("Health:", src.health)
-
-	Life(parent)
-		if (..(parent))
-			return 1
-
-		if (src.client)
-			src.antagonist_overlay_refresh(0, 0)
-
-		if (!src.abilityHolder)
-			src.abilityHolder = new /datum/abilityHolder/wraith(src)
-
-		if (src.haunting)
-			src.hauntBonus = 0
-			for (var/mob/living/carbon/human/H in viewers(6, src))
-				if (!H.stat && !H.bioHolder.HasEffect("revenant"))
-					src.hauntBonus += 5
-			src.abilityHolder.addBonus(src.hauntBonus)
-
-		src.abilityHolder.generatePoints()
-
-		if (src.health < 1)
-			src.death(0)
-			return
-		else if (src.health < src.max_health)
-			src.health++
+	else if (src.health < src.max_health)
+		src.health++
 
 	// No log entries for unaffected mobs (Convair880).
-	ex_act(severity)
-		return
+/mob/wraith/ex_act(severity)
+	return
 
-	death(gibbed)
-		//Todo: some cool-ass effects here
+/mob/wraith/death(gibbed)
+	//Todo: some cool-ass effects here
 
-		//Back to square one with you!
+	//Back to square one with you!
 
-		var/datum/abilityHolder/wraith/W = src.abilityHolder
-		if(istype(W))
-			W.corpsecount = 0
-		src.abilityHolder.points = 0
-		src.abilityHolder.regenRate = 1
-		src.health = initial(src.health) // oh sweet jesus it spammed so hard
-		src.haunting = 0
-		src.hauntBonus = 0
-		deaths++
-		src.makeIncorporeal()
+	var/datum/abilityHolder/wraith/W = src.abilityHolder
+	if(istype(W))
+		W.corpsecount = 0
+	src.abilityHolder.points = 0
+	src.abilityHolder.regenRate = 1
+	src.health = initial(src.health) // oh sweet jesus it spammed so hard
+	src.haunting = 0
+	src.hauntBonus = 0
+	deaths++
+	src.makeIncorporeal()
+	if (src.mind)
+		for (var/datum/objective/specialist/wraith/WO in src.mind.objectives)
+			WO.onWeakened()
+	if (deaths < 2)
+		boutput(src, "<span style=\"color:red\"><b>You have been defeated...for now. The strain of banishment has weakened you, and you will not survive another.</b></span>")
+		src.justdied = 1
+		src.set_loc(pick(latejoin))
+		spawn(150) //15 seconds
+			src.justdied = 0
+	else
+		boutput(src, "<span style=\"color:red\"><b>Your connection with the mortal realm is severed. You have been permanently banished.</b></span>")
 		if (src.mind)
 			for (var/datum/objective/specialist/wraith/WO in src.mind.objectives)
-				WO.onWeakened()
-		if (deaths < 2)
-			boutput(src, "<span style=\"color:red\"><b>You have been defeated...for now. The strain of banishment has weakened you, and you will not survive another.</b></span>")
-			src.justdied = 1
-			src.set_loc(pick(latejoin))
-			spawn(150) //15 seconds
-				src.justdied = 0
-		else
-			boutput(src, "<span style=\"color:red\"><b>Your connection with the mortal realm is severed. You have been permanently banished.</b></span>")
-			if (src.mind)
-				for (var/datum/objective/specialist/wraith/WO in src.mind.objectives)
-					WO.onBanished()
-			src.ghostize()
-			qdel(src)
+				WO.onBanished()
+		src.ghostize()
+		qdel(src)
 
-	proc/onAbsorb(var/mob/M)
-		if (src.mind)
-			for (var/datum/objective/specialist/wraith/WO in src.mind.objectives)
-				WO.onAbsorb(M)
+/mob/wraith/proc/onAbsorb(var/mob/M)
+	if (src.mind)
+		for (var/datum/objective/specialist/wraith/WO in src.mind.objectives)
+			WO.onAbsorb(M)
 
-	CanPass(atom/movable/mover, turf/target, height=0, air_group=0)
-		if (src.density) return 0
-		else return 1
+/mob/wraith/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)
+	if (src.density) return 0
+	else return 1
 
 
-	projCanHit(datum/projectile/P)
-		if (src.density) return 1
-		else return 0
+/mob/wraith/projCanHit(datum/projectile/P)
+	if (src.density) return 1
+	else return 0
 
 
-	bullet_act(var/obj/projectile/P)
-		var/damage = 0
-		damage = round((P.power*P.proj_data.ks_ratio), 1.0)
+/mob/wraith/bullet_act(var/obj/projectile/P)
+	var/damage = 0
+	damage = round((P.power*P.proj_data.ks_ratio), 1.0)
 
-		switch (P.proj_data.damage_type)
-			if (D_KINETIC)
-				src.TakeDamage(null, damage, 0)
-			if (D_PIERCING)
-				src.TakeDamage(null, damage / 2.0, 0)
-			if (D_SLASHING)
-				src.TakeDamage(null, damage, 0)
-			if (D_BURNING)
-				src.TakeDamage(null, 0, damage)
-			if (D_ENERGY)
-				src.TakeDamage(null, 0, damage)
+	switch (P.proj_data.damage_type)
+		if (D_KINETIC)
+			src.TakeDamage(null, damage, 0)
+		if (D_PIERCING)
+			src.TakeDamage(null, damage / 2.0, 0)
+		if (D_SLASHING)
+			src.TakeDamage(null, damage, 0)
+		if (D_BURNING)
+			src.TakeDamage(null, 0, damage)
+		if (D_ENERGY)
+			src.TakeDamage(null, 0, damage)
 
-		if(!P.proj_data.silentshot)
-			src.visible_message("<span style=\"color:red\">[src] is hit by the [P]!</span>")
+	if(!P.proj_data.silentshot)
+		src.visible_message("<span style=\"color:red\">[src] is hit by the [P]!</span>")
 
 
-	TakeDamage(zone, brute, burn)
-		if (!src.density)
+/mob/wraith/TakeDamage(zone, brute, burn)
+	if (!src.density)
+		return
+	health -= burn
+	health -= brute * 3
+	health = min(max_health, health)
+	if (src.health <= 0)
+		src.death(0)
+
+/mob/wraith/HealDamage(zone, brute, burn)
+	TakeDamage(zone, -(brute / 3), -burn)
+
+/mob/wraith/updatehealth()
+	return
+
+/mob/wraith/Move(var/turf/NewLoc, direct)
+	if (loc)
+		if (!isturf(loc) && !density)
+			loc = get_turf(loc)
+	else
+		loc = locate(1,1,1)
+
+	if(!canmove) return
+
+	if(!isturf(src.loc)) src.set_loc(get_turf(src))
+
+	if (NewLoc)
+		if (isrestrictedz(NewLoc.z) && !restricted_z_allowed(src, NewLoc) && !(src.client && src.client.holder))
+			var/OS = observer_start.len ? pick(observer_start) : locate(1, 1, 1)
+			if (OS)
+				src.set_loc(OS)
+			else
+				src.z = 1
 			return
-		health -= burn
-		health -= brute * 3
-		health = min(max_health, health)
-		if (src.health <= 0)
-			src.death(0)
 
-	HealDamage(zone, brute, burn)
-		TakeDamage(zone, -(brute / 3), -burn)
+		var/mydir = get_dir(src, NewLoc)
+		var/salted = 0
+		if (mydir == NORTH || mydir == EAST || mydir == WEST || mydir == SOUTH)
+			if (src.density && !NewLoc.Enter(src))
+				return
 
-	updatehealth()
+		else
+			var/turf/vertical
+			var/turf/horizontal
+			var/blocked = 1
+			if (mydir & NORTH)
+				vertical = get_step(src, NORTH)
+			else
+				vertical = get_step(src, SOUTH)
+
+			if (mydir & WEST)
+				horizontal = get_step(src, WEST)
+			else
+				horizontal = get_step(src, EAST)
+
+			var/turf/oldloc = loc
+			var/horiz = 0
+			var/vert = 0
+
+			if (!src.density || vertical.Enter(src))
+				vert = 1
+				loc = vertical
+				if (!src.density || NewLoc.Enter(src))
+					blocked = 0
+					for(var/obj/decal/cleanable/saltpile/A in vertical)
+						if (istype(A)) salted = 1
+						if (salted) break
+				loc = oldloc
+
+			if (!src.density || horizontal.Enter(src))
+				horiz = 1
+				loc = horizontal
+				if (!src.density || NewLoc.Enter(src))
+					blocked = 0
+					for(var/obj/decal/cleanable/saltpile/A in horizontal)
+						if (istype(A)) salted = 1
+						if (salted) break
+				loc = oldloc
+
+			if (blocked)
+				if (horiz)
+					Move(horizontal)
+					return
+				else if (vert)
+					Move(vertical)
+					return
+				return
+
+		for(var/obj/decal/cleanable/saltpile/A in NewLoc)
+			if (istype(A)) salted = 1
+			if (salted) break
+
+		dir = get_dir(loc, NewLoc)
+		src.set_loc(NewLoc)
+		NewLoc.HasEntered(src)
+
+		//if tile contains salt, wraith becomes corporeal
+		if (salted && !src.density && !src.justdied)
+			src.makeCorporeal()
+			boutput(src, "<span style=\"color:red\">You have passed over salt! You now interact with the mortal realm...</span>")
+			spawn(600) //one minute
+				src.makeIncorporeal()
+
 		return
 
-	Move(var/turf/NewLoc, direct)
-		if (loc)
-			if (!isturf(loc) && !density)
-				loc = get_turf(loc)
+	//Z level boundary stuff
+	if((direct & NORTH) && src.y < world.maxy)
+		src.y++
+	if((direct & SOUTH) && src.y > 1)
+		src.y--
+	if((direct & EAST) && src.x < world.maxx)
+		src.x++
+	if((direct & WEST) && src.x > 1)
+		src.x--
+
+
+/mob/wraith/can_use_hands()
+	if (src.density) return 1
+	else return 0
+
+
+/mob/wraith/is_active()
+	if (src.density) return 1
+	else return 0
+
+/mob/wraith/put_in_hand(obj/item/I, hand)
+	return 0
+
+/mob/wraith/south_east()
+	Move(get_step(src, SOUTHEAST))
+
+/mob/wraith/swap_hand()
+	Move(get_step(src, NORTHEAST))
+
+/mob/wraith/drop_item_v()
+	Move(get_step(src, NORTHWEST))
+
+/mob/wraith/equipped()
+	return 0
+
+/mob/wraith/click(atom/target)
+	. = ..()
+	if (. == 100)
+		return 100
+	if (!density)
+		target.examine()
+
+/mob/wraith/say(var/message)
+	message = trim(copytext(sanitize(message), 1, MAX_MESSAGE_LEN))
+	if (!message)
+		return
+
+	if (src.density) //If corporeal speak to the living (garbled)
+		logTheThing("diary", src, null, "(WRAITH): [message]", "say")
+
+		if (src.client && src.client.ismuted())
+			boutput(src, "You are currently muted and may not speak.")
+			return
+
+		if (copytext(message, 1, 2) == "*")
+			src.emote(copytext(message, 2))
+			return
 		else
-			loc = locate(1,1,1)
+			src.emote(pick("hiss", "murmur", "drone", "wheeze", "grustle", "rattle"))
 
-		if(!canmove) return
+		//Todo: random pick of spooky things or maybe parse the original message somehow
+		/*var/rendered = "<strong>[src.name]</strong> screeches incomprehensibly!"
 
-		if(!isturf(src.loc)) src.set_loc(get_turf(src))
+		var/list/listening = all_hearers(null, src)
+		listening -= src
+		listening += src
 
-		if (NewLoc)
-			if (isrestrictedz(NewLoc.z) && !restricted_z_allowed(src, NewLoc) && !(src.client && src.client.holder))
-				var/OS = observer_start.len ? pick(observer_start) : locate(1, 1, 1)
-				if (OS)
-					src.set_loc(OS)
-				else
-					src.z = 1
-				return
+		for (var/mob/M in listening)
+			M.show_message(rendered, 2)*/
 
-			var/mydir = get_dir(src, NewLoc)
-			var/salted = 0
-			if (mydir == NORTH || mydir == EAST || mydir == WEST || mydir == SOUTH)
-				if (src.density && !NewLoc.Enter(src))
-					return
-
-			else
-				var/turf/vertical
-				var/turf/horizontal
-				var/blocked = 1
-				if (mydir & NORTH)
-					vertical = get_step(src, NORTH)
-				else
-					vertical = get_step(src, SOUTH)
-
-				if (mydir & WEST)
-					horizontal = get_step(src, WEST)
-				else
-					horizontal = get_step(src, EAST)
-
-				var/turf/oldloc = loc
-				var/horiz = 0
-				var/vert = 0
-
-				if (!src.density || vertical.Enter(src))
-					vert = 1
-					loc = vertical
-					if (!src.density || NewLoc.Enter(src))
-						blocked = 0
-						for(var/obj/decal/cleanable/saltpile/A in vertical)
-							if (istype(A)) salted = 1
-							if (salted) break
-					loc = oldloc
-
-				if (!src.density || horizontal.Enter(src))
-					horiz = 1
-					loc = horizontal
-					if (!src.density || NewLoc.Enter(src))
-						blocked = 0
-						for(var/obj/decal/cleanable/saltpile/A in horizontal)
-							if (istype(A)) salted = 1
-							if (salted) break
-					loc = oldloc
-
-				if (blocked)
-					if (horiz)
-						Move(horizontal)
-						return
-					else if (vert)
-						Move(vertical)
-						return
-					return
-
-			for(var/obj/decal/cleanable/saltpile/A in NewLoc)
-				if (istype(A)) salted = 1
-				if (salted) break
-
-			dir = get_dir(loc, NewLoc)
-			src.set_loc(NewLoc)
-			NewLoc.HasEntered(src)
-
-			//if tile contains salt, wraith becomes corporeal
-			if (salted && !src.density && !src.justdied)
-				src.makeCorporeal()
-				boutput(src, "<span style=\"color:red\">You have passed over salt! You now interact with the mortal realm...</span>")
-				spawn(600) //one minute
-					src.makeIncorporeal()
-
+	else //Speak in ghostchat if not corporeal
+		if (copytext(message, 1, 2) == "*")
 			return
 
-		//Z level boundary stuff
-		if((direct & NORTH) && src.y < world.maxy)
-			src.y++
-		if((direct & SOUTH) && src.y > 1)
-			src.y--
-		if((direct & EAST) && src.x < world.maxx)
-			src.x++
-		if((direct & WEST) && src.x > 1)
-			src.x--
+		logTheThing("diary", src, null, "(WRAITH): [message]", "say")
 
-
-	can_use_hands()
-		if (src.density) return 1
-		else return 0
-
-
-	is_active()
-		if (src.density) return 1
-		else return 0
-
-	put_in_hand(obj/item/I, hand)
-		return 0
-
-	south_east()
-		Move(get_step(src, SOUTHEAST))
-
-	swap_hand()
-		Move(get_step(src, NORTHEAST))
-
-	drop_item_v()
-		Move(get_step(src, NORTHWEST))
-
-	equipped()
-		return 0
-
-	click(atom/target)
-		. = ..()
-		if (. == 100)
-			return 100
-		if (!density)
-			target.examine()
-
-	say(var/message)
-		message = trim(copytext(sanitize(message), 1, MAX_MESSAGE_LEN))
-		if (!message)
+		if (src.client && src.client.ismuted())
+			boutput(src, "You are currently muted and may not speak.")
 			return
 
-		if (src.density) //If corporeal speak to the living (garbled)
-			logTheThing("diary", src, null, "(WRAITH): [message]", "say")
+		. = src.say_dead(message, 1)
 
-			if (src.client && src.client.ismuted())
-				boutput(src, "You are currently muted and may not speak.")
-				return
+/mob/wraith/emote(var/act)
+	if (!density)
+		return
+	var/acts = null
+	switch (act)
+		if ("hiss")
+			acts = "hisses"
+		if ("murmur")
+			acts = "murmurs"
+		if ("drone")
+			acts = "drones"
+		if ("wheeze")
+			acts = "wheezes"
+		if ("grustle")
+			acts = "grustles"
+		if ("rattle")
+			acts = "rattles"
 
-			if (copytext(message, 1, 2) == "*")
-				src.emote(copytext(message, 2))
-				return
-			else
-				src.emote(pick("hiss", "murmur", "drone", "wheeze", "grustle", "rattle"))
+	if (acts)
+		for (var/mob/M in hearers(src, null))
+			M.show_message("<span style=\"color:red\">[src] [acts]!</span>")
 
-			//Todo: random pick of spooky things or maybe parse the original message somehow
-			/*var/rendered = "<strong>[src.name]</strong> screeches incomprehensibly!"
-
-			var/list/listening = all_hearers(null, src)
-			listening -= src
-			listening += src
-
-			for (var/mob/M in listening)
-				M.show_message(rendered, 2)*/
-
-		else //Speak in ghostchat if not corporeal
-			if (copytext(message, 1, 2) == "*")
-				return
-
-			logTheThing("diary", src, null, "(WRAITH): [message]", "say")
-
-			if (src.client && src.client.ismuted())
-				boutput(src, "You are currently muted and may not speak.")
-				return
-
-			. = src.say_dead(message, 1)
-
-	emote(var/act)
-		if (!density)
-			return
-		var/acts = null
-		switch (act)
-			if ("hiss")
-				acts = "hisses"
-			if ("murmur")
-				acts = "murmurs"
-			if ("drone")
-				acts = "drones"
-			if ("wheeze")
-				acts = "wheezes"
-			if ("grustle")
-				acts = "grustles"
-			if ("rattle")
-				acts = "rattles"
-
-		if (acts)
-			for (var/mob/M in hearers(src, null))
-				M.show_message("<span style=\"color:red\">[src] [acts]!</span>")
-
-	attack_hand(var/mob/user)
-		if (user.a_intent != "harm")
-			visible_message("[user] pets [src]!")
-		else
-			visible_message("[user] punches [src]!")
-			TakeDamage("chest", 1, 0)
+/mob/wraith/attack_hand(var/mob/user)
+	if (user.a_intent != "harm")
+		visible_message("[user] pets [src]!")
+	else
+		visible_message("[user] punches [src]!")
+		TakeDamage("chest", 1, 0)
 
 
 
 	//////////////
 	// Wraith Procs
 	//////////////
-	proc
+/mob/wraith/proc/makeCorporeal()
+	if (!src.density)
+		src.density = 1
+		src.invisibility = 0
+		src.alpha = 255
+		src.see_invisible = 0
+		src.visible_message(pick("<span style=\"color:red\">A horrible apparition fades into view!</span>", "<span style=\"color:red\">A pool of shadow forms!</span>"), pick("<span style=\"color:red\">A shell of ectoplasm forms around you!</span>", "<span style=\"color:red\">You manifest!</span>"))
 
-		makeCorporeal()
-			if (!src.density)
-				src.density = 1
-				src.invisibility = 0
-				src.alpha = 255
-				src.see_invisible = 0
-				src.visible_message(pick("<span style=\"color:red\">A horrible apparition fades into view!</span>", "<span style=\"color:red\">A pool of shadow forms!</span>"), pick("<span style=\"color:red\">A shell of ectoplasm forms around you!</span>", "<span style=\"color:red\">You manifest!</span>"))
+/mob/wraith/proc/makeIncorporeal()
+	if (src.density)
+		src.visible_message(pick("<span style=\"color:red\">[src] vanishes!</span>", "<span style=\"color:red\">The wraith dissolves into shadow!</span>"), pick("<span style=\"color:blue\">The ectoplasm around you dissipates!</span>", "<span style=\"color:blue\">You fade into the aether!</span>"))
+		src.density = 0
+		src.invisibility = 10
+		src.alpha = 160
+		src.see_invisible = 16
 
-		makeIncorporeal()
-			if (src.density)
-				src.visible_message(pick("<span style=\"color:red\">[src] vanishes!</span>", "<span style=\"color:red\">The wraith dissolves into shadow!</span>"), pick("<span style=\"color:blue\">The ectoplasm around you dissipates!</span>", "<span style=\"color:blue\">You fade into the aether!</span>"))
-				src.density = 0
-				src.invisibility = 10
-				src.alpha = 160
-				src.see_invisible = 16
+/mob/wraith/proc/haunt()
+	if (src.density)
+		src.show_message("<span style=\"color:red\">You are already corporeal! You cannot use this ability.</span>")
+		return 1
 
-		haunt()
-			if (src.density)
-				src.show_message("<span style=\"color:red\">You are already corporeal! You cannot use this ability.</span>")
-				return 1
+	src.makeCorporeal()
+	src.haunting = 1
 
-			src.makeCorporeal()
-			src.haunting = 1
+	spawn (300)
+		src.makeIncorporeal()
+		src.haunting = 0
 
-			spawn (300)
-				src.makeIncorporeal()
-				src.haunting = 0
-
-			return 0
+	return 0
 
 
-		addAllAbilities()
-			src.addAbility(/datum/targetable/wraithAbility/help)
-			src.addAbility(/datum/targetable/wraithAbility/absorbCorpse)
-			src.addAbility(/datum/targetable/wraithAbility/possessObject)
-			src.addAbility(/datum/targetable/wraithAbility/makeRevenant)
-			src.addAbility(/datum/targetable/wraithAbility/decay)
-			src.addAbility(/datum/targetable/wraithAbility/command)
-			src.addAbility(/datum/targetable/wraithAbility/raiseSkeleton)
-			src.addAbility(/datum/targetable/wraithAbility/animateObject)
-			src.addAbility(/datum/targetable/wraithAbility/haunt)
-			src.addAbility(/datum/targetable/wraithAbility/poltergeist)
-			src.addAbility(/datum/targetable/wraithAbility/whisper)
+/mob/wraith/proc/addAllAbilities()
+	src.addAbility(/datum/targetable/wraithAbility/help)
+	src.addAbility(/datum/targetable/wraithAbility/absorbCorpse)
+	src.addAbility(/datum/targetable/wraithAbility/possessObject)
+	src.addAbility(/datum/targetable/wraithAbility/makeRevenant)
+	src.addAbility(/datum/targetable/wraithAbility/decay)
+	src.addAbility(/datum/targetable/wraithAbility/command)
+	src.addAbility(/datum/targetable/wraithAbility/raiseSkeleton)
+	src.addAbility(/datum/targetable/wraithAbility/animateObject)
+	src.addAbility(/datum/targetable/wraithAbility/haunt)
+	src.addAbility(/datum/targetable/wraithAbility/poltergeist)
+	src.addAbility(/datum/targetable/wraithAbility/whisper)
 
 
-		removeAllAbilities()
-			src.removeAbility(/datum/targetable/wraithAbility/help)
-			src.removeAbility(/datum/targetable/wraithAbility/absorbCorpse)
-			src.removeAbility(/datum/targetable/wraithAbility/possessObject)
-			src.removeAbility(/datum/targetable/wraithAbility/makeRevenant)
-			src.removeAbility(/datum/targetable/wraithAbility/decay)
-			src.removeAbility(/datum/targetable/wraithAbility/command)
-			src.removeAbility(/datum/targetable/wraithAbility/raiseSkeleton)
-			src.removeAbility(/datum/targetable/wraithAbility/animateObject)
-			src.removeAbility(/datum/targetable/wraithAbility/haunt)
-			src.removeAbility(/datum/targetable/wraithAbility/poltergeist)
-			src.removeAbility(/datum/targetable/wraithAbility/whisper)
+/mob/wraith/proc/removeAllAbilities()
+	src.removeAbility(/datum/targetable/wraithAbility/help)
+	src.removeAbility(/datum/targetable/wraithAbility/absorbCorpse)
+	src.removeAbility(/datum/targetable/wraithAbility/possessObject)
+	src.removeAbility(/datum/targetable/wraithAbility/makeRevenant)
+	src.removeAbility(/datum/targetable/wraithAbility/decay)
+	src.removeAbility(/datum/targetable/wraithAbility/command)
+	src.removeAbility(/datum/targetable/wraithAbility/raiseSkeleton)
+	src.removeAbility(/datum/targetable/wraithAbility/animateObject)
+	src.removeAbility(/datum/targetable/wraithAbility/haunt)
+	src.removeAbility(/datum/targetable/wraithAbility/poltergeist)
+	src.removeAbility(/datum/targetable/wraithAbility/whisper)
 
-		addAbility(var/abilityType)
-			abilityHolder.addAbility(abilityType)
-
-
-		removeAbility(var/abilityType)
-			abilityHolder.removeAbility(abilityType)
+/mob/wraith/proc/addAbility(var/abilityType)
+	abilityHolder.addAbility(abilityType)
 
 
-		getAbility(var/abilityType)
-			return abilityHolder.getAbility(abilityType)
+/mob/wraith/proc/removeAbility(var/abilityType)
+	abilityHolder.removeAbility(abilityType)
 
 
-		updateButtons()
-			abilityHolder.updateButtons()
+/mob/wraith/proc/getAbility(var/abilityType)
+	return abilityHolder.getAbility(abilityType)
 
-		makeRevenant(var/mob/M as mob)
-			if (!ishuman(M))
-				boutput(usr, "<span style=\"color:red\">You can only extend your consciousness into humans corpses.</span>")
-				return 1
-			var/mob/living/carbon/human/H = M
-			if (H.stat != 2)
-				boutput(usr, "<span style=\"color:red\">A living consciousness possesses this body. You cannot force your way in.</span>")
-				return 1
-			if (H.decomp_stage == 4)
-				boutput(usr, "<span style=\"color:red\">This corpse is no good for this!</span>")
-				return 1
-			if (H.is_changeling())
-				boutput(usr, "<span style=\"color:red\">What is this? An exquisite genetic structure. It forcibly resists your will, even in death.</span>")
-				return 1
-			if (!H.bioHolder)
-				message_admins("[key_name(src)] tried to possess [M] as a revenant but failed due to a missing bioholder.")
-				boutput(usr, "<span style=\"color:red\">Failed.</span>")
-				return 1
-			// Happens in wraithPossess() already.
-			//src.abilityHolder.suspendAllAbilities()
-			var/datum/bioEffect/hidden/revenant/R = H.bioHolder.AddEffect("revenant")
-			if (H.bioHolder.HasEffect("revenant")) // make sure we didn't get deleted on the way - should probably make a better check than this. whatever.
-				R.wraithPossess(src)
-				return 0
-			return 1
+
+/mob/wraith/proc/updateButtons()
+	abilityHolder.updateButtons()
+
+/mob/wraith/proc/makeRevenant(var/mob/M as mob)
+	if (!ishuman(M))
+		boutput(usr, "<span style=\"color:red\">You can only extend your consciousness into humans corpses.</span>")
+		return 1
+	var/mob/living/carbon/human/H = M
+	if (H.stat != 2)
+		boutput(usr, "<span style=\"color:red\">A living consciousness possesses this body. You cannot force your way in.</span>")
+		return 1
+	if (H.decomp_stage == 4)
+		boutput(usr, "<span style=\"color:red\">This corpse is no good for this!</span>")
+		return 1
+	if (H.is_changeling())
+		boutput(usr, "<span style=\"color:red\">What is this? An exquisite genetic structure. It forcibly resists your will, even in death.</span>")
+		return 1
+	if (!H.bioHolder)
+		message_admins("[key_name(src)] tried to possess [M] as a revenant but failed due to a missing bioholder.")
+		boutput(usr, "<span style=\"color:red\">Failed.</span>")
+		return 1
+	// Happens in wraithPossess() already.
+	//src.abilityHolder.suspendAllAbilities()
+	var/datum/bioEffect/hidden/revenant/R = H.bioHolder.AddEffect("revenant")
+	if (H.bioHolder.HasEffect("revenant")) // make sure we didn't get deleted on the way - should probably make a better check than this. whatever.
+		R.wraithPossess(src)
+		return 0
+	return 1
 
 
 	//////////////
 	// Wraith Verbs
 	//////////////
 
-	/*verb
-		makeCorporealDebug()
-			src.makeCorporeal()
+/*verb
+	makeCorporealDebug()
+		src.makeCorporeal()
 
 
-		makeIncorporealDebug()
-			src.makeIncorporeal()
+	makeIncorporealDebug()
+		src.makeIncorporeal()
 
 
-		givePointsDebug()
-			src.abilityHolder.points = 99999*/
+	givePointsDebug()
+		src.abilityHolder.points = 99999*/
 
 
 //////////////

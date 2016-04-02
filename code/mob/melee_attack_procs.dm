@@ -526,178 +526,178 @@
 	var/disarm = 0 // Is this a disarm as opposed to harm attack?
 	var/disarm_RNG_result = null // Blocked, shoved down etc.
 
-	New(var/mob/M)
-		owner = M
+/datum/attackResults/New(var/mob/M)
+	owner = M
 
-	proc/clear(var/mob/M)
-		target = M
-		visible_self = list()
-		visible_target = list()
-		show_self = list()
-		show_target = list()
-		if (istype(src, /datum/attackResults/disarm))
-			logs = list("disarms %target%")
-		else
-			logs = list("punches %target%")
-		played_sound = null
-		base_attack_message = null
-		stamina_self = 0
-		stamina_target = 0
-		stamina_crit = 0
-		damage = 0
-		damage_type = DAMAGE_BLUNT
-		affecting = null
-		valid = 0
-		disarm = 0
-		disarm_RNG_result = null
-		after_effects = list()
+/datum/attackResults/proc/clear(var/mob/M)
+	target = M
+	visible_self = list()
+	visible_target = list()
+	show_self = list()
+	show_target = list()
+	if (istype(src, /datum/attackResults/disarm))
+		logs = list("disarms %target%")
+	else
+		logs = list("punches %target%")
+	played_sound = null
+	base_attack_message = null
+	stamina_self = 0
+	stamina_target = 0
+	stamina_crit = 0
+	damage = 0
+	damage_type = DAMAGE_BLUNT
+	affecting = null
+	valid = 0
+	disarm = 0
+	disarm_RNG_result = null
+	after_effects = list()
 
-	proc/show_message_self(var/message)
-		show_self += message
+/datum/attackResults/proc/show_message_self(var/message)
+	show_self += message
 
-	proc/show_message_target(var/message)
-		show_target += message
+/datum/attackResults/proc/show_message_target(var/message)
+	show_target += message
 
-	proc/visible_message_self(var/message)
-		visible_self += message
+/datum/attackResults/proc/visible_message_self(var/message)
+	visible_self += message
 
-	proc/visible_message_target(var/message)
-		visible_target += message
+/datum/attackResults/proc/visible_message_target(var/message)
+	visible_target += message
 
-	proc/logc(var/message)
-		logs += message
+/datum/attackResults/proc/logc(var/message)
+	logs += message
 
 	// I worked disarm into this because I needed a more detailed disarm proc and didn't want to reinvent the wheel or repeat a bunch of code (Convair880).
-	proc/flush(var/suppress = 0)
-		if (!target)
-			clear(null)
-			logTheThing("debug", owner, null, "<b>Marquesas/Melee Attack Refactor:</b> NO TARGET FLUSH! EMERGENCY!")
-			return
+/datum/attackResults/proc/flush(var/suppress = 0)
+	if (!target)
+		clear(null)
+		logTheThing("debug", owner, null, "<b>Marquesas/Melee Attack Refactor:</b> NO TARGET FLUSH! EMERGENCY!")
+		return
 
-		if (!affecting)
-			clear(null)
-			logTheThing("debug", owner, null, "<b>Marquesas/Melee Attack Refactor:</b> NO AFFECTING FLUSH! WARNING!")
-			return
+	if (!affecting)
+		clear(null)
+		logTheThing("debug", owner, null, "<b>Marquesas/Melee Attack Refactor:</b> NO AFFECTING FLUSH! WARNING!")
+		return
 
-		if (!(suppress & SUPPRESS_SOUND) && played_sound)
-			playsound(owner.loc, played_sound, 50, 1, -1)
+	if (!(suppress & SUPPRESS_SOUND) && played_sound)
+		playsound(owner.loc, played_sound, 50, 1, -1)
 
-		if (!(suppress & SUPPRESS_BASE_MESSAGE) && base_attack_message)
-			owner.visible_message(base_attack_message)
+	if (!(suppress & SUPPRESS_BASE_MESSAGE) && base_attack_message)
+		owner.visible_message(base_attack_message)
 
-		if (!(suppress & SUPPRESS_SHOWN_MESSAGES))
-			for (var/message in show_self)
-				owner.show_message(message)
+	if (!(suppress & SUPPRESS_SHOWN_MESSAGES))
+		for (var/message in show_self)
+			owner.show_message(message)
 
-			for (var/message in visible_self)
-				owner.visible_message(message)
+		for (var/message in visible_self)
+			owner.visible_message(message)
 
-		if (!(suppress & SUPPRESS_SHOWN_MESSAGES))
-			for (var/message in visible_target)
-				target.visible_message(message)
+	if (!(suppress & SUPPRESS_SHOWN_MESSAGES))
+		for (var/message in visible_target)
+			target.visible_message(message)
 
-			for (var/message in show_target)
-				target.show_message(message)
+		for (var/message in show_target)
+			target.show_message(message)
 
-		if (!(suppress & SUPPRESS_LOGS))
-			for (var/message in logs)
-				logTheThing("combat", owner, target, "[message] at [log_loc(owner)].")
+	if (!(suppress & SUPPRESS_LOGS))
+		for (var/message in logs)
+			logTheThing("combat", owner, target, "[message] at [log_loc(owner)].")
 
-		if (stamina_self)
-			if (stamina_self > 0)
-				owner.add_stamina(stamina_self)
-			else
-				owner.remove_stamina(-stamina_self)
-
-		if (src.disarm == 1)
-			target.add_fingerprint(owner)
-
-			if (owner.traitHolder && !owner.traitHolder.hasTrait("glasscannon"))
-				owner.process_stamina(STAMINA_DISARM_COST)
-
-			if (!isnull(src.disarm_RNG_result))
-				switch (src.disarm_RNG_result)
-					if ("drop_item")
-						target.deliver_move_trigger("bump")
-						target.drop_item()
-
-					if ("shoved_down")
-						target.deliver_move_trigger("pushdown")
-						target.drop_item()
-						target.weakened = 2
-			else
-				target.deliver_move_trigger("bump")
-
+	if (stamina_self)
+		if (stamina_self > 0)
+			owner.add_stamina(stamina_self)
 		else
-			if (owner.traitHolder && !owner.traitHolder.hasTrait("glasscannon"))
-				owner.process_stamina(STAMINA_HTH_COST)
+			owner.remove_stamina(-stamina_self)
+
+	if (src.disarm == 1)
+		target.add_fingerprint(owner)
+
+		if (owner.traitHolder && !owner.traitHolder.hasTrait("glasscannon"))
+			owner.process_stamina(STAMINA_DISARM_COST)
+
+		if (!isnull(src.disarm_RNG_result))
+			switch (src.disarm_RNG_result)
+				if ("drop_item")
+					target.deliver_move_trigger("bump")
+					target.drop_item()
+
+				if ("shoved_down")
+					target.deliver_move_trigger("pushdown")
+					target.drop_item()
+					target.weakened = 2
+		else
+			target.deliver_move_trigger("bump")
+
+	else
+		if (owner.traitHolder && !owner.traitHolder.hasTrait("glasscannon"))
+			owner.process_stamina(STAMINA_HTH_COST)
 
 #ifdef DATALOGGER
-			game_stats.Increment("violence")
+		game_stats.Increment("violence")
 #endif
-			owner.lastattacked = target
-			target.lastattacker = owner
-			target.lastattackertime = world.time
-			target.add_fingerprint(owner)
+		owner.lastattacked = target
+		target.lastattacker = owner
+		target.lastattackertime = world.time
+		target.add_fingerprint(owner)
 
-		if (damage > 0 || src.disarm == 1)
-			if (src.disarm == 1 && damage <= 0)
-				goto process_stamina
+	if (damage > 0 || src.disarm == 1)
+		if (src.disarm == 1 && damage <= 0)
+			goto process_stamina
 
-			// important
-			target.abuse_clown()
+		// important
+		target.abuse_clown()
 
-			if (damage_type == DAMAGE_BLUNT && prob(25 + (damage * 2)) && damage >= 8)
-				damage_type = DAMAGE_CRUSH
+		if (damage_type == DAMAGE_BLUNT && prob(25 + (damage * 2)) && damage >= 8)
+			damage_type = DAMAGE_CRUSH
 
-			if (damage_type == DAMAGE_BURN)
-				if (istype(affecting))
-					affecting.take_damage(0, damage, 0, damage_type)
-				else if (affecting)
-					target.TakeDamage(affecting, 0, damage, 0, damage_type)
-				else
-					target.TakeDamage("chest", 0, damage, 0, damage_type)
+		if (damage_type == DAMAGE_BURN)
+			if (istype(affecting))
+				affecting.take_damage(0, damage, 0, damage_type)
+			else if (affecting)
+				target.TakeDamage(affecting, 0, damage, 0, damage_type)
 			else
-				if (istype(affecting))
-					affecting.take_damage(damage, 0, 0, damage_type)
-				else if (affecting)
-					target.TakeDamage(affecting, damage, 0, 0, damage_type)
-				else
-					target.TakeDamage("chest", damage, 0, 0, damage_type)
-				if (damage_type & (DAMAGE_CUT | DAMAGE_STAB))
-					take_bleeding_damage(target, owner, damage, damage_type)
-					target.spread_blood_clothes(target)
-					owner.spread_blood_hands(target)
-					if (prob(15))
-						owner.spread_blood_clothes(target)
+				target.TakeDamage("chest", 0, damage, 0, damage_type)
+		else
+			if (istype(affecting))
+				affecting.take_damage(damage, 0, 0, damage_type)
+			else if (affecting)
+				target.TakeDamage(affecting, damage, 0, 0, damage_type)
+			else
+				target.TakeDamage("chest", damage, 0, 0, damage_type)
+			if (damage_type & (DAMAGE_CUT | DAMAGE_STAB))
+				take_bleeding_damage(target, owner, damage, damage_type)
+				target.spread_blood_clothes(target)
+				owner.spread_blood_hands(target)
+				if (prob(15))
+					owner.spread_blood_clothes(target)
 
-			for (var/P in after_effects)
-				call(P)(owner, target)
+		for (var/P in after_effects)
+			call(P)(owner, target)
 
-			process_stamina
-			if (stamina_target)
-				if (stamina_target > 0)
-					target.add_stamina(stamina_target)
-				else
-					var/prev_stam = target.get_stamina()
-					target.remove_stamina(-stamina_target)
-					target.stamina_stun()
-					if(prev_stam > 0 && target.get_stamina() <= 0) //We were just knocked out.
-						target.set_clothing_icon_dirty()
-						target.lastgasp()
-						if (istype(ticker.mode, /datum/game_mode/revolution))
-							var/datum/game_mode/revolution/R = ticker.mode
-							R.remove_revolutionary(target.mind)
+		process_stamina
+		if (stamina_target)
+			if (stamina_target > 0)
+				target.add_stamina(stamina_target)
+			else
+				var/prev_stam = target.get_stamina()
+				target.remove_stamina(-stamina_target)
+				target.stamina_stun()
+				if(prev_stam > 0 && target.get_stamina() <= 0) //We were just knocked out.
+					target.set_clothing_icon_dirty()
+					target.lastgasp()
+					if (istype(ticker.mode, /datum/game_mode/revolution))
+						var/datum/game_mode/revolution/R = ticker.mode
+						R.remove_revolutionary(target.mind)
 
-			if (stamina_crit)
-				target.handle_stamina_crit()
+		if (stamina_crit)
+			target.handle_stamina_crit()
 
-			if (src.disarm != 1)
-				owner.attack_finished(target)
-				target.attackby_finished(owner)
-			target.UpdateDamageIcon()
-			target.updatehealth()
-		clear(null)
+		if (src.disarm != 1)
+			owner.attack_finished(target)
+			target.attackby_finished(owner)
+		target.UpdateDamageIcon()
+		target.updatehealth()
+	clear(null)
 
 /datum/attackResults/disarm
 	logs = list("disarms %target%")

@@ -1,6 +1,5 @@
-var
-	jobban_runonce	// Updates legacy bans with new info
-	jobban_keylist[0]		//to store the keys & ranks
+var/jobban_runonce	// Updates legacy bans with new info
+var/jobban_keylist[0]		//to store the keys & ranks
 
 /proc/jobban_fullban(mob/M, rank)
 	if (!M || !M.ckey) return

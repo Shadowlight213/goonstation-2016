@@ -1,5 +1,5 @@
 // handles mobs
-datum/controller/process/mobs
+/datum/controller/process/mobs
 	var/tmp/list/detailed_count
 	var/tmp/tick_counter
 	var/list/mobs
@@ -8,16 +8,16 @@ datum/controller/process/mobs
 	var/list/wraiths = list()
 	var/list/adminghosts = list()
 
-datum/controller/process/mobs/setup()
+/datum/controller/process/mobs/setup()
 	name = "Mob"
 	schedule_interval = 20
 	detailed_count = new
 	src.mobs = global.mobs
 
-datum/controller/process/mobs/copyStateFrom(var/datum/controller/process/mobs/other)
+/datum/controller/process/mobs/copyStateFrom(var/datum/controller/process/mobs/other)
 	detailed_count = other.detailed_count
 
-datum/controller/process/mobs/doWork()
+/datum/controller/process/mobs/doWork()
 	src.mobs = global.mobs
 	var/c
 
@@ -53,7 +53,7 @@ datum/controller/process/mobs/doWork()
 			W.Life(src)
 			scheck(currentTick)
 		*/
-datum/controller/process/mobs/tickDetail()
+/datum/controller/process/mobs/tickDetail()
 	if (detailed_count && detailed_count.len)
 		var/stats = "<b>[name] ticks:</b><br>"
 		var/count

@@ -59,97 +59,97 @@
 	health = 40
 	self_destruct = 1
 
-	New()
-		..()
-		bioHolder = new/datum/bioHolder( src )
-		spawn(5)
-			if (src.module)
-				qdel(src.module)
-			pick_module()
-			var/ion_trail = new /datum/effects/system/ion_trail_follow()
-			ion_trail:set_up(src)
+/mob/living/silicon/hivebot/eyebot/New()
+	..()
+	bioHolder = new/datum/bioHolder( src )
+	spawn(5)
+		if (src.module)
+			qdel(src.module)
+		pick_module()
+		var/ion_trail = new /datum/effects/system/ion_trail_follow()
+		ion_trail:set_up(src)
 
-			//ew
-			if (!(src in available_ai_shells))
-				available_ai_shells += src
+		//ew
+		if (!(src in available_ai_shells))
+			available_ai_shells += src
 
+	return
+
+/mob/living/silicon/hivebot/eyebot/pick_module()
+	if (src.module)
 		return
 
-	pick_module()
-		if (src.module)
-			return
+	if (!ticker)
+		src.module = new /obj/item/robot_module( src )
+		return
+	if (!ticker.mode)
+		src.module = new /obj/item/robot_module( src )
+		return
+	if (ticker.mode && istype(ticker.mode, /datum/game_mode/construction))
+		src.module = new /obj/item/robot_module/construction_ai( src )
+	else
+		src.module = new /obj/item/robot_module( src )
 
-		if (!ticker)
-			src.module = new /obj/item/robot_module( src )
-			return
-		if (!ticker.mode)
-			src.module = new /obj/item/robot_module( src )
-			return
-		if (ticker.mode && istype(ticker.mode, /datum/game_mode/construction))
-			src.module = new /obj/item/robot_module/construction_ai( src )
-		else
-			src.module = new /obj/item/robot_module( src )
+/mob/living/silicon/hivebot/eyebot/movement_delay()
+	return -1
 
-	movement_delay()
-		return -1
+/mob/living/silicon/hivebot/eyebot/updateicon() // Haine wandered in here and just junked up this code with bees.  I'm so sorry it's so ugly aaaa
+	src.overlays = null
 
-	updateicon() // Haine wandered in here and just junked up this code with bees.  I'm so sorry it's so ugly aaaa
-		src.overlays = null
-
-		if(src.stat == 0)
-			if(src.client)
-				if(pixel_y)
+	if(src.stat == 0)
+		if(src.client)
+			if(pixel_y)
+				if (src.beebot == 1)
+					src.icon_state = "eyebot-bee"
+				else
+					src.icon_state = "[initial(icon_state)]"
+			else
+				spawn(0)
+					while(src.pixel_y < 10)
+						src.pixel_y++
+						sleep(1)
 					if (src.beebot == 1)
 						src.icon_state = "eyebot-bee"
 					else
 						src.icon_state = "[initial(icon_state)]"
-				else
-					spawn(0)
-						while(src.pixel_y < 10)
-							src.pixel_y++
-							sleep(1)
-						if (src.beebot == 1)
-							src.icon_state = "eyebot-bee"
-						else
-							src.icon_state = "[initial(icon_state)]"
-					return
-			else
-				if (src.beebot == 1)
-					src.icon_state = "eyebot-bee-logout"
-				else
-					src.icon_state = "[initial(icon_state)]-logout"
-				src.pixel_y = 0
+				return
 		else
 			if (src.beebot == 1)
-				src.icon_state = "eyebot-bee-dead"
+				src.icon_state = "eyebot-bee-logout"
 			else
-				src.icon_state = "[initial(icon_state)]-dead"
+				src.icon_state = "[initial(icon_state)]-logout"
 			src.pixel_y = 0
-		return
-
-	show_laws()
-		var/mob/living/silicon/ai/aiMainframe = src.mainframe
-		if (istype(aiMainframe))
-			aiMainframe.show_laws(0, src)
+	else
+		if (src.beebot == 1)
+			src.icon_state = "eyebot-bee-dead"
 		else
-			ticker.centralized_ai_laws.show_laws(src)
+			src.icon_state = "[initial(icon_state)]-dead"
+		src.pixel_y = 0
+	return
 
+/mob/living/silicon/hivebot/eyebot/show_laws()
+	var/mob/living/silicon/ai/aiMainframe = src.mainframe
+	if (istype(aiMainframe))
+		aiMainframe.show_laws(0, src)
+	else
+		ticker.centralized_ai_laws.show_laws(src)
+
+	return
+
+/mob/living/silicon/hivebot/eyebot/ghostize()
+	if(src.mainframe)
+		src.mainframe.return_to(src)
+	else
+		return ..()
+
+/mob/living/silicon/hivebot/eyebot/handle_regular_hud_updates()
+	..()
+	if (!ticker)
 		return
-
-	ghostize()
-		if(src.mainframe)
-			src.mainframe.return_to(src)
-		else
-			return ..()
-
-	handle_regular_hud_updates()
-		..()
-		if (!ticker)
-			return
-		if (!ticker.mode)
-			return
-		if (ticker.mode && istype(ticker.mode, /datum/game_mode/construction))
-			see_invisible = 9
+	if (!ticker.mode)
+		return
+	if (ticker.mode && istype(ticker.mode, /datum/game_mode/construction))
+		see_invisible = 9
 
 /mob/living/silicon/hivebot/drop_item_v()
 	return
@@ -1016,201 +1016,199 @@ Frequency:
 	update_canmove()
 
 
-/mob/living/silicon/hivebot
+/mob/living/silicon/hivebot/proc/clamp_values()
 
-	proc/clamp_values()
+	stunned = max(min(stunned, 10),0)
+	paralysis = max(min(paralysis, 1), 0)
+	weakened = max(min(weakened, 15), 0)
+	sleeping = max(min(sleeping, 1), 0)
+	bruteloss = max(bruteloss, 0)
+	fireloss = max(fireloss, 0)
 
-		stunned = max(min(stunned, 10),0)
-		paralysis = max(min(paralysis, 1), 0)
-		weakened = max(min(weakened, 15), 0)
-		sleeping = max(min(sleeping, 1), 0)
-		bruteloss = max(bruteloss, 0)
-		fireloss = max(fireloss, 0)
+/mob/living/silicon/hivebot/proc/use_power()
 
-	proc/use_power()
-
-		if (src.cell)
-			if (src.cell.charge <= 0)
-				//death() no why would it just explode upon running out of power that is absurd
-				if (src.stat == 0)
-					sleep(0)
-					src.lastgasp()
-				src.stat = 1
-			else if (src.cell.charge <= 10)
-				src.module_active = null
-				src.module_states[1] = null
-				src.module_states[2] = null
-				src.module_states[3] = null
-				src.cell.charge -=1
-			else
-				if (src.module_states[1])
-					src.cell.charge -=1
-				if (src.module_states[2])
-					src.cell.charge -=1
-				if (src.module_states[3])
-					src.cell.charge -=1
-				src.cell.charge -=1
-				src.blinded = 0
-				src.stat = 0
-		else
-			src.blinded = 1
+	if (src.cell)
+		if (src.cell.charge <= 0)
+			//death() no why would it just explode upon running out of power that is absurd
 			if (src.stat == 0)
 				sleep(0)
-				src.lastgasp() // calling lastgasp() here because we just ran out of power
+				src.lastgasp()
 			src.stat = 1
-
-
-	proc/update_canmove()
-		if (paralysis || stunned || weakened || buckled)
-			canmove = 0
+		else if (src.cell.charge <= 10)
+			src.module_active = null
+			src.module_states[1] = null
+			src.module_states[2] = null
+			src.module_states[3] = null
+			src.cell.charge -=1
 		else
-			canmove = 1
+			if (src.module_states[1])
+				src.cell.charge -=1
+			if (src.module_states[2])
+				src.cell.charge -=1
+			if (src.module_states[3])
+				src.cell.charge -=1
+			src.cell.charge -=1
+			src.blinded = 0
+			src.stat = 0
+	else
+		src.blinded = 1
+		if (src.stat == 0)
+			sleep(0)
+			src.lastgasp() // calling lastgasp() here because we just ran out of power
+		src.stat = 1
 
 
-	proc/handle_regular_status_updates()
-
-		health = src.max_health - (fireloss + bruteloss)
-
-		if(health <= 0)
-			death()
-
-		if (src.stat != 2) //Alive.
-
-			if (src.paralysis || src.stunned || src.weakened) //Stunned etc.
-				var/setStat = src.stat
-				if (src.stunned > 0)
-					src.stunned--
-					setStat = 0
-				if (src.weakened > 0)
-					src.weakened--
-					src.lying = 1
-					setStat = 0
-				if (src.paralysis > 0)
-					src.paralysis--
-					src.blinded = 1
-					src.lying = 1
-					setStat = 1
-				if (src.stat == 0 && setStat == 1)
-					sleep(0)
-					src.lastgasp() // calling lastgasp() here because we just got knocked out
-				src.stat = setStat
-			else	//Not stunned.
-				src.lying = 0
-				src.stat = 0
-
-		else //Dead.
-			src.blinded = 1
-			src.stat = 2
-
-		if (src.stuttering)
-			src.stuttering = 0
-
-		src.lying = 0
-		src.density = 1
-
-		if (src.get_eye_blurry())
-			src.change_eye_blurry(-1)
-
-		if (src.druggy > 0)
-			src.druggy--
-			src.druggy = max(0, src.druggy)
-
-		return 1
-
-	proc/handle_regular_hud_updates()
-
-		if (src.stat == 2 || src.bioHolder.HasEffect("xray"))
-			src.sight |= SEE_TURFS
-			src.sight |= SEE_MOBS
-			src.sight |= SEE_OBJS
-			src.see_in_dark = SEE_DARK_FULL
-			src.see_invisible = 2
-		else if (src.stat != 2)
-			src.sight &= ~SEE_MOBS
-			src.sight &= ~SEE_TURFS
-			src.sight &= ~SEE_OBJS
-			src.see_in_dark = SEE_DARK_FULL
-			src.see_invisible = 2
-
-		if (src.healths)
-			if (src.stat != 2)
-				switch(health)
-					if(max_health to INFINITY)
-						src.healths.icon_state = "health0"
-					if(src.max_health*0.80 to src.max_health)
-						src.healths.icon_state = "health1"
-					if(src.max_health*0.60 to src.max_health*0.80)
-						src.healths.icon_state = "health2"
-					if(src.max_health*0.40 to src.max_health*0.60)
-						src.healths.icon_state = "health3"
-					if(src.max_health*0.20 to src.max_health*0.40)
-						src.healths.icon_state = "health4"
-					if(0 to max_health*0.20)
-						src.healths.icon_state = "health5"
-					else
-						src.healths.icon_state = "health6"
-			else
-				src.healths.icon_state = "health7"
-
-		if (src.cells)
-			if (src.cell)
-				switch(round(100*src.cell.charge/src.cell.maxcharge))
-					if (75 to INFINITY)
-						cells.icon_state = "charge4"
-					if (50 to 75)
-						cells.icon_state = "charge3"
-					if (25 to 50)
-						cells.icon_state = "charge2"
-					if (1 to 25)
-						cells.icon_state = "charge1"
-					else
-						cells.icon_state = "charge0"
-			else
-				cells.icon_state = "charge-none"
-
-		switch(get_temp_deviation())
-			if(2 to INFINITY)
-				src.bodytemp.icon_state = "temp2"
-			if(1 to 2)
-				src.bodytemp.icon_state = "temp1"
-			if(-1 to 1)
-				src.bodytemp.icon_state = "temp0"
-			if(-2 to -1)
-				src.bodytemp.icon_state = "temp-1"
-			else
-				src.bodytemp.icon_state = "temp-2"
+/mob/living/silicon/hivebot/proc/update_canmove()
+	if (paralysis || stunned || weakened || buckled)
+		canmove = 0
+	else
+		canmove = 1
 
 
-		if(src.pullin)	src.pullin.icon_state = "pull[src.pulling ? 1 : 0]"
+/mob/living/silicon/hivebot/proc/handle_regular_status_updates()
 
-		if (!src.sight_check(1) && src.stat != 2)
-			vision.set_color_mod("#000000")
+	health = src.max_health - (fireloss + bruteloss)
+
+	if(health <= 0)
+		death()
+
+	if (src.stat != 2) //Alive.
+
+		if (src.paralysis || src.stunned || src.weakened) //Stunned etc.
+			var/setStat = src.stat
+			if (src.stunned > 0)
+				src.stunned--
+				setStat = 0
+			if (src.weakened > 0)
+				src.weakened--
+				src.lying = 1
+				setStat = 0
+			if (src.paralysis > 0)
+				src.paralysis--
+				src.blinded = 1
+				src.lying = 1
+				setStat = 1
+			if (src.stat == 0 && setStat == 1)
+				sleep(0)
+				src.lastgasp() // calling lastgasp() here because we just got knocked out
+			src.stat = setStat
+		else	//Not stunned.
+			src.lying = 0
+			src.stat = 0
+
+	else //Dead.
+		src.blinded = 1
+		src.stat = 2
+
+	if (src.stuttering)
+		src.stuttering = 0
+
+	src.lying = 0
+	src.density = 1
+
+	if (src.get_eye_blurry())
+		src.change_eye_blurry(-1)
+
+	if (src.druggy > 0)
+		src.druggy--
+		src.druggy = max(0, src.druggy)
+
+	return 1
+
+/mob/living/silicon/hivebot/proc/handle_regular_hud_updates()
+
+	if (src.stat == 2 || src.bioHolder.HasEffect("xray"))
+		src.sight |= SEE_TURFS
+		src.sight |= SEE_MOBS
+		src.sight |= SEE_OBJS
+		src.see_in_dark = SEE_DARK_FULL
+		src.see_invisible = 2
+	else if (src.stat != 2)
+		src.sight &= ~SEE_MOBS
+		src.sight &= ~SEE_TURFS
+		src.sight &= ~SEE_OBJS
+		src.see_in_dark = SEE_DARK_FULL
+		src.see_invisible = 2
+
+	if (src.healths)
+		if (src.stat != 2)
+			switch(health)
+				if(max_health to INFINITY)
+					src.healths.icon_state = "health0"
+				if(src.max_health*0.80 to src.max_health)
+					src.healths.icon_state = "health1"
+				if(src.max_health*0.60 to src.max_health*0.80)
+					src.healths.icon_state = "health2"
+				if(src.max_health*0.40 to src.max_health*0.60)
+					src.healths.icon_state = "health3"
+				if(src.max_health*0.20 to src.max_health*0.40)
+					src.healths.icon_state = "health4"
+				if(0 to max_health*0.20)
+					src.healths.icon_state = "health5"
+				else
+					src.healths.icon_state = "health6"
 		else
-			vision.set_color_mod("#ffffff")
-		return 1
+			src.healths.icon_state = "health7"
 
-
-	proc/update_items()
-		if (src.client)
-			src.client.screen -= src.contents
-			src.client.screen += src.contents
-		var/obj/item/I = null
-		if(src.module_states[1])
-			I = src.module_states[1]
-			I.screen_loc = ui_inv1
-		if(src.module_states[2])
-			I = src.module_states[2]
-			I.screen_loc = ui_inv2
-		if(src.module_states[3])
-			I = src.module_states[3]
-			I.screen_loc = ui_inv3
-
-	proc/mainframe_check()
-		if (mainframe)
-			if (mainframe.stat == 2)
-				mainframe.return_to(src)
+	if (src.cells)
+		if (src.cell)
+			switch(round(100*src.cell.charge/src.cell.maxcharge))
+				if (75 to INFINITY)
+					cells.icon_state = "charge4"
+				if (50 to 75)
+					cells.icon_state = "charge3"
+				if (25 to 50)
+					cells.icon_state = "charge2"
+				if (1 to 25)
+					cells.icon_state = "charge1"
+				else
+					cells.icon_state = "charge0"
 		else
-			death()
+			cells.icon_state = "charge-none"
+
+	switch(get_temp_deviation())
+		if(2 to INFINITY)
+			src.bodytemp.icon_state = "temp2"
+		if(1 to 2)
+			src.bodytemp.icon_state = "temp1"
+		if(-1 to 1)
+			src.bodytemp.icon_state = "temp0"
+		if(-2 to -1)
+			src.bodytemp.icon_state = "temp-1"
+		else
+			src.bodytemp.icon_state = "temp-2"
+
+
+	if(src.pullin)	src.pullin.icon_state = "pull[src.pulling ? 1 : 0]"
+
+	if (!src.sight_check(1) && src.stat != 2)
+		vision.set_color_mod("#000000")
+	else
+		vision.set_color_mod("#ffffff")
+	return 1
+
+
+/mob/living/silicon/hivebot/proc/update_items()
+	if (src.client)
+		src.client.screen -= src.contents
+		src.client.screen += src.contents
+	var/obj/item/I = null
+	if(src.module_states[1])
+		I = src.module_states[1]
+		I.screen_loc = ui_inv1
+	if(src.module_states[2])
+		I = src.module_states[2]
+		I.screen_loc = ui_inv2
+	if(src.module_states[3])
+		I = src.module_states[3]
+		I.screen_loc = ui_inv3
+
+/mob/living/silicon/hivebot/proc/mainframe_check()
+	if (mainframe)
+		if (mainframe.stat == 2)
+			mainframe.return_to(src)
+	else
+		death()
 
 /mob/living/silicon/hivebot/Login()
 	..()

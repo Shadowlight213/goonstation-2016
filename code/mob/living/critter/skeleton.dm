@@ -40,41 +40,41 @@
 	burning_suffix = "humanoid"
 	metabolizes = 0
 
-	specific_emotes(var/act, var/param = null, var/voluntary = 0)
-		switch (act)
-			if ("scream", "clak")
-				if (src.emote_check(voluntary, 50))
-					playsound(get_turf(src), "sound/items/Scissor.ogg", 80, 1)
-					return "<span style='color:red'>[src] claks!</span>"
-		return null
+/mob/living/critter/skeleton/specific_emotes(var/act, var/param = null, var/voluntary = 0)
+	switch (act)
+		if ("scream", "clak")
+			if (src.emote_check(voluntary, 50))
+				playsound(get_turf(src), "sound/items/Scissor.ogg", 80, 1)
+				return "<span style='color:red'>[src] claks!</span>"
+	return null
 
-	specific_emote_type(var/act)
-		switch (act)
-			if ("scream", "clak")
-				return 2
-		return ..()
+/mob/living/critter/skeleton/specific_emote_type(var/act)
+	switch (act)
+		if ("scream", "clak")
+			return 2
+	return ..()
 
-	setup_equipment_slots()
-		equipment += new /datum/equipmentHolder/suit(src)
-		equipment += new /datum/equipmentHolder/ears(src)
-		var/list/hats = list(new /datum/equipmentHolder/head/skeleton(src))
-		equipment += hats[1]
-		for (var/i = 1, i <= 10, i++)
-			var/datum/equipmentHolder/head/skeleton/S = hats[i]
-			var/datum/equipmentHolder/head/skeleton/S1 = S.spawn_next()
-			hats += S1
-			equipment += S1
+/mob/living/critter/skeleton/setup_equipment_slots()
+	equipment += new /datum/equipmentHolder/suit(src)
+	equipment += new /datum/equipmentHolder/ears(src)
+	var/list/hats = list(new /datum/equipmentHolder/head/skeleton(src))
+	equipment += hats[1]
+	for (var/i = 1, i <= 10, i++)
+		var/datum/equipmentHolder/head/skeleton/S = hats[i]
+		var/datum/equipmentHolder/head/skeleton/S1 = S.spawn_next()
+		hats += S1
+		equipment += S1
 
-	setup_hands()
-		..()
-		var/datum/handHolder/HH = hands[1]
-		HH.icon_state = "handl"
+/mob/living/critter/skeleton/setup_hands()
+	..()
+	var/datum/handHolder/HH = hands[1]
+	HH.icon_state = "handl"
 
-		HH = hands[2]
-		HH.name = "right hand"
-		HH.suffix = "-R"
-		HH.icon_state = "handr"
+	HH = hands[2]
+	HH.name = "right hand"
+	HH.suffix = "-R"
+	HH.icon_state = "handr"
 
-	setup_healths()
-		add_hh_flesh(-50, 50, 1)
-		add_hh_flesh_burn(-50, 50, 0.7)
+/mob/living/critter/skeleton/setup_healths()
+	add_hh_flesh(-50, 50, 1)
+	add_hh_flesh_burn(-50, 50, 0.7)

@@ -390,57 +390,57 @@ td {
 			output += "<a href='?src=\ref[src];addcurr=1;mod=\ref[D]'>Add to module</a>"
 		usr << browse(output, "window=module_editor;size=400x600")
 
-	Topic(href, href_list)
-		var/obj/item/robot_module/D = locate(href_list["mod"])
-		if (!D)
-			boutput(usr, "<span style=\"color:red\">Missing module reference!</span>")
+/datum/module_editor/Topic(href, href_list)
+	var/obj/item/robot_module/D = locate(href_list["mod"])
+	if (!D)
+		boutput(usr, "<span style=\"color:red\">Missing module reference!</span>")
+		return
+	if (href_list["edit"])
+		var/obj/item/I = locate(href_list["edit"])
+		if (!istype(I))
+			boutput(usr, "<span style=\"color:red\">Item no longer exists!</span>")
+			show_interface(usr.client, D)
 			return
-		if (href_list["edit"])
-			var/obj/item/I = locate(href_list["edit"])
-			if (!istype(I))
-				boutput(usr, "<span style=\"color:red\">Item no longer exists!</span>")
-				show_interface(usr.client, D)
-				return
-			if (!(I in D.modules))
-				boutput(usr, "<span style=\"color:red\">Item no longer in module!</span>")
-				show_interface(usr.client, D)
-				return
-			usr.client:debug_variables(I)
-		if (href_list["del"])
-			var/obj/item/I = locate(href_list["del"])
-			if (!istype(I))
-				boutput(usr, "<span style=\"color:red\">Item no longer exists!</span>")
-				show_interface(usr.client, D)
-				return
-			if (!(I in D.modules))
-				boutput(usr, "<span style=\"color:red\">Item no longer in module!</span>")
-				show_interface(usr.client, D)
-				return
-			D.modules -= I
-			qdel(I)
-		if (href_list["edcurr"])
-			if (!current)
-				boutput(usr, "<span style=\"color:red\">No current item!</span>")
-				show_interface(usr.client, D)
-				return
-			usr.client:debug_variables(current)
-		if (href_list["create"])
-			var/path_match = input("Enter a type path or part of a type path.", "Type match", null) as text
-			var/path = get_one_match(path_match, /obj/item)
-			if (!path)
-				boutput(usr, "<span style=\"color:red\">Invalid path!</span>")
-				show_interface(usr.client, D)
-				return
-			current = new path(null)
-		if (href_list["addcurr"])
-			if (!current)
-				show_interface(usr.client, D)
-				return
-			D.modules += current
-			current.loc = D
-			current = null
-			boutput(usr, "<span style=\"color:blue\">Added item to module!</span>")
-		show_interface(usr.client, D)
+		if (!(I in D.modules))
+			boutput(usr, "<span style=\"color:red\">Item no longer in module!</span>")
+			show_interface(usr.client, D)
+			return
+		usr.client:debug_variables(I)
+	if (href_list["del"])
+		var/obj/item/I = locate(href_list["del"])
+		if (!istype(I))
+			boutput(usr, "<span style=\"color:red\">Item no longer exists!</span>")
+			show_interface(usr.client, D)
+			return
+		if (!(I in D.modules))
+			boutput(usr, "<span style=\"color:red\">Item no longer in module!</span>")
+			show_interface(usr.client, D)
+			return
+		D.modules -= I
+		qdel(I)
+	if (href_list["edcurr"])
+		if (!current)
+			boutput(usr, "<span style=\"color:red\">No current item!</span>")
+			show_interface(usr.client, D)
+			return
+		usr.client:debug_variables(current)
+	if (href_list["create"])
+		var/path_match = input("Enter a type path or part of a type path.", "Type match", null) as text
+		var/path = get_one_match(path_match, /obj/item)
+		if (!path)
+			boutput(usr, "<span style=\"color:red\">Invalid path!</span>")
+			show_interface(usr.client, D)
+			return
+		current = new path(null)
+	if (href_list["addcurr"])
+		if (!current)
+			show_interface(usr.client, D)
+			return
+		D.modules += current
+		current.loc = D
+		current = null
+		boutput(usr, "<span style=\"color:blue\">Added item to module!</span>")
+	show_interface(usr.client, D)
 
 var/global/list/module_editors = list()
 

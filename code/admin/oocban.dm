@@ -1,6 +1,5 @@
-var
-	oocban_runonce	// Updates legacy bans with new info
-	oocban_keylist[0]		//to store the keys & ranks
+var/oocban_runonce	// Updates legacy bans with new info
+var/oocban_keylist[0]		//to store the keys & ranks
 
 /proc/oocban_fullban(mob/M)
 	if (!M || !M.ckey) return

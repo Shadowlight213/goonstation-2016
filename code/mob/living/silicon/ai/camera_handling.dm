@@ -170,66 +170,66 @@
 	var/success_delay = 5	//How long between refreshes if we succeeded in tracking someone?
 	var/fail_delay = 50		// Same but in case we failed
 
-	New(var/mob/living/silicon/ai/A)
-		owner = A
-		global.tracking_list += src
+/datum/ai_camera_tracker/New(var/mob/living/silicon/ai/A)
+	owner = A
+	global.tracking_list += src
 
-	disposing()
-		owner = null
-		tracking = null
-		global.tracking_list -= src
+/datum/ai_camera_tracker/disposing()
+	owner = null
+	tracking = null
+	global.tracking_list -= src
 
-	proc/begin_track(mob/target as mob)
-		if(!owner || !target)
-			return
+/datum/ai_camera_tracker/proc/begin_track(mob/target as mob)
+	if(!owner || !target)
+		return
 
-		tracking = target
-		if(!owner.machine)
-			owner.machine = owner
+	tracking = target
+	if(!owner.machine)
+		owner.machine = owner
 
-		process() //Process now!!!
+	process() //Process now!!!
 
-	proc/cease_track()
-		tracking = null
+/datum/ai_camera_tracker/proc/cease_track()
+	tracking = null
+	delay = success_delay
+
+/datum/ai_camera_tracker/proc/process()
+	if(!tracking || !owner || ( ( (last_track + delay) > world.timeofday ) && (world.timeofday > last_track) ) )
+		return
+
+
+	var/failedToTrack = 0
+	if (!can_track(tracking))
+		failedToTrack = 1
+
+	if(!failedToTrack) //We don't have a premature failure
+		failedToTrack = 1 //Assume failure
+		for(var/obj/machinery/camera/C in range(7, tracking))
+			if(C.network == owner.network && C.status) //The goodest camera
+				failedToTrack = 0
+				owner.switchCamera(C)
+				break
+	/*
+	else
+		sleep(rand(0,1)) //Hey it went real fast this time! Bet it's a syndie
+	*/
+
+	if (failedToTrack)
+		owner.show_text("Target is not on or near any active cameras on the station. We'll check again in 5 seconds (unless you use the cancel-camera verb).")
+		delay = fail_delay
+	else
 		delay = success_delay
 
-	proc/process()
-		if(!tracking || !owner || ( ( (last_track + delay) > world.timeofday ) && (world.timeofday > last_track) ) )
-			return
+	last_track = world.timeofday
 
-
-		var/failedToTrack = 0
-		if (!can_track(tracking))
-			failedToTrack = 1
-
-		if(!failedToTrack) //We don't have a premature failure
-			failedToTrack = 1 //Assume failure
-			for(var/obj/machinery/camera/C in range(7, tracking))
-				if(C.network == owner.network && C.status) //The goodest camera
-					failedToTrack = 0
-					owner.switchCamera(C)
-					break
-		/*
-		else
-			sleep(rand(0,1)) //Hey it went real fast this time! Bet it's a syndie
-		*/
-
-		if (failedToTrack)
-			owner.show_text("Target is not on or near any active cameras on the station. We'll check again in 5 seconds (unless you use the cancel-camera verb).")
-			delay = fail_delay
-		else
-			delay = success_delay
-
-		last_track = world.timeofday
-
-	proc/can_track(mob/target as mob)
-		//Allow tracking of cyborgs, however
-		//Track autofails if:
-		//Target is wearing a syndicate ID
-		//Target is inside a dummy
-		//Target is not at a turf
-		return (issilicon(target) && istype(target.loc, /turf) ) \
-				|| !((istype(target, /mob/living/carbon/human) \
-				&& istype(target:wear_id, /obj/item/card/id/syndicate)) \
-				|| (istype(target:wear_id, /obj/item/device/pda2) && target:wear_id:ID_card && istype(target:wear_id:ID_card, /obj/item/card/id/syndicate)) \
-				||  !istype(target.loc, /turf))
+/datum/ai_camera_tracker/proc/can_track(mob/target as mob)
+	//Allow tracking of cyborgs, however
+	//Track autofails if:
+	//Target is wearing a syndicate ID
+	//Target is inside a dummy
+	//Target is not at a turf
+	return (issilicon(target) && istype(target.loc, /turf) ) \
+			|| !((istype(target, /mob/living/carbon/human) \
+			&& istype(target:wear_id, /obj/item/card/id/syndicate)) \
+			|| (istype(target:wear_id, /obj/item/device/pda2) && target:wear_id:ID_card && istype(target:wear_id:ID_card, /obj/item/card/id/syndicate)) \
+			||  !istype(target.loc, /turf))

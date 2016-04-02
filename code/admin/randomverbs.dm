@@ -885,380 +885,380 @@
 
 	var/icon/preview_icon = null
 
-	New(var/client/newuser, var/mob/target)
-		..()
-		if(!newuser || !ishuman(target))
-			qdel(src)
-			return
-
-		src.target_mob = target
-		src.usercl = newuser
-		src.load_mob_data(src.target_mob)
-		src.update_menu()
-		src.process()
+/datum/polymorph_menu/New(var/client/newuser, var/mob/target)
+	..()
+	if(!newuser || !ishuman(target))
+		qdel(src)
 		return
 
-	disposing()
-		if(usercl && usercl.mob)
-			usercl.mob << browse(null, "window=adminpmorph")
-		usercl = null
-		target_mob = null
-		mutantrace = null
-		preview_icon = null
-		..()
+	src.target_mob = target
+	src.usercl = newuser
+	src.load_mob_data(src.target_mob)
+	src.update_menu()
+	src.process()
+	return
 
-	Topic(href, href_list)
-		if(href_list["close"])
-			qdel(src)
-			return
+/datum/polymorph_menu/disposing()
+	if(usercl && usercl.mob)
+		usercl.mob << browse(null, "window=adminpmorph")
+	usercl = null
+	target_mob = null
+	mutantrace = null
+	preview_icon = null
+	..()
 
-		else if (href_list["real_name"])
-			var/new_name = input(usr, "Please select a name:", "Polymorph Menu")  as null|text
-			var/list/bad_characters = list("_", "'", "\"", "<", ">", ";", "[", "]", "{", "}", "|", "\\")
-			for(var/c in bad_characters)
-				new_name = replacetext(new_name, c, "")
-
-			if(new_name)
-				if(length(new_name) >= 26)
-					new_name = copytext(new_name, 1, 26)
-				src.real_name = new_name
-
-		else if (href_list["customization_first"])
-			var/new_style = input(usr, "Please select style", "Polymorph Menu")  as null|anything in (customization_styles + customization_styles_gimmick)
-
-			if (new_style)
-				src.customization_first = new_style
-
-		else if (href_list["customization_second"])
-			var/new_style = input(usr, "Please select style", "Polymorph Menu")  as null|anything in (customization_styles + customization_styles_gimmick)
-
-			if (new_style)
-				src.customization_second = new_style
-
-		else if (href_list["customization_third"])
-			var/new_style = input(usr, "Please select style", "Polymorph Menu")  as null|anything in (customization_styles + customization_styles_gimmick)
-
-			if (new_style)
-				src.customization_third = new_style
-
-		else if (href_list["age"])
-			var/new_age = input(usr, "Please select type in age: 20-99", "Polymorph Menu")  as num
-
-			if(new_age)
-				src.age = max(min(round(text2num(new_age)), 99), 20)
-
-		else if (href_list["blType"])
-			var/blTypeNew = input(usr, "Please select a blood type:", "Polymorph Menu")  as null|anything in list( "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" )
-
-			if (blTypeNew)
-				blType = blTypeNew
-
-		else if (href_list["hair"])
-			var/new_hair = input(usr, "Please select hair color.", "Polymorph Menu") as color
-			if(new_hair)
-				src.customization_first_color = new_hair
-
-		else if (href_list["facial"])
-			var/new_facial = input(usr, "Please select detail 1 color.", "Polymorph Menu") as color
-			if(new_facial)
-				src.customization_second_color = new_facial
-
-		else if (href_list["detail"])
-			var/new_detail = input(usr, "Please select detail 2 color.", "Polymorph Menu") as color
-			if(new_detail)
-				src.customization_third_color = new_detail
-
-		else if (href_list["eyes"])
-			var/new_eyes = input(usr, "Please select eye color.", "Polymorph Menu") as color
-			if(new_eyes)
-				src.e_color = new_eyes
-
-		else if (href_list["s_tone"])
-			var/new_tone = input(usr, "Please select skin tone level: 1-220 (1=albino, 35=caucasian, 150=black, 220='very' black)", "Polymorph Menu")  as null|text
-
-			if (new_tone)
-				src.s_tone = max(min(round(text2num(new_tone)), 220), 1)
-				src.s_tone =  -src.s_tone + 35
-
-		else if (href_list["gender"])
-			if (src.gender == FEMALE)
-				src.gender = MALE
-			else
-				src.gender = FEMALE
-
-		else if (href_list["fat"])
-			src.fat = !src.fat
-
-		else if (href_list["updateid"])
-			src.update_wearid = !src.update_wearid
-
-		else if (href_list["mutantrace"])
-			var/new_race = input(usr, "Please select mutant race", "Polymorph Menu") as null|anything in (typesof(/datum/mutantrace) - /datum/mutantrace + "Remove")
-
-			if (ispath(new_race, /datum/mutantrace))
-				src.mutantrace = new new_race
-			if (new_race == "Remove")
-				src.mutantrace = null
-
-		else if(href_list["apply"])
-			src.copy_to_target()
-			logTheThing("admin", src.target_mob, "polymorphed %target%!")
-			logTheThing("diary", usr, src.target_mob, "polymorphed %target%!", "admin")
-			message_admins("[key_name(usr)] polymorphed [key_name(src.target_mob)]!")
-
-		else if(href_list["cinematic"])
-			var/new_cinema = input(usr, "Please select cinematic mode.", "Polymorph Menu")  as null|anything in list("Smoke","Changeling","Wizard","None")
-
-			if (new_cinema)
-				src.cinematic = new_cinema
-
-		src.update_menu()
+/datum/polymorph_menu/Topic(href, href_list)
+	if(href_list["close"])
+		qdel(src)
 		return
 
-	proc/load_mob_data(var/mob/living/carbon/human/H)
-		if(!ishuman(H))
-			qdel(src)
-			return
+	else if (href_list["real_name"])
+		var/new_name = input(usr, "Please select a name:", "Polymorph Menu")  as null|text
+		var/list/bad_characters = list("_", "'", "\"", "<", ">", ";", "[", "]", "{", "}", "|", "\\")
+		for(var/c in bad_characters)
+			new_name = replacetext(new_name, c, "")
 
-		src.real_name = H.real_name
-		src.gender = H.gender
-		src.age = H.bioHolder.age
-		src.blType = H.bioHolder.bloodType
-		src.s_tone = H.bioHolder.mobAppearance.s_tone
+		if(new_name)
+			if(length(new_name) >= 26)
+				new_name = copytext(new_name, 1, 26)
+			src.real_name = new_name
 
-		src.customization_first = H.bioHolder.mobAppearance.customization_first
-		src.customization_first_color = H.bioHolder.mobAppearance.customization_first_color
+	else if (href_list["customization_first"])
+		var/new_style = input(usr, "Please select style", "Polymorph Menu")  as null|anything in (customization_styles + customization_styles_gimmick)
 
-		src.customization_second = H.bioHolder.mobAppearance.customization_second
-		src.customization_second_color = H.bioHolder.mobAppearance.customization_second_color
+		if (new_style)
+			src.customization_first = new_style
 
-		src.customization_third = H.bioHolder.mobAppearance.customization_third
-		src.customization_third_color = H.bioHolder.mobAppearance.customization_third_color
+	else if (href_list["customization_second"])
+		var/new_style = input(usr, "Please select style", "Polymorph Menu")  as null|anything in (customization_styles + customization_styles_gimmick)
 
-		if(!(customization_styles[src.customization_first] || customization_styles_gimmick[src.customization_first]))
-			src.customization_first = "None"
+		if (new_style)
+			src.customization_second = new_style
 
-		if(!(customization_styles[src.customization_second] || customization_styles_gimmick[src.customization_second]))
-			src.customization_second = "None"
+	else if (href_list["customization_third"])
+		var/new_style = input(usr, "Please select style", "Polymorph Menu")  as null|anything in (customization_styles + customization_styles_gimmick)
 
-		if(!(customization_styles[src.customization_third] || customization_styles_gimmick[src.customization_third]))
-			src.customization_third = "None"
+		if (new_style)
+			src.customization_third = new_style
 
-		src.e_color = H.bioHolder.mobAppearance.e_color
-		src.fat = (H.bioHolder.HasEffect("fat"))
-		if(H.mutantrace)
-			src.mutantrace = new H.mutantrace.type
+	else if (href_list["age"])
+		var/new_age = input(usr, "Please select type in age: 20-99", "Polymorph Menu")  as num
+
+		if(new_age)
+			src.age = max(min(round(text2num(new_age)), 99), 20)
+
+	else if (href_list["blType"])
+		var/blTypeNew = input(usr, "Please select a blood type:", "Polymorph Menu")  as null|anything in list( "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" )
+
+		if (blTypeNew)
+			blType = blTypeNew
+
+	else if (href_list["hair"])
+		var/new_hair = input(usr, "Please select hair color.", "Polymorph Menu") as color
+		if(new_hair)
+			src.customization_first_color = new_hair
+
+	else if (href_list["facial"])
+		var/new_facial = input(usr, "Please select detail 1 color.", "Polymorph Menu") as color
+		if(new_facial)
+			src.customization_second_color = new_facial
+
+	else if (href_list["detail"])
+		var/new_detail = input(usr, "Please select detail 2 color.", "Polymorph Menu") as color
+		if(new_detail)
+			src.customization_third_color = new_detail
+
+	else if (href_list["eyes"])
+		var/new_eyes = input(usr, "Please select eye color.", "Polymorph Menu") as color
+		if(new_eyes)
+			src.e_color = new_eyes
+
+	else if (href_list["s_tone"])
+		var/new_tone = input(usr, "Please select skin tone level: 1-220 (1=albino, 35=caucasian, 150=black, 220='very' black)", "Polymorph Menu")  as null|text
+
+		if (new_tone)
+			src.s_tone = max(min(round(text2num(new_tone)), 220), 1)
+			src.s_tone =  -src.s_tone + 35
+
+	else if (href_list["gender"])
+		if (src.gender == FEMALE)
+			src.gender = MALE
+		else
+			src.gender = FEMALE
+
+	else if (href_list["fat"])
+		src.fat = !src.fat
+
+	else if (href_list["updateid"])
+		src.update_wearid = !src.update_wearid
+
+	else if (href_list["mutantrace"])
+		var/new_race = input(usr, "Please select mutant race", "Polymorph Menu") as null|anything in (typesof(/datum/mutantrace) - /datum/mutantrace + "Remove")
+
+		if (ispath(new_race, /datum/mutantrace))
+			src.mutantrace = new new_race
+		if (new_race == "Remove")
+			src.mutantrace = null
+
+	else if(href_list["apply"])
+		src.copy_to_target()
+		logTheThing("admin", src.target_mob, "polymorphed %target%!")
+		logTheThing("diary", usr, src.target_mob, "polymorphed %target%!", "admin")
+		message_admins("[key_name(usr)] polymorphed [key_name(src.target_mob)]!")
+
+	else if(href_list["cinematic"])
+		var/new_cinema = input(usr, "Please select cinematic mode.", "Polymorph Menu")  as null|anything in list("Smoke","Changeling","Wizard","None")
+
+		if (new_cinema)
+			src.cinematic = new_cinema
+
+	src.update_menu()
+	return
+
+/datum/polymorph_menu/proc/load_mob_data(var/mob/living/carbon/human/H)
+	if(!ishuman(H))
+		qdel(src)
 		return
 
-	proc/update_menu()
-		if(!usercl)
-			qdel(src)
-			return
-		var/mob/user = usercl.mob
-		src.update_preview_icon()
-		user << browse_rsc(preview_icon, "polymorphicon.png")
+	src.real_name = H.real_name
+	src.gender = H.gender
+	src.age = H.bioHolder.age
+	src.blType = H.bioHolder.bloodType
+	src.s_tone = H.bioHolder.mobAppearance.s_tone
 
-		var/dat = "<html><body>"
-		dat += "<b>Name:</b> "
-		dat += "<a href='byond://?src=\ref[src];real_name=input'><b>[src.real_name]</b></a> "
-		dat += "<br>"
+	src.customization_first = H.bioHolder.mobAppearance.customization_first
+	src.customization_first_color = H.bioHolder.mobAppearance.customization_first_color
 
-		dat += "<b>Gender:</b> <a href='byond://?src=\ref[src];gender=input'><b>[src.gender == MALE ? "Male" : "Female"]</b></a><br>"
-		dat += "<b>Age:</b> <a href='byond://?src=\ref[src];age=input'>[src.age]</a>"
+	src.customization_second = H.bioHolder.mobAppearance.customization_second
+	src.customization_second_color = H.bioHolder.mobAppearance.customization_second_color
 
-		dat += "<hr><table><tr><td><b>Body</b><br>"
-		dat += "Blood Type: <a href='byond://?src=\ref[src];blType=input'>[src.blType]</a><br>"
-		dat += "Skin Tone: <a href='byond://?src=\ref[src];s_tone=input'>[-src.s_tone + 35]/220</a><br>"
-		dat += "Obese: <a href='byond://?src=\ref[src];fat=1'>[src.fat ? "YES" : "NO"]</a><br>"
-		dat += "Mutant Race: <a href='byond://?src=\ref[src];mutantrace=1'>[src.mutantrace ? capitalize(src.mutantrace.name) : "None"]</a><br>"
-		dat += "Update ID: <a href='byond://?src=\ref[src];updateid=1'>[src.update_wearid ? "YES" : "NO"]</a><br>"
-		dat += "</td><td><b>Preview</b><br><img src=polymorphicon.png height=64 width=64></td></tr></table>"
+	src.customization_third = H.bioHolder.mobAppearance.customization_third
+	src.customization_third_color = H.bioHolder.mobAppearance.customization_third_color
 
-		dat += "<hr><b>Bottom Detail</b><br>"
-		dat += "<a href='byond://?src=\ref[src];hair=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.customization_first_color]\"><table bgcolor=\"[src.customization_first_color]\"><tr><td>IM</td></tr></table></font>"
-		dat += "Style: <a href='byond://?src=\ref[src];customization_first=input'>[src.customization_first]</a>"
-		dat += "<hr><b>Mid Detail</b><br>"
-		dat += "<a href='byond://?src=\ref[src];facial=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.customization_second_color]\"><table bgcolor=\"[src.customization_second_color]\"><tr><td>GO</td></tr></table></font>"
-		dat += "Style: <a href='byond://?src=\ref[src];customization_second=input'>[src.customization_second]</a>"
-		dat += "<hr><b>Top Detail</b><br>"
-		dat += "<a href='byond://?src=\ref[src];detail=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.customization_third_color]\"><table bgcolor=\"[src.customization_third_color]\"><tr><td>GO</td></tr></table></font>"
-		dat += "Style: <a href='byond://?src=\ref[src];customization_third=input'>[src.customization_third]</a>"
+	if(!(customization_styles[src.customization_first] || customization_styles_gimmick[src.customization_first]))
+		src.customization_first = "None"
 
-		dat += "<hr><b>Eyes</b><br>"
-		dat += "<a href='byond://?src=\ref[src];eyes=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.e_color]\"><table bgcolor=\"[src.e_color]\"><tr><td>KU</td></tr></table></font>"
+	if(!(customization_styles[src.customization_second] || customization_styles_gimmick[src.customization_second]))
+		src.customization_second = "None"
 
-		dat += "<hr>"
+	if(!(customization_styles[src.customization_third] || customization_styles_gimmick[src.customization_third]))
+		src.customization_third = "None"
 
-		dat += "<a href='byond://?src=\ref[src];apply=1'>Apply</a><br>"
-		dat += "Cinematic Application: <a href='byond://?src=\ref[src];cinematic=1'>[src.cinematic]</a><br>"
-		dat += "</body></html>"
+	src.e_color = H.bioHolder.mobAppearance.e_color
+	src.fat = (H.bioHolder.HasEffect("fat"))
+	if(H.mutantrace)
+		src.mutantrace = new H.mutantrace.type
+	return
 
-		user << browse(dat, "window=adminpmorph;size=300x550")
-		onclose(user, "adminpmorph", src)
+/datum/polymorph_menu/proc/update_menu()
+	if(!usercl)
+		qdel(src)
+		return
+	var/mob/user = usercl.mob
+	src.update_preview_icon()
+	user << browse_rsc(preview_icon, "polymorphicon.png")
+
+	var/dat = "<html><body>"
+	dat += "<b>Name:</b> "
+	dat += "<a href='byond://?src=\ref[src];real_name=input'><b>[src.real_name]</b></a> "
+	dat += "<br>"
+
+	dat += "<b>Gender:</b> <a href='byond://?src=\ref[src];gender=input'><b>[src.gender == MALE ? "Male" : "Female"]</b></a><br>"
+	dat += "<b>Age:</b> <a href='byond://?src=\ref[src];age=input'>[src.age]</a>"
+
+	dat += "<hr><table><tr><td><b>Body</b><br>"
+	dat += "Blood Type: <a href='byond://?src=\ref[src];blType=input'>[src.blType]</a><br>"
+	dat += "Skin Tone: <a href='byond://?src=\ref[src];s_tone=input'>[-src.s_tone + 35]/220</a><br>"
+	dat += "Obese: <a href='byond://?src=\ref[src];fat=1'>[src.fat ? "YES" : "NO"]</a><br>"
+	dat += "Mutant Race: <a href='byond://?src=\ref[src];mutantrace=1'>[src.mutantrace ? capitalize(src.mutantrace.name) : "None"]</a><br>"
+	dat += "Update ID: <a href='byond://?src=\ref[src];updateid=1'>[src.update_wearid ? "YES" : "NO"]</a><br>"
+	dat += "</td><td><b>Preview</b><br><img src=polymorphicon.png height=64 width=64></td></tr></table>"
+
+	dat += "<hr><b>Bottom Detail</b><br>"
+	dat += "<a href='byond://?src=\ref[src];hair=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.customization_first_color]\"><table bgcolor=\"[src.customization_first_color]\"><tr><td>IM</td></tr></table></font>"
+	dat += "Style: <a href='byond://?src=\ref[src];customization_first=input'>[src.customization_first]</a>"
+	dat += "<hr><b>Mid Detail</b><br>"
+	dat += "<a href='byond://?src=\ref[src];facial=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.customization_second_color]\"><table bgcolor=\"[src.customization_second_color]\"><tr><td>GO</td></tr></table></font>"
+	dat += "Style: <a href='byond://?src=\ref[src];customization_second=input'>[src.customization_second]</a>"
+	dat += "<hr><b>Top Detail</b><br>"
+	dat += "<a href='byond://?src=\ref[src];detail=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.customization_third_color]\"><table bgcolor=\"[src.customization_third_color]\"><tr><td>GO</td></tr></table></font>"
+	dat += "Style: <a href='byond://?src=\ref[src];customization_third=input'>[src.customization_third]</a>"
+
+	dat += "<hr><b>Eyes</b><br>"
+	dat += "<a href='byond://?src=\ref[src];eyes=input'>Change Color</a> <font face=\"fixedsys\" size=\"3\" color=\"[src.e_color]\"><table bgcolor=\"[src.e_color]\"><tr><td>KU</td></tr></table></font>"
+
+	dat += "<hr>"
+
+	dat += "<a href='byond://?src=\ref[src];apply=1'>Apply</a><br>"
+	dat += "Cinematic Application: <a href='byond://?src=\ref[src];cinematic=1'>[src.cinematic]</a><br>"
+	dat += "</body></html>"
+
+	user << browse(dat, "window=adminpmorph;size=300x550")
+	onclose(user, "adminpmorph", src)
+	return
+
+/datum/polymorph_menu/proc/copy_to_target()
+	if(!target_mob)
 		return
 
-	proc/copy_to_target()
-		if(!target_mob)
-			return
+	var/old_name = target_mob.real_name
+	target_mob.real_name = real_name
 
-		var/old_name = target_mob.real_name
-		target_mob.real_name = real_name
+	target_mob.bioHolder.mobAppearance.gender = gender
 
-		target_mob.bioHolder.mobAppearance.gender = gender
+	target_mob.bioHolder.age = age
+	target_mob.bioHolder.bloodType = blType
+	target_mob.bioHolder.ownerName = real_name
 
-		target_mob.bioHolder.age = age
-		target_mob.bioHolder.bloodType = blType
-		target_mob.bioHolder.ownerName = real_name
+	target_mob.bioHolder.mobAppearance.e_color = e_color
+	target_mob.bioHolder.mobAppearance.customization_first_color = customization_first_color
+	target_mob.bioHolder.mobAppearance.customization_second_color = customization_second_color
+	target_mob.bioHolder.mobAppearance.customization_third_color = customization_third_color
+	target_mob.bioHolder.mobAppearance.s_tone = s_tone
 
-		target_mob.bioHolder.mobAppearance.e_color = e_color
-		target_mob.bioHolder.mobAppearance.customization_first_color = customization_first_color
-		target_mob.bioHolder.mobAppearance.customization_second_color = customization_second_color
-		target_mob.bioHolder.mobAppearance.customization_third_color = customization_third_color
-		target_mob.bioHolder.mobAppearance.s_tone = s_tone
+	target_mob.bioHolder.mobAppearance.customization_first = customization_first
+	target_mob.bioHolder.mobAppearance.customization_second = customization_second
+	target_mob.bioHolder.mobAppearance.customization_third = customization_third
 
-		target_mob.bioHolder.mobAppearance.customization_first = customization_first
-		target_mob.bioHolder.mobAppearance.customization_second = customization_second
-		target_mob.bioHolder.mobAppearance.customization_third = customization_third
-
-		target_mob.cust_one_state = customization_styles[customization_first]
+	target_mob.cust_one_state = customization_styles[customization_first]
+	if(!target_mob.cust_one_state)
+		target_mob.cust_one_state = customization_styles_gimmick[customization_first]
 		if(!target_mob.cust_one_state)
-			target_mob.cust_one_state = customization_styles_gimmick[customization_first]
-			if(!target_mob.cust_one_state)
-				target_mob.cust_one_state = "None"
+			target_mob.cust_one_state = "None"
 
-		target_mob.cust_two_state = customization_styles[customization_second]
+	target_mob.cust_two_state = customization_styles[customization_second]
+	if(!target_mob.cust_two_state)
+		target_mob.cust_two_state = customization_styles_gimmick[customization_second]
 		if(!target_mob.cust_two_state)
-			target_mob.cust_two_state = customization_styles_gimmick[customization_second]
-			if(!target_mob.cust_two_state)
-				target_mob.cust_two_state = "None"
+			target_mob.cust_two_state = "None"
 
-		target_mob.cust_three_state = customization_styles[customization_third]
+	target_mob.cust_three_state = customization_styles[customization_third]
+	if(!target_mob.cust_three_state)
+		target_mob.cust_three_state = customization_styles_gimmick[customization_third]
 		if(!target_mob.cust_three_state)
-			target_mob.cust_three_state = customization_styles_gimmick[customization_third]
-			if(!target_mob.cust_three_state)
-				target_mob.cust_three_state = "None"
+			target_mob.cust_three_state = "None"
 
-		if(src.fat)
-			target_mob.nutrition = 9999
+	if(src.fat)
+		target_mob.nutrition = 9999
+	else
+		target_mob.nutrition = 0
+
+	if(src.update_wearid && target_mob.wear_id)
+		target_mob.wear_id:registered = target_mob.real_name
+		if (istype(target_mob.wear_id, /obj/item/card/id))
+			target_mob.wear_id.name = "[target_mob.real_name]'s ID ([target_mob.wear_id:assignment])"
+		else if (istype(target_mob.wear_id, /obj/item/device/pda2) && target_mob.wear_id:ID_card)
+			target_mob.wear_id:ID_card:name = "[target_mob.real_name]'s ID ([target_mob.wear_id:ID_card:assignment])"
+
+	target_mob.set_mutantrace(null)
+	if(src.mutantrace)
+		target_mob.set_mutantrace(src.mutantrace.type)
+
+	switch(src.cinematic)
+		if("Changeling") //Heh
+			target_mob.visible_message("<span style=\"color:red\"><b>[target_mob] transforms!</b></span>")
+
+		if("Wizard") //Heh 2: Merlin Edition
+			qdel(target_mob.wear_suit)
+			qdel(target_mob.head)
+			qdel(target_mob.shoes)
+			qdel(target_mob.r_hand)
+			target_mob.equip_if_possible(new /obj/item/clothing/suit/wizrobe, target_mob.slot_wear_suit)
+			target_mob.equip_if_possible(new /obj/item/clothing/head/wizard, target_mob.slot_head)
+			target_mob.equip_if_possible(new /obj/item/clothing/shoes/sandal, target_mob.slot_shoes)
+			target_mob.put_in_hand(new /obj/item/staff(target_mob))
+
+			var/datum/effects/system/harmless_smoke_spread/smoke = new /datum/effects/system/harmless_smoke_spread()
+			smoke.set_up(5, 0, target_mob.loc)
+			smoke.attach(target_mob)
+			smoke.start()
+
+			target_mob.visible_message("<span style=\"color:red\"><b>The glamour around [old_name] drops!</b></span>")
+			target_mob.say("DISPEL!")
+
+		if("Smoke")
+			var/datum/effects/system/harmless_smoke_spread/smoke = new /datum/effects/system/harmless_smoke_spread()
+			smoke.set_up(5, 0, target_mob.loc)
+			smoke.attach(target_mob)
+			smoke.start()
+
+
+	target_mob.bioHolder.mobAppearance.UpdateMob()
+	return
+
+/datum/polymorph_menu/proc/process() //Oh no what if we get orphaned!! (Also don't garbage collect us as soon as we spawn you fuk)
+	while(!disposed)
+		if(!usercl || !target_mob)
+			qdel(src)
+			return
+		sleep(20)
+	return
+
+/datum/polymorph_menu/proc/update_preview_icon()
+	src.preview_icon = null
+
+	var/customization_first_r = null
+	var/customization_second_r = null
+	var/customization_third_r = null
+
+	var/g = "m"
+	if (src.gender == MALE)
+		g = "m"
+	else
+		g = "f"
+
+	if(src.mutantrace)
+		src.preview_icon = new /icon(src.mutantrace.icon, src.mutantrace.icon_state)
+	else
+		src.preview_icon = new /icon('icons/mob/human.dmi', "body_[g]")
+
+	if(!(src.mutantrace && src.mutantrace.override_skintone))
+		// Skin tone
+		if (src.s_tone >= 0)
+			src.preview_icon.Blend(rgb(src.s_tone, src.s_tone, src.s_tone), ICON_ADD)
 		else
-			target_mob.nutrition = 0
+			src.preview_icon.Blend(rgb(-src.s_tone,  -src.s_tone,  -src.s_tone), ICON_SUBTRACT)
 
-		if(src.update_wearid && target_mob.wear_id)
-			target_mob.wear_id:registered = target_mob.real_name
-			if (istype(target_mob.wear_id, /obj/item/card/id))
-				target_mob.wear_id.name = "[target_mob.real_name]'s ID ([target_mob.wear_id:assignment])"
-			else if (istype(target_mob.wear_id, /obj/item/device/pda2) && target_mob.wear_id:ID_card)
-				target_mob.wear_id:ID_card:name = "[target_mob.real_name]'s ID ([target_mob.wear_id:ID_card:assignment])"
+	//if(!src.mutantrace)
+		//src.preview_icon.Blend(new /icon('icons/mob/human_underwear.dmi', "none"), ICON_OVERLAY) // why are you blending an empty icon state into the icon???
 
-		target_mob.set_mutantrace(null)
-		if(src.mutantrace)
-			target_mob.set_mutantrace(src.mutantrace.type)
+	var/icon/eyes_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = "eyes")
 
-		switch(src.cinematic)
-			if("Changeling") //Heh
-				target_mob.visible_message("<span style=\"color:red\"><b>[target_mob] transforms!</b></span>")
+	if(!(src.mutantrace && src.mutantrace.override_eyes))
+		eyes_s.Blend(src.e_color, ICON_MULTIPLY)
+		src.preview_icon.Blend(eyes_s, ICON_OVERLAY)
 
-			if("Wizard") //Heh 2: Merlin Edition
-				qdel(target_mob.wear_suit)
-				qdel(target_mob.head)
-				qdel(target_mob.shoes)
-				qdel(target_mob.r_hand)
-				target_mob.equip_if_possible(new /obj/item/clothing/suit/wizrobe, target_mob.slot_wear_suit)
-				target_mob.equip_if_possible(new /obj/item/clothing/head/wizard, target_mob.slot_head)
-				target_mob.equip_if_possible(new /obj/item/clothing/shoes/sandal, target_mob.slot_shoes)
-				target_mob.put_in_hand(new /obj/item/staff(target_mob))
-
-				var/datum/effects/system/harmless_smoke_spread/smoke = new /datum/effects/system/harmless_smoke_spread()
-				smoke.set_up(5, 0, target_mob.loc)
-				smoke.attach(target_mob)
-				smoke.start()
-
-				target_mob.visible_message("<span style=\"color:red\"><b>The glamour around [old_name] drops!</b></span>")
-				target_mob.say("DISPEL!")
-
-			if("Smoke")
-				var/datum/effects/system/harmless_smoke_spread/smoke = new /datum/effects/system/harmless_smoke_spread()
-				smoke.set_up(5, 0, target_mob.loc)
-				smoke.attach(target_mob)
-				smoke.start()
-
-
-		target_mob.bioHolder.mobAppearance.UpdateMob()
-		return
-
-	proc/process() //Oh no what if we get orphaned!! (Also don't garbage collect us as soon as we spawn you fuk)
-		while(!disposed)
-			if(!usercl || !target_mob)
-				qdel(src)
-				return
-			sleep(20)
-		return
-
-	proc/update_preview_icon()
-		src.preview_icon = null
-
-		var/customization_first_r = null
-		var/customization_second_r = null
-		var/customization_third_r = null
-
-		var/g = "m"
-		if (src.gender == MALE)
-			g = "m"
-		else
-			g = "f"
-
-		if(src.mutantrace)
-			src.preview_icon = new /icon(src.mutantrace.icon, src.mutantrace.icon_state)
-		else
-			src.preview_icon = new /icon('icons/mob/human.dmi', "body_[g]")
-
-		if(!(src.mutantrace && src.mutantrace.override_skintone))
-			// Skin tone
-			if (src.s_tone >= 0)
-				src.preview_icon.Blend(rgb(src.s_tone, src.s_tone, src.s_tone), ICON_ADD)
-			else
-				src.preview_icon.Blend(rgb(-src.s_tone,  -src.s_tone,  -src.s_tone), ICON_SUBTRACT)
-
-		//if(!src.mutantrace)
-			//src.preview_icon.Blend(new /icon('icons/mob/human_underwear.dmi', "none"), ICON_OVERLAY) // why are you blending an empty icon state into the icon???
-
-		var/icon/eyes_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = "eyes")
-
-		if(!(src.mutantrace && src.mutantrace.override_eyes))
-			eyes_s.Blend(src.e_color, ICON_MULTIPLY)
-			src.preview_icon.Blend(eyes_s, ICON_OVERLAY)
-
-		if(!(src.mutantrace && src.mutantrace.override_hair))
-			customization_first_r = customization_styles[customization_first]
+	if(!(src.mutantrace && src.mutantrace.override_hair))
+		customization_first_r = customization_styles[customization_first]
+		if(!customization_first_r)
+			customization_first_r = customization_styles_gimmick[customization_first]
 			if(!customization_first_r)
-				customization_first_r = customization_styles_gimmick[customization_first]
-				if(!customization_first_r)
-					customization_first_r = "None"
-			var/icon/hair_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = customization_first_r)
-			hair_s.Blend(src.customization_first_color, ICON_MULTIPLY)
-			eyes_s.Blend(hair_s, ICON_OVERLAY)
+				customization_first_r = "None"
+		var/icon/hair_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = customization_first_r)
+		hair_s.Blend(src.customization_first_color, ICON_MULTIPLY)
+		eyes_s.Blend(hair_s, ICON_OVERLAY)
 
-		if(!(src.mutantrace && src.mutantrace.override_beard))
-			customization_second_r = customization_styles[customization_second]
+	if(!(src.mutantrace && src.mutantrace.override_beard))
+		customization_second_r = customization_styles[customization_second]
+		if(!customization_second_r)
+			customization_second_r = customization_styles_gimmick[customization_second]
 			if(!customization_second_r)
-				customization_second_r = customization_styles_gimmick[customization_second]
-				if(!customization_second_r)
-					customization_second_r = "None"
-			var/icon/facial_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = customization_second_r)
-			facial_s.Blend(src.customization_second_color, ICON_MULTIPLY)
-			eyes_s.Blend(facial_s, ICON_OVERLAY)
+				customization_second_r = "None"
+		var/icon/facial_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = customization_second_r)
+		facial_s.Blend(src.customization_second_color, ICON_MULTIPLY)
+		eyes_s.Blend(facial_s, ICON_OVERLAY)
 
-		if(!(src.mutantrace && src.mutantrace.override_detail))
-			customization_third_r = customization_styles[customization_third]
+	if(!(src.mutantrace && src.mutantrace.override_detail))
+		customization_third_r = customization_styles[customization_third]
+		if(!customization_third_r)
+			customization_third_r = customization_styles_gimmick[customization_third]
 			if(!customization_third_r)
-				customization_third_r = customization_styles_gimmick[customization_third]
-				if(!customization_third_r)
-					customization_third_r = "none"
-			var/icon/detail_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = customization_third_r)
-			detail_s.Blend(src.customization_third_color, ICON_MULTIPLY)
-			eyes_s.Blend(detail_s, ICON_OVERLAY)
+				customization_third_r = "none"
+		var/icon/detail_s = new/icon("icon" = 'icons/mob/human_hair.dmi', "icon_state" = customization_third_r)
+		detail_s.Blend(src.customization_third_color, ICON_MULTIPLY)
+		eyes_s.Blend(detail_s, ICON_OVERLAY)
 
-		return
+	return
 
 /client/proc/cmd_admin_aview()
 	set category = "Special Verbs"
