@@ -1,5 +1,5 @@
 // living
-#define DEATHSHUTTLEDELAY 108000
+#define DEATHSHUTTLEDELAY 10800
 /mob/living
 	var/t_plasma = null
 	var/t_oxygen = null

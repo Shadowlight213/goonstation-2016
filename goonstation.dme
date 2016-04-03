@@ -16,7 +16,7 @@ var/datum/preMapLoad/preMapLoad = new
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
-#include "_maps\cog1.dm"
+#include "_maps\standard.dm"
 #include "code\_build_config.dm"
 #include "code\_layer.dm"
 #include "code\_macros.dm"

@@ -31,7 +31,7 @@
 				continue
 			else
 				M << csound("tgstationcode/adminhelp.ogg")
-				boutput(M, "<span style=\"color:blue\"><font size='3'><b><span style='color: red'>HELP: </span>[key_name(src,0,0)][(src.real_name ? "/"+src.real_name : "")] <A HREF='?src=\ref[M.client.holder];action=adminplayeropts;targetckey=[src.client.ckey]' class='popt'><i class='icon-info-sign'></i></A></b>: [msg]</font></span>")
+				boutput(M, "<span style=\"color:blue\"><font size='3'><b><span style='color: red'>HELP: </span>[key_name(src,0,0)][(src.real_name ? "/"+src.real_name : "")] <A HREF='?src=\ref[M.client.holder];action=adminplayeropts;targetckey=[src.client.ckey]' class='popt'><i class='icon-info-sign'></i></A></b> <A HREF='?src=\ref[M.client.holder];action=adminfollow;targetckey=[src.client.ckey]'>(FLW)</A>: [msg]</font></span>")
 
 #ifdef DATALOGGER
 	game_stats.Increment("adminhelps")
@@ -40,6 +40,9 @@
 	boutput(usr, "<span style=\"color:blue\"><font size='3'><b><span style='color: red'>HELP: </span> You</b>: [msg]</font></span>")
 	logTheThing("admin_help", src, null, "HELP: [msg]")
 	logTheThing("diary", src, null, "HELP: [msg]", "ahelp")
+
+	send2irc_adminless_only(src.key, html_decode(msg))
+
 	var/ircmsg[] = new()
 	ircmsg["key"] = src.key
 	ircmsg["name"] = src.real_name

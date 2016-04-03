@@ -1932,6 +1932,11 @@ var/global/noir = 0
 			else
 				alert("You need to be at least a Primary Administrator to view variables.")
 
+		if ("adminfollow")
+			var/mob/M = locate(href_list["target"])
+			if (!M) return
+			usr.client.admin_follow_mobject(M)
+
 		if ("adminplayeropts")
 			var/mob/M = locate(href_list["target"])
 			if (!M) return

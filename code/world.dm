@@ -438,9 +438,6 @@ var/f_color_selector_handler/F_Color_Selector
 #endif
 
 	sleep(50) // wait for sound to play
-	if(config.update_check_enabled)
-		world.installUpdate()
-
 	world.Reboot()
 
 /world/proc/update_status()
@@ -512,23 +509,6 @@ var/f_color_selector_handler/F_Color_Selector
 	/* does this help? I do not know */
 	if (src.status != s)
 		src.status = s
-
-/world/proc/installUpdate()
-	// Simple check to see if a new dmb exists in the update folder
-	logTheThing("diary", null, null, "Checking for updated [config.dmb_filename].dmb...", "admin")
-	if(fexists("update/[config.dmb_filename].dmb"))
-		logTheThing("diary", null, null, "Updated [config.dmb_filename].dmb found. Updating...", "admin")
-		for(var/f in flist("update/"))
-			logTheThing("diary", null, null, "\tMoving [f]...", "admin")
-			fcopy("update/[f]", "[f]")
-			fdel("update/[f]")
-
-		// Delete .dyn.rsc so that stupid shit doesn't happen
-		fdel("[config.dmb_filename].dyn.rsc")
-
-		logTheThing("diary", null, null, "Update complete.", "admin")
-	else
-		logTheThing("diary", null, null, "No update found. Skipping update process.", "admin")
 
 /world/Topic(T, addr, master, key)
 	diary << "TOPIC: \"[T]\", from:[addr], master:[master], key:[key]"

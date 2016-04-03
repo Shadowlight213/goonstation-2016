@@ -1501,6 +1501,7 @@ var/global/derelict_mode = 0
 
 			sleep(150)
 			logTheThing("diary", null, null, "Rebooting due to completion of solarium quest.", "game")
+			send2irc("Server", "Round just ended. Solarium quest completed")
 			Reboot_server()
 
 proc/voidify_world()

@@ -5,7 +5,6 @@
 
 	var/server_specific_configs = 0		// load extra config files (by port)
 
-	var/update_check_enabled = 0				// Server will call world.Reboot after checking for update if this is on
 	var/dmb_filename = "goonstation"
 
 	var/medal_hub = null				// medal hub name
@@ -311,8 +310,6 @@
 				config.extserver_token = trim(value)
 			if ("extserver_web_token")
 				config.extserver_web_token = trim(value)
-			if ("update_check_enabled")
-				config.update_check_enabled = 1
 			if ("dmb_filename")
 				config.dmb_filename = trim(value)
 			if ("env")

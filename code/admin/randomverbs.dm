@@ -3,8 +3,6 @@
 /verb/restart_the_fucking_server_i_mean_it()
 	set name = "Emergency Restart"
 	set category = null
-	if(config.update_check_enabled)
-		world.installUpdate()
 	world.Reboot()
 
 /client/proc/cmd_admin_drop_everything(mob/M as mob in world)
