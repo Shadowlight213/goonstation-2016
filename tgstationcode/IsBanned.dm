@@ -1,7 +1,6 @@
 //Blocks an attempt to connect before even creating our client datum thing.
 
 /world/IsBanned(key,address,computer_id)
-	world.log << "Actually ran"
 	if (!key || !address || !computer_id)
 		log_access("Failed Login (invalid data): [key] [address]-[computer_id]")
 		return list("reason"="invalid login data", "desc"="Error: Could not check ban status, Please try again. Error message: Your computer provided invalid or blank information to the server on connection (byond username, IP, and Computer ID.) Provided information for reference: Username:'[key]' IP:'[address]' Computer ID:'[computer_id]'. (If you continue to get this error, please restart byond or contact byond support.)")
@@ -43,6 +42,7 @@
 
 	if(!query.Execute())
 		world.log << "Ban database execution failure. Key [ckeytext] not checked"
+		diary << "Ban database execution failure. Key [ckeytext] not checked"
 	while(query.NextRow())
 		var/pckey = query.item[1]
 		//var/pip = query.item[2]

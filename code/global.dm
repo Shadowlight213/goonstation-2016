@@ -400,7 +400,7 @@ var/global
 	diary = null
 	hublog = null
 	station_name = null
-	game_version = "Goon Station 13 (r" + svn_revision + ")"
+	game_version = "/TG/oon Station 13"
 
 //	datum/air_tunnel/air_tunnel1/SS13_airtunnel = null
 	going = 1.0

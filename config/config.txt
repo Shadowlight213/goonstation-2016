@@ -18,6 +18,17 @@ LOG_GAME
 # log player votes
 LOG_VOTE
 
+# log debug stuff
+LOG_DEBUG
+
+LOG_AHELP
+
+LOG_MHELP
+
+LOG_COMBAT
+
+LOG_STATION
+
 # probablities for game modes chosen in "secret" and "random" modes
 # 
 # default probablity is 1, increase to make that mode more likely to be picked
@@ -93,3 +104,8 @@ MYSQL_PASSWORD passwordhere
 # I lost 4 hours of work because I spelled this DATBASE
 MYSQL_DATABASE feedback
 
+# Allow advanced commands via topic
+#COMMS_ENABLED
+
+#password for the commands
+COMMS_KEY password

@@ -1113,4 +1113,4 @@ var/global/curr_day = null
 	set name = "Forum"
 	set desc = "Open the Forum in your browser"
 	set hidden = 1
-	src << link("http://forum.ss13.co")
+	src << link("https://tgstation13.org/phpBB/index.php")

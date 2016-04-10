@@ -13,18 +13,17 @@ For the main html chat area
 #define CTX_GET 128
 
 //Precaching a bunch of shit
-var/global
-	savefile/iconCache = new /savefile("data/iconCache.sav") //Cache of icons for the browser output
-	chatDebug = file("data/chatDebug.log")
-	cFlagsShitguy = CTX_GIB | CTX_GET
-	cFlagsSa = CTX_BAN | CTX_POPT | CTX_JUMP
-	cFlagsMod = CTX_SMSG | CTX_BOOT | CTX_PM
+var/global/savefile/iconCache = new /savefile("data/iconCache.sav") //Cache of icons for the browser output
+var/global/chatDebug = file("data/chatDebug.log")
+var/global/cFlagsShitguy = CTX_GIB | CTX_GET
+var/global/cFlagsSa = CTX_BAN | CTX_POPT | CTX_JUMP
+var/global/cFlagsMod = CTX_SMSG | CTX_BOOT | CTX_PM
 	// Why is this defined this way you ask?
 	// It's because if you define an associative list mapping constants inside strings
 	// like "[LEVEL_MOD]" = FOOBAR_SHITFUCK_FUCKFACE
 	// The byond object tree output gets completely fucked in the ass and generates
 	// broken xml
-	list/contextFlags = list(1 = 0,2 = cFlagsMod,3 = cFlagsSa,4 = 0,5 = 0,6 = cFlagsShitguy,7 = 0,8 = 0)
+var/global/list/contextFlags = list(1 = 0,2 = cFlagsMod,3 = cFlagsSa,4 = 0,5 = 0,6 = cFlagsShitguy,7 = 0,8 = 0)
 
 	/*
 	8 = LEVEL_HOST
@@ -39,195 +38,194 @@ var/global
 
 //On client, created on login
 /datum/chatOutput
-	var
-		client/owner = null //client ref
-		loaded = 0 //Has the client loaded the browser output area?
-		loadAttempts = 0 //How many times has the client tried to load the output area?
-		list/messageQueue = list() //If they haven't loaded chat, this is where messages will go until they do
-		ctxFlag = 0 //Context menu flags for the admin powers
-		cookieSent = 0 //Has the client sent a cookie for analysis
-		list/connectionHistory = list() //Contains the connection history passed from chat cookie
+	var/client/owner = null //client ref
+	var/loaded = 0 //Has the client loaded the browser output area?
+	var/loadAttempts = 0 //How many times has the client tried to load the output area?
+	var/list/messageQueue = list() //If they haven't loaded chat, this is where messages will go until they do
+	var/ctxFlag = 0 //Context menu flags for the admin powers
+	var/cookieSent = 0 //Has the client sent a cookie for analysis
+	var/list/connectionHistory = list() //Contains the connection history passed from chat cookie
 
-	New(client/C)
-		..()
+/datum/chatOutput/New(client/C)
+	..()
 
-		if (C)
-			src.owner = C
-			return 1
+	if (C)
+		src.owner = C
+		return 1
 
-	proc
-		start()
-			//Check for existing chat
-			if (!src.owner) return 0
-			if (winget(src.owner, "browseroutput", "is-disabled") == "false") //Already setup
-				src.doneLoading()
-			else //Not setup
-				src.load()
+/datum/chatOutput/proc/
+/datum/chatOutput/proc/start()
+	//Check for existing chat
+	if (!src.owner) return 0
+	if (winget(src.owner, "browseroutput", "is-disabled") == "false") //Already setup
+		src.doneLoading()
+	else //Not setup
+		src.load()
 
-			return 1
+	return 1
 
-		load()
-			if (src.owner)
-				//For local-testing fallback
-				if (!CDN_ENABLED || config.env == "dev")
-					var/list/chatResources = list(
-						"browserassets/js/jquery.min.js",
-						"browserassets/js/json2.min.js",
-						"browserassets/js/browserOutput.js",
-						"browserassets/css/fonts/fontawesome-webfont.eot",
-						"browserassets/css/fonts/fontawesome-webfont.svg",
-						"browserassets/css/fonts/fontawesome-webfont.ttf",
-						"browserassets/css/fonts/fontawesome-webfont.woff",
-						"browserassets/css/font-awesome.css",
-						"browserassets/css/browserOutput.css"
-					)
-					src.owner.loadResourcesFromList(chatResources)
+/datum/chatOutput/proc/load()
+	if (src.owner)
+		//For local-testing fallback
+		if (!CDN_ENABLED || config.env == "dev")
+			var/list/chatResources = list(
+				"browserassets/js/jquery.min.js",
+				"browserassets/js/json2.min.js",
+				"browserassets/js/browserOutput.js",
+				"browserassets/css/fonts/fontawesome-webfont.eot",
+				"browserassets/css/fonts/fontawesome-webfont.svg",
+				"browserassets/css/fonts/fontawesome-webfont.ttf",
+				"browserassets/css/fonts/fontawesome-webfont.woff",
+				"browserassets/css/font-awesome.css",
+				"browserassets/css/browserOutput.css"
+			)
+			src.owner.loadResourcesFromList(chatResources)
 
-				src.owner << browse(grabResource("html/browserOutput.html"), "window=browseroutput")
+		src.owner << browse(grabResource("html/browserOutput.html"), "window=browseroutput")
 
-				if (src.loadAttempts < 5) //To a max of 5 load attempts
-					spawn(200) //20 seconds
-						if (src.owner && !src.loaded)
-							src.loadAttempts++
-							src.load()
-				else
-					//Exceeded. Maybe do something extra here
-					return
-			else
-				//Client managed to logoff or otherwise get deleted
-				return
+		if (src.loadAttempts < 5) //To a max of 5 load attempts
+			spawn(200) //20 seconds
+				if (src.owner && !src.loaded)
+					src.loadAttempts++
+					src.load()
+		else
+			//Exceeded. Maybe do something extra here
+			return
+	else
+		//Client managed to logoff or otherwise get deleted
+		return
 
 		//Called on chat output done-loading by JS.
-		doneLoading(ua)
-			if (!src.loaded)
-				src.loaded = 1
-				winset(src.owner, "browseroutput", "is-disabled=false")
-				if (src.owner.holder)
-					src.loadAdmin()
-				if (src.messageQueue)
-					for (var/x = 1, x <= src.messageQueue.len, x++)
-						boutput(src.owner, src.messageQueue[x])
-				src.messageQueue = null
-				if (ua)
-					ircbot.export("useragent", list("key" = src.owner.key, "useragent" = ua, "bversion" = owner.byond_version)) //For persistent user tracking
-				else
-					src.sendClientData()
-					/* WIRE TODO: Fix this so the CDN dying doesn't break everyone
-					spawn(600) //60 seconds
-						if (!src.cookieSent) //Client has very likely futzed with their local html/js chat file
-							out(src.owner, "<div class='fatalError'>Chat file tampering detected. Closing connection.</div>")
-							del(src.owner)
-					*/
+/datum/chatOutput/proc/doneLoading(ua)
+	if (!src.loaded)
+		src.loaded = 1
+		winset(src.owner, "browseroutput", "is-disabled=false")
+		if (src.owner.holder)
+			src.loadAdmin()
+		if (src.messageQueue)
+			for (var/x = 1, x <= src.messageQueue.len, x++)
+				boutput(src.owner, src.messageQueue[x])
+		src.messageQueue = null
+		if (ua)
+			ircbot.export("useragent", list("key" = src.owner.key, "useragent" = ua, "bversion" = owner.byond_version)) //For persistent user tracking
+		else
+			src.sendClientData()
+			/* WIRE TODO: Fix this so the CDN dying doesn't break everyone
+			spawn(600) //60 seconds
+				if (!src.cookieSent) //Client has very likely futzed with their local html/js chat file
+					out(src.owner, "<div class='fatalError'>Chat file tampering detected. Closing connection.</div>")
+					del(src.owner)
+			*/
 
 		//Called in update_admins()
-		loadAdmin()
-			var/data = json_encode(list("loadAdminCode" = replacetext(replacetext(grabResource("html/adminOutput.html"), "\n", ""), "\t", "")))
-			ehjax.send(src.owner, "browseroutput", url_encode(data))
+/datum/chatOutput/proc/loadAdmin()
+	var/data = json_encode(list("loadAdminCode" = replacetext(replacetext(grabResource("html/adminOutput.html"), "\n", ""), "\t", "")))
+	ehjax.send(src.owner, "browseroutput", url_encode(data))
 
 		//Sends client connection details to the chat to handle and save
-		sendClientData()
-			//Get dem deets
-			var/list/deets = list("clientData" = list())
-			deets["clientData"]["ckey"] = src.owner.ckey
-			deets["clientData"]["ip"] = src.owner.address
-			deets["clientData"]["compid"] = src.owner.computer_id
-			var/data = json_encode(deets)
-			ehjax.send(src.owner, "browseroutput", data)
+/datum/chatOutput/proc/sendClientData()
+	//Get dem deets
+	var/list/deets = list("clientData" = list())
+	deets["clientData"]["ckey"] = src.owner.ckey
+	deets["clientData"]["ip"] = src.owner.address
+	deets["clientData"]["compid"] = src.owner.computer_id
+	var/data = json_encode(deets)
+	ehjax.send(src.owner, "browseroutput", data)
 
 		//Called by client, sent data to investigate (cookie history so far)
-		analyzeClientData(cookie = "")
-			if (!cookie) return
-			return	//Goof ate all the cookies from the cookie jar. RIP
-			if (cookie != "none")
-				var/list/connData = json_decode(cookie)
-				if (connData && islist(connData) && connData.len > 0 && connData["connData"])
-					src.connectionHistory = connData["connData"] //lol fuck
-					var/list/found = new()
-					for (var/i = src.connectionHistory.len; i >= 1; i--)
-						var/list/row = src.connectionHistory[i]
-						if (!row || row.len < 3 || (!row["ckey"] && !row["compid"] && !row["ip"])) //Passed malformed history object
-							return
-						if (checkBan(row["ckey"], row["compid"], row["ip"]))
-							found = row
-							break
+/datum/chatOutput/proc/analyzeClientData(cookie = "")
+	if (!cookie) return
+	return	//Goof ate all the cookies from the cookie jar. RIP
+	if (cookie != "none")
+		var/list/connData = json_decode(cookie)
+		if (connData && islist(connData) && connData.len > 0 && connData["connData"])
+			src.connectionHistory = connData["connData"] //lol fuck
+			var/list/found = new()
+			for (var/i = src.connectionHistory.len; i >= 1; i--)
+				var/list/row = src.connectionHistory[i]
+				if (!row || row.len < 3 || (!row["ckey"] && !row["compid"] && !row["ip"])) //Passed malformed history object
+					return
+				if (checkBan(row["ckey"], row["compid"], row["ip"]))
+					found = row
+					break
 
-					//Uh oh this fucker has a history of playing on a banned account!!
-					if (found.len > 0)
-						//TODO: add a new evasion ban for the CURRENT client details, using the matched row details
-						message_admins("[key_name(src.owner)] has a cookie from a banned account! (Matched: [found["ckey"]], [found["ip"]], [found["compid"]])")
-						logTheThing("debug", src.owner, null, "has a cookie from a banned account! (Matched: [found["ckey"]], [found["ip"]], [found["compid"]])")
-						logTheThing("diary", src.owner, null, "has a cookie from a banned account! (Matched: [found["ckey"]], [found["ip"]], [found["compid"]])", "debug")
+			//Uh oh this fucker has a history of playing on a banned account!!
+			if (found.len > 0)
+				//TODO: add a new evasion ban for the CURRENT client details, using the matched row details
+				message_admins("[key_name(src.owner)] has a cookie from a banned account! (Matched: [found["ckey"]], [found["ip"]], [found["compid"]])")
+				logTheThing("debug", src.owner, null, "has a cookie from a banned account! (Matched: [found["ckey"]], [found["ip"]], [found["compid"]])")
+				logTheThing("diary", src.owner, null, "has a cookie from a banned account! (Matched: [found["ckey"]], [found["ip"]], [found["compid"]])", "debug")
 
-						//Irc message too
-						if(owner)
-							var/ircmsg[] = new()
-							ircmsg["key"] = owner.key
-							ircmsg["name"] = owner.mob.name
-							ircmsg["msg"] = "has a cookie from banned account [found["ckey"]](IP: [found["ip"]], CompID: [found["compID"]])"
-							ircbot.export("admin", ircmsg)
-			src.cookieSent = 1
+				//Irc message too
+				if(owner)
+					var/ircmsg[] = new()
+					ircmsg["key"] = owner.key
+					ircmsg["name"] = owner.mob.name
+					ircmsg["msg"] = "has a cookie from banned account [found["ckey"]](IP: [found["ip"]], CompID: [found["compID"]])"
+					ircbot.export("admin", ircmsg)
+	src.cookieSent = 1
 
 		//Called in New() (/datum/admins)
-		getContextFlag()
-			if (!src.owner.holder) return
-			var/level = src.owner.holder.level
+/datum/chatOutput/proc/getContextFlag()
+	if (!src.owner.holder) return
+	var/level = src.owner.holder.level
 
-			for (var/x = level; x >= -1 ; x--) //-1 is the lowest rank
-				var/rankFlags = contextFlags[x+2] // X + 2 because fuck byond. See definition of contextflags at the top of this file.
-				if (rankFlags)
-					src.ctxFlag |= rankFlags
+	for (var/x = level; x >= -1 ; x--) //-1 is the lowest rank
+		var/rankFlags = contextFlags[x+2] // X + 2 because fuck byond. See definition of contextflags at the top of this file.
+		if (rankFlags)
+			src.ctxFlag |= rankFlags
 
 		//Called by js client on admin command via context menu
-		handleContextMenu(command, target)
-			if (!src.owner.holder) return
-			var/datum/mind/targetMind = locate(target)
-			var/mob/targetMob
-			if (targetMind)
-				targetMob = targetMind.current
-			else //The mind no longer exists? What? How?!
-				return
+/datum/chatOutput/proc/handleContextMenu(command, target)
+	if (!src.owner.holder) return
+	var/datum/mind/targetMind = locate(target)
+	var/mob/targetMob
+	if (targetMind)
+		targetMob = targetMind.current
+	else //The mind no longer exists? What? How?!
+		return
 
-			switch(command)
-				if ("pm")
-					src.owner.cmd_admin_pm(targetMob)
-				if ("smsg")
-					src.owner.cmd_admin_subtle_message(targetMob)
-				if ("jump")
-					if (!istype(targetMob, /mob/dead/target_observer))
-						src.owner.jumptomob(targetMob)
-					else
-						var/jumptarget = targetMob.eye
-						if (jumptarget)
-							src.owner.jumptoturf(get_turf(jumptarget))
-				if ("get")
-					src.owner.Getmob(targetMob)
-				if ("boot")
-					src.owner.cmd_boot(targetMob)
-				if ("ban")
-					src.owner.addBanDialog(targetMob)
-				if ("gib")
-					src.owner.cmd_admin_gib(targetMob)
-					logTheThing("admin", src.owner, targetMob, "gibbed %target%.")
-				if ("popt")
-					src.owner.holder.playeropt(targetMob)
+	switch(command)
+		if ("pm")
+			src.owner.cmd_admin_pm(targetMob)
+		if ("smsg")
+			src.owner.cmd_admin_subtle_message(targetMob)
+		if ("jump")
+			if (!istype(targetMob, /mob/dead/target_observer))
+				src.owner.jumptomob(targetMob)
+			else
+				var/jumptarget = targetMob.eye
+				if (jumptarget)
+					src.owner.jumptoturf(get_turf(jumptarget))
+		if ("get")
+			src.owner.Getmob(targetMob)
+		if ("boot")
+			src.owner.cmd_boot(targetMob)
+		if ("ban")
+			src.owner.addBanDialog(targetMob)
+		if ("gib")
+			src.owner.cmd_admin_gib(targetMob)
+			logTheThing("admin", src.owner, targetMob, "gibbed %target%.")
+		if ("popt")
+			src.owner.holder.playeropt(targetMob)
 
 		//todo
-		changeChatMode(mode)
-			if (!mode) return
-			var/data = json_encode(list("modeChange" = mode))
-			data = url_encode(data)
+/datum/chatOutput/proc/changeChatMode(mode)
+	if (!mode) return
+	var/data = json_encode(list("modeChange" = mode))
+	data = url_encode(data)
 
-			for (var/client/C in clients)
-				ehjax.send(C, "browseroutput", data)
+	for (var/client/C in clients)
+		ehjax.send(C, "browseroutput", data)
 
 		//Called by js client every 60 seconds
-		ping()
-			return "pong"
+/datum/chatOutput/proc/ping()
+	return "pong"
 
 		//Called by js client on js error
-		debug(error)
-			error = "\[[time2text(world.realtime, "YYYY-MM-DD hh:mm:ss")]\] Client: [(src.owner.key ? src.owner.key : src.owner)] triggered JS error: [error]"
-			chatDebug << error
+/datum/chatOutput/proc/debug(error)
+	error = "\[[time2text(world.realtime, "YYYY-MM-DD hh:mm:ss")]\] Client: [(src.owner.key ? src.owner.key : src.owner)] triggered JS error: [error]"
+	chatDebug << error
 
 
 //Global chat procs

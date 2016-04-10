@@ -581,17 +581,14 @@ var/list/special_pa_observing_verbs = list(\
 		clear_admin_verbs()
 		if(!istype(src.mob, /mob/dead/observer) && !istype(src.mob, /mob/dead/target_observer))
 			src.holder.state = 2
-		else
-			src.holder.state = 1
-
 	//	src.mob.mind.observing = 1
 		update_admins(rank)
 	if(!istype(src.mob, /mob/dead/observer) && !istype(src.mob, /mob/dead/target_observer))
 		src.mob.ghostize()
 		boutput(src, "<span style=\"color:blue\">You are now observing</span>")
 	else
-		boutput(src, "<span style=\"color:blue\">You are now playing</span>")
-		src.mob:reenter_corpse()
+		if(src.mob:reenter_corpse())
+			boutput(src, "<span style=\"color:blue\">You are now playing</span>")
 
 
 //admin client procs ported over from mob.dm

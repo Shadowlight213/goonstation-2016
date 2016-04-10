@@ -16,7 +16,11 @@
 		..()
 
 		if (!istype(T,/turf/))
-			T = pick(blobstart)
+			if(blobstart.len > 0) // Erik: Fix for pick() from empty list.
+				T = pick(blobstart)
+			else
+				message_admins("The black hole event failed to spawn a black hole (no blobstart landmark found)")
+				return
 
 		message_admins("Black Hole will appear in [T.loc]")
 		playsound(T, bhole_warning, 100, 0, 5, 0.5)
@@ -51,7 +55,11 @@
 		if (locinput == "My Current Tile")
 			T = get_turf(usr)
 		else
-			T = pick(blobstart)
+			if(blobstart.len > 0) // Erik: Fix for pick() from empty list.
+				T = pick(blobstart)
+			else
+				message_admins("The black hole event failed to spawn a black hole (no blobstart landmark found)")
+				return
 
 		var/warninput = input(usr,"How long between the warning and the black hole spawning? (10 = 1 second, Negative number to cancel)","Black Hole") as num
 		if (warninput < 0)

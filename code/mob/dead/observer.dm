@@ -481,7 +481,7 @@
 	set category = "Special Verbs"
 	set name = "Toggle-Darkness"
 	set desc= "see dark"
-	if((usr.stat != 2) || !istype(usr, /mob/dead))
+	if((usr.stat != 2 && !src.client.holder) || !istype(usr, /mob/dead))
 		boutput(usr, "Not when you're not dead!")
 		return
 

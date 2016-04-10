@@ -61,149 +61,149 @@
  *	Types of pda, for the different jobs and stuff
  */
 /obj/item/device/pda2
-	captain
-		icon_state = "pda-c"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/captain
-		setup_drive_size = 32
-		mailgroup = "command"
+/obj/item/device/pda2/captain
+	icon_state = "pda-c"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/captain
+	setup_drive_size = 32
+	mailgroup = "command"
 
-	heads
-		icon_state = "pda-h"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/head
-		setup_drive_size = 32
-		mailgroup = "command"
+/obj/item/device/pda2/heads
+	icon_state = "pda-h"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/head
+	setup_drive_size = 32
+	mailgroup = "command"
 
-	hos
-		icon_state = "pda-hos"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/hos
-		setup_drive_size = 32
-		mailgroup = "security" // should be merged with command
+/obj/item/device/pda2/hos
+	icon_state = "pda-hos"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/hos
+	setup_drive_size = 32
+	mailgroup = "security" // should be merged with command
 
-	ai
-		icon_state = "pda-h"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/ai
-		setup_drive_size = 1024
-		bombproof = 1
-		mailgroup = "silicon"
+/obj/item/device/pda2/ai
+	icon_state = "pda-h"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/ai
+	setup_drive_size = 1024
+	bombproof = 1
+	mailgroup = "silicon"
 
-	cyborg
-		icon_state = "pda-h"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/cyborg
-		setup_drive_size = 1024
-		bombproof = 1
-		mailgroup = "silicon"
+/obj/item/device/pda2/cyborg
+	icon_state = "pda-h"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/cyborg
+	setup_drive_size = 1024
+	bombproof = 1
+	mailgroup = "silicon"
 
-	research_director
-		icon_state = "pda-rd"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/research_director
-		setup_drive_size = 32
-		mailgroup = "science" // merge with command
+/obj/item/device/pda2/research_director
+	icon_state = "pda-rd"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/research_director
+	setup_drive_size = 32
+	mailgroup = "science" // merge with command
 
-	medical_director
-		icon_state = "pda-md"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/medical_director
-		setup_drive_size = 32
-		mailgroup = "medresearch" // merge with command
+/obj/item/device/pda2/medical_director
+	icon_state = "pda-md"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/medical_director
+	setup_drive_size = 32
+	mailgroup = "medresearch" // merge with command
 
-	medical
-		icon_state = "pda-m"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/medical
-		mailgroup = "medbay"
+/obj/item/device/pda2/medical
+	icon_state = "pda-m"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/medical
+	mailgroup = "medbay"
 
-		robotics
-			mailgroup = "medresearch"
+/obj/item/device/pda2/medical/robotics
+	mailgroup = "medresearch"
 
-	security
-		icon_state = "pda-s"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/security
-		mailgroup = "security"
+/obj/item/device/pda2/security
+	icon_state = "pda-s"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/security
+	mailgroup = "security"
 
-	forensic
-		icon_state = "pda-s"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/forensic
-		mailgroup = "security"
+/obj/item/device/pda2/forensic
+	icon_state = "pda-s"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/forensic
+	mailgroup = "security"
 
-	toxins
-		icon_state = "pda-tox"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/toxins
-		mailgroup = "science"
+/obj/item/device/pda2/toxins
+	icon_state = "pda-tox"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/toxins
+	mailgroup = "science"
 
-	genetics
-		icon_state = "pda-gen"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/genetics
-		mailgroup = "medresearch"
+/obj/item/device/pda2/genetics
+	icon_state = "pda-gen"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/genetics
+	mailgroup = "medresearch"
 
-	quartermaster
-		icon_state = "pda-q"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/quartermaster
-		mailgroup = "cargo"
+/obj/item/device/pda2/quartermaster
+	icon_state = "pda-q"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/quartermaster
+	mailgroup = "cargo"
 
-	clown
-		icon_state = "pda-clown"
-		desc = "A portable microcomputer by Thinktronic Systems, LTD. The surface is coated with polytetrafluoroethylene and banana drippings."
-		setup_default_cartridge = /obj/item/disk/data/cartridge/clown
+/obj/item/device/pda2/clown
+	icon_state = "pda-clown"
+	desc = "A portable microcomputer by Thinktronic Systems, LTD. The surface is coated with polytetrafluoroethylene and banana drippings."
+	setup_default_cartridge = /obj/item/disk/data/cartridge/clown
 
-		HasEntered(AM as mob|obj) //Clown PDA is slippery.
-			if (istype(src.loc, /turf/space))
+	HasEntered(AM as mob|obj) //Clown PDA is slippery.
+		if (istype(src.loc, /turf/space))
+			return
+		if (iscarbon(AM))
+			var/mob/M =	AM
+			if (!M.can_slip())
 				return
-			if (iscarbon(AM))
-				var/mob/M =	AM
-				if (!M.can_slip())
-					return
 
-				M.pulling = null
-				boutput(M, "<span style=\"color:blue\">You slipped on the PDA!</span>")
-				playsound(src.loc, "sound/misc/slip.ogg", 50, 1, -3)
-				if (M.bioHolder.HasEffect("clumsy"))
-					M.stunned = 8
-					M.weakened = 5
-				else
-					M.weakened = 2
+			M.pulling = null
+			boutput(M, "<span style=\"color:blue\">You slipped on the PDA!</span>")
+			playsound(src.loc, "sound/misc/slip.ogg", 50, 1, -3)
+			if (M.bioHolder.HasEffect("clumsy"))
+				M.stunned = 8
+				M.weakened = 5
+			else
+				M.weakened = 2
 
-	janitor
-		icon_state = "pda-j"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/janitor
-		mailgroup = "janitor"
+/obj/item/device/pda2/janitor
+	icon_state = "pda-j"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/janitor
+	mailgroup = "janitor"
 
-	chaplain
-		icon_state = "pda-holy"
-		mailgroup = "chaplain"
+/obj/item/device/pda2/chaplain
+	icon_state = "pda-holy"
+	mailgroup = "chaplain"
 
-	atmos
-		icon_state = "pda-a"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/atmos
+/obj/item/device/pda2/atmos
+	icon_state = "pda-a"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/atmos
 
-	engine
-		icon_state = "pda-e"
-		mailgroup = "engineer"
+/obj/item/device/pda2/engine
+	icon_state = "pda-e"
+	mailgroup = "engineer"
 
-	mining
-		icon_state = "pda-e"
-		mailgroup = "mining"
+/obj/item/device/pda2/mining
+	icon_state = "pda-e"
+	mailgroup = "mining"
 
-	chef
-		mailgroup = "kitchen"
+/obj/item/device/pda2/chef
+	mailgroup = "kitchen"
 
-	barman
-		mailgroup = "kitchen"
+/obj/item/device/pda2/barman
+	mailgroup = "kitchen"
 
-	mechanic
-		icon_state = "pda-a"
-		setup_default_module = /obj/item/device/pda_module/tray
-		setup_default_cartridge = /obj/item/disk/data/cartridge/mechanic
-		mailgroup = "mechanic"
+/obj/item/device/pda2/mechanic
+	icon_state = "pda-a"
+	setup_default_module = /obj/item/device/pda_module/tray
+	setup_default_cartridge = /obj/item/disk/data/cartridge/mechanic
+	mailgroup = "mechanic"
 
-	botanist
-		icon_state = "pda-hydro"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/botanist
-		mailgroup = "botany"
+/obj/item/device/pda2/botanist
+	icon_state = "pda-hydro"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/botanist
+	mailgroup = "botany"
 
-	syndicate
-		icon_state = "pda-syn"
-		name = "Military PDA"
-		owner = "John Doe"
-		setup_default_cartridge = /obj/item/disk/data/cartridge/nuclear
-		setup_system_os_path = /datum/computer/file/pda_program/os/main_os/mess_off
+/obj/item/device/pda2/syndicate
+	icon_state = "pda-syn"
+	name = "Military PDA"
+	owner = "John Doe"
+	setup_default_cartridge = /obj/item/disk/data/cartridge/nuclear
+	setup_system_os_path = /datum/computer/file/pda_program/os/main_os/mess_off
 
 /obj/item/device/pda2/pickup(mob/user)
 	if (src.module)
@@ -550,80 +550,95 @@
 	if (!target || !message)
 		return
 
-	if (usr:paralysis || usr:stunned || usr:weakened || usr:stat)
+	if (usr.paralysis || usr.stunned || usr.weakened || usr.stat)
 		return
 
 	if (istype(src.host_program))
 		src.host_program.pda_message(pdasay_autocomplete[target], target, message)
 
-/obj/item/device/pda2
+/obj/item/device/pda2/verb/eject()
+	set name = "Eject ID"
+	set desc = "Eject the currently loaded ID card from this PDA."
+	set src in usr
 
-	proc/post_signal(datum/signal/signal,var/newfreq)
-		spawn(0)
-			if(!signal)
-				return
-			var/freq = newfreq
-			if(!freq)
-				freq = src.frequency
-
-			signal.source = src
-			signal.data["sender"] = src.net_id
-
-			var/datum/radio_frequency/frequency = radio_controller.return_frequency("[freq]")
-
-			signal.transmission_method = TRANSMISSION_RADIO
-			if(frequency)
-				return frequency.post_signal(src, signal)
-			//else
-				//qdel(signal)
-
-	proc/eject_cartridge()
-		if(src.cartridge)
-			var/turf/T = get_turf(src)
-
-			if(src.active_program && (src.active_program.holder == src.cartridge))
-				src.active_program = null
-
-			if(src.host_program && (src.host_program.holder == src.cartridge))
-				src.host_program = null
-
-			if(src.scan_program && (src.scan_program.holder == src.cartridge))
-				src.scan_program = null
-
-			src.cartridge.set_loc(T)
-			src.cartridge = null
-
+	if (usr.paralysis || usr.stunned || usr.weakened || usr.stat)
 		return
 
-	proc/eject_id_card(var/mob/user as mob)
-		if (src.ID_card)
-			src.registered = null
-			src.assignment = null
-			src.access = null
-			src.underlays -= src.ID_image
-			if (istype(user))
-				user.put_in_hand_or_drop(src.ID_card)
-			else
-				var/turf/T = get_turf(src)
-				src.ID_card.set_loc(T)
-			src.ID_card = null
-			return
+	eject_id_card(usr)
+	src.updateSelfDialog()
 
-	proc/insert_id_card(var/obj/item/card/id/ID as obj, var/mob/user as mob)
-		if (!istype(ID))
+
+
+
+/obj/item/device/pda2/proc/is_user_in_range(var/mob/user)
+	return in_range(src, user) || loc == user
+
+/obj/item/device/pda2/proc/post_signal(datum/signal/signal,var/newfreq)
+	spawn(0)
+		if(!signal)
 			return
-		if (src.ID_card)
-			src.eject_id_card(istype(user) ? user : null)
-		src.ID_card = ID
-		if (user)
-			user.u_equip(ID)
-		ID.set_loc(src)
-		src.registered = ID.registered
-		src.assignment = ID.assignment
-		src.access = ID.access
-		src.ID_image = src.ID_card.icon_state
-		src.underlays += src.ID_image
-		src.updateSelfDialog()
+		var/freq = newfreq
+		if(!freq)
+			freq = src.frequency
+
+		signal.source = src
+		signal.data["sender"] = src.net_id
+
+		var/datum/radio_frequency/frequency = radio_controller.return_frequency("[freq]")
+
+		signal.transmission_method = TRANSMISSION_RADIO
+		if(frequency)
+			return frequency.post_signal(src, signal)
+		//else
+			//qdel(signal)
+
+/obj/item/device/pda2/proc/eject_cartridge()
+	if(src.cartridge)
+		var/turf/T = get_turf(src)
+
+		if(src.active_program && (src.active_program.holder == src.cartridge))
+			src.active_program = null
+
+		if(src.host_program && (src.host_program.holder == src.cartridge))
+			src.host_program = null
+
+		if(src.scan_program && (src.scan_program.holder == src.cartridge))
+			src.scan_program = null
+
+		src.cartridge.set_loc(T)
+		src.cartridge = null
+
+	return
+
+/obj/item/device/pda2/proc/eject_id_card(var/mob/user as mob)
+	if (src.ID_card)
+		src.registered = null
+		src.assignment = null
+		src.access = null
+		src.underlays -= src.ID_image
+		if (istype(user))
+			user.put_in_hand_or_drop(src.ID_card)
+		else
+			var/turf/T = get_turf(src)
+			src.ID_card.set_loc(T)
+		src.ID_card = null
+		return
+
+/obj/item/device/pda2/proc/insert_id_card(var/obj/item/card/id/ID as obj, var/mob/user as mob)
+	if (!istype(ID))
+		return
+	if (src.ID_card)
+		src.eject_id_card(istype(user) ? user : null)
+	src.ID_card = ID
+	if (user)
+		user.u_equip(ID)
+	ID.set_loc(src)
+	src.registered = ID.registered
+	src.assignment = ID.assignment
+	src.access = ID.access
+	src.ID_image = src.ID_card.icon_state
+	src.underlays += src.ID_image
+	src.updateSelfDialog()
 /*
 	//Toggle the built-in flashlight
 	toggle_light()
@@ -639,109 +654,130 @@
 
 		src.updateSelfDialog()
 */
-	proc/display_alert(var/alert_message) //Add alert overlay and beep
-		if (alert_message)
-			playsound(get_turf(src), "sound/machines/twobeep.ogg", 50, 1)
-			for (var/mob/O in hearers(3, src.loc))
-				O.show_message(text("[bicon(src)] *[alert_message]*"))
+/obj/item/device/pda2/proc/display_alert(var/alert_message) //Add alert overlay and beep
+	if (alert_message)
+		playsound(get_turf(src), "sound/machines/twobeep.ogg", 50, 1)
+		for (var/mob/O in hearers(3, src.loc))
+			O.show_message(text("[bicon(src)] *[alert_message]*"))
 
-		src.overlays = null
-		src.overlays += image('icons/obj/pda.dmi', "pda-r")
+	src.overlays = null
+	src.overlays += image('icons/obj/pda.dmi', "pda-r")
+	return
+
+/obj/item/device/pda2/proc/display_message(var/message)
+	if (ismob(loc))
+		boutput(loc, message)
+
+/obj/item/device/pda2/proc/run_program(datum/computer/file/pda_program/program)
+	if((!program) || (!program.holder))
+		return 0
+
+	if(!(program.holder in src))
+//		boutput(world, "Not in src")
+		program = new program.type
+		program.transfer_holder(src.hd)
+
+	if(program.master != src)
+		program.master = src
+
+	if(!src.host_program && istype(program, /datum/computer/file/pda_program/os))
+		src.host_program = program
+
+	if(istype(program, /datum/computer/file/pda_program/scan))
+		if(program == src.scan_program)
+			src.scan_program = null
+		else
+			src.scan_program = program
+		return 1
+
+	src.active_program = program
+	program.init()
+
+	if(program.setup_use_process && !(src in processing_items))
+		processing_items.Add(src)
+
+	return 1
+
+/obj/item/device/pda2/proc/unload_active_program()
+	if(src.active_program == src.host_program)
+		return 1
+
+	if(src.active_program.setup_use_process && !src.host_program.setup_use_process)
+		processing_items.Remove(src)
+
+	if(src.host_program && src.host_program.holder && (src.host_program.holder in src.contents))
+		src.run_program(src.host_program)
+	else
+		src.active_program = null
+
+	src.updateSelfDialog()
+	return 1
+
+/obj/item/device/pda2/proc/delete_file(datum/computer/file/theFile)
+	//boutput(world, "Deleting [file]...")
+	if((!theFile) || (!theFile.holder) || (theFile.holder.read_only))
+		//boutput(world, "Cannot delete :(")
+		return 0
+
+	//Don't delete the running program you jerk
+	if(src.active_program == theFile || src.host_program == theFile)
+		src.active_program = null
+
+	//boutput(world, "Now calling del on [file]...")
+	//qdel(file)
+	theFile.dispose()
+	return 1
+
+/obj/item/device/pda2/proc/explode()
+	if (src.bombproof)
+		if (ismob(src.loc))
+			boutput(src.loc, "<span style=\"color:red\"><b>ALERT:</b> An attempt to run malicious explosive code on your PDA has been blocked.</span>")
 		return
 
-	proc/run_program(datum/computer/file/pda_program/program)
-		if((!program) || (!program.holder))
-			return 0
-
-		if(!(program.holder in src))
-	//		boutput(world, "Not in src")
-			program = new program.type
-			program.transfer_holder(src.hd)
-
-		if(program.master != src)
-			program.master = src
-
-		if(!src.host_program && istype(program, /datum/computer/file/pda_program/os))
-			src.host_program = program
-
-		if(istype(program, /datum/computer/file/pda_program/scan))
-			if(program == src.scan_program)
-				src.scan_program = null
-			else
-				src.scan_program = program
-			return 1
-
-		src.active_program = program
-		program.init()
-
-		if(program.setup_use_process && !(src in processing_items))
-			processing_items.Add(src)
-
-		return 1
-
-	proc/unload_active_program()
-		if(src.active_program == src.host_program)
-			return 1
-
-		if(src.active_program.setup_use_process && !src.host_program.setup_use_process)
-			processing_items.Remove(src)
-
-		if(src.host_program && src.host_program.holder && (src.host_program.holder in src.contents))
-			src.run_program(src.host_program)
-		else
-			src.active_program = null
-
-		src.updateSelfDialog()
-		return 1
-
-	proc/delete_file(datum/computer/file/theFile)
-		//boutput(world, "Deleting [file]...")
-		if((!theFile) || (!theFile.holder) || (theFile.holder.read_only))
-			//boutput(world, "Cannot delete :(")
-			return 0
-
-		//Don't delete the running program you jerk
-		if(src.active_program == theFile || src.host_program == theFile)
-			src.active_program = null
-
-		//boutput(world, "Now calling del on [file]...")
-		//qdel(file)
-		theFile.dispose()
-		return 1
-
-	proc/explode()
-		if (src.bombproof)
-			if (ismob(src.loc))
-				boutput(src.loc, "<span style=\"color:red\"><b>ALERT:</b> An attempt to run malicious explosive code on your PDA has been blocked.</span>")
-			return
-
-		if(src in bible_contents)
-			for(var/obj/item/storage/bible/B in world)
-				var/turf/T = get_turf(B.loc)
-				if(T)
-					T.hotspot_expose(700,125)
-					explosion(src, T, -1, -1, 2, 3)
-			bible_contents.Remove(src)
-			//dispose()
-			//src.dispose()
-			qdel(src)
-			return
-
-		var/turf/T = get_turf(src.loc)
-
-		if (ismob(src.loc))
-			var/mob/M = src.loc
-			M.show_message("<span style=\"color:red\">Your [src] explodes!</span>", 1)
-
-		if(T)
-			T.hotspot_expose(700,125)
-
-			explosion(src, T, -1, -1, 2, 3)
-
+	if(src in bible_contents)
+		for(var/obj/item/storage/bible/B in world)
+			var/turf/T = get_turf(B.loc)
+			if(T)
+				T.hotspot_expose(700,125)
+				explosion(src, T, -1, -1, 2, 3)
+		bible_contents.Remove(src)
 		//dispose()
 		//src.dispose()
 		qdel(src)
 		return
+
+	var/turf/T = get_turf(src.loc)
+
+	if (ismob(src.loc))
+		var/mob/M = src.loc
+		M.show_message("<span style=\"color:red\">Your [src] explodes!</span>", 1)
+
+	if(T)
+		T.hotspot_expose(700,125)
+
+		explosion(src, T, -1, -1, 2, 3)
+
+	//dispose()
+	//src.dispose()
+	qdel(src)
+	return
+
+/obj/item/device/pda2/ai/display_message(var/message)
+	. = ..(message)
+	// The AI might be deployed to shell, in which case we'll relay the message
+	if (!isAI(loc))
+		return
+	var/mob/living/silicon/ai/ai = loc
+	if (ismob(ai.deployed_shell))
+		boutput(ai.deployed_shell, message)
+
+/obj/item/device/pda2/ai/is_user_in_range(var/mob/user)
+	if (issilicon(user))
+		var/mob/living/silicon/S = user
+		if (S.mainframe && S.mainframe == loc)
+			return 1
+	return ..(user)
+
 
 
 /*

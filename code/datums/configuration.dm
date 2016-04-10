@@ -67,6 +67,8 @@
 	var/useircbot = 0
 	var/irclog_url = null
 	var/ircbot_api = null
+	var/comms_allowed = 0
+	var/comms_key = null
 
 	//External server configuration (for central bans etc)
 	var/extserver_hostname = null
@@ -278,6 +280,12 @@
 
 			if ("mysql_database")
 				config.sql_database = trim(value)
+
+			if ("comms_enabled")
+				config.comms_allowed = 1
+
+			if ("comms_key")
+				config.comms_key = trim(value)
 
 			if ("server_specific_configs")
 				config.server_specific_configs = 1

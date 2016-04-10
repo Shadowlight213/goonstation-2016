@@ -452,8 +452,7 @@ var/f_color_selector_handler/F_Color_Selector
 		s += "<big><b>[station_name()]</b></big>";
 
 	s += " ("
-	s += "<a href=\"http://ss13.co/\">"
-	s += "Goon Station 13"
+	s += "/tg/oon Station 13"
 	s += "</a>"
 	s += " r"
 	s += svn_revision
@@ -512,21 +511,22 @@ var/f_color_selector_handler/F_Color_Selector
 
 /world/Topic(T, addr, master, key)
 	diary << "TOPIC: \"[T]\", from:[addr], master:[master], key:[key]"
-
-	if (T == "ping")
+	var/list/plist = params2list(T)
+	var/key_valid = (config.comms_allowed && plist["key"] == config.comms_key)
+	if ("ping" in plist)
 		var/x = 1
 		for (var/client/C)
 			x++
 		return x
 
-	else if(T == "players")
+	else if("players" in plist)
 		var/n = 0
 		for(var/mob/M in mobs)
 			if(M.client)
 				n++
 		return n
 
-	else if (T == "admins")
+	else if ("admins" in plist)
 		var/list/s = list()
 		var/n = 0
 		for(var/mob/M in mobs)
@@ -536,7 +536,7 @@ var/f_color_selector_handler/F_Color_Selector
 		s["admins"] = n
 		return list2params(s)
 
-	else if (T == "mentors")
+	else if ("mentors" in plist)
 		var/list/s = list()
 		var/n = 0
 		for(var/mob/M in mobs)
@@ -546,7 +546,7 @@ var/f_color_selector_handler/F_Color_Selector
 		s["mentors"] = n
 		return list2params(s)
 
-	else if (T == "status")
+	else if ("status" in plist)
 		var/list/s = list()
 		s["version"] = game_version
 		s["mode"] = (ticker && ticker.hide_mode) ? "secret" : master_mode
@@ -582,8 +582,8 @@ var/f_color_selector_handler/F_Color_Selector
 		return list2params(s)
 
 	else // IRC bot communication (or callbacks)
-		return
-		var/list/plist = params2list(T)
+		if(!key_valid)
+			return
 		switch(plist["type"])
 			if("irc")
 				var/nick = plist["nick"]

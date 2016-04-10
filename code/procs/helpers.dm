@@ -927,6 +927,8 @@ var/list/hasvar_type_cache = list()
 /proc/get_edge_target_turf(var/atom/A, var/direction)
 
 	var/turf/target = locate(A.x, A.y, A.z)
+	if(!A || !target)
+		return 0
 		//since NORTHEAST == NORTH & EAST, etc, doing it this way allows for diagonal mass drivers in the future
 		//and isn't really any more complicated
 
@@ -1167,13 +1169,11 @@ var/list/hasvar_type_cache = list()
 		else
 	return
 
-/proc/get_turf(turf/location as turf)
-	while (location)
-		if (istype(location, /turf))
-			return location
-
-		location = location.loc
-	return null
+/proc/get_turf(atom/A)
+	if (!istype(A))
+		return
+	for(A, A && !isturf(A), A=A.loc);
+	return A
 
 /proc/dir2text(direction)
 	switch(direction)

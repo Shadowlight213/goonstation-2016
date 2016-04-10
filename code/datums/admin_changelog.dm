@@ -7,6 +7,10 @@
 	var/html = null
 
 	var/changes = {"
+(t)sun apr 10 16
+(u)Shadowlight213
+(*)Set observe and set play combined into aghost
+(*)Follow link added to ahelps.
 (t)fri feb 05 16
 (u)Haine
 (*)Setting people to arrest is now logged.
