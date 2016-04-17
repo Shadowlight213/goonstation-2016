@@ -1,0 +1,42 @@
+language: generic
+sudo: false
+
+env:
+    global:
+    - BYOND_MAJOR="510"
+    - BYOND_MINOR="1332"
+    matrix:
+    - DM_MAPFILE="cog1"
+    - DM_MAPFILE="destiny"
+    - DM_MAPFILE="standard"
+    - DM_MAPFILE="construction"
+
+
+cache:
+  directories:
+    - $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}
+
+
+addons:
+  apt:
+    packages:
+      - libc6-i386
+      - libgcc1:i386
+      - libstdc++6:i386
+      - python
+      - python-pip
+
+
+install:
+  - pip install --user PyYaml -q
+  - pip install --user beautifulsoup4 -q
+
+before_script:
+  - chmod +x ./install-byond.sh
+  - ./install-byond.sh
+  - shopt -s globstar
+
+script:
+  - (! grep 'step_[xy]' _maps/**/*.dmm)
+  - source $HOME/BYOND-${BYOND_MAJOR}.${BYOND_MINOR}/byond/bin/byondsetup
+  - bash dm.sh -M${DM_MAPFILE} goonstation.dme
