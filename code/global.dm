@@ -550,7 +550,7 @@ var/global
 	list/syndicatestart = list()
 	list/newplayer_start = list()
 	list/latejoin = list()
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	list/rp_latejoin = list()
 #endif
 	list/observer_start = list()

@@ -111,7 +111,7 @@
 	wages = 750
 	recieves_miranda = 1
 	cant_spawn_as_rev = 1
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	announce_on_join = 1
 #endif
 	slot_belt = /obj/item/device/pda2/heads
@@ -133,7 +133,7 @@
 	recieves_miranda = 1
 	allow_traitors = 0
 	cant_spawn_as_rev = 1
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	announce_on_join = 1
 #endif
 	slot_belt = /obj/item/gun/energy/taser_gun
@@ -181,7 +181,7 @@
 	limit = 1
 	wages = 750
 	cant_spawn_as_rev = 1
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	announce_on_join = 1
 #endif
 	slot_belt = /obj/item/device/pda2/heads
@@ -220,7 +220,7 @@
 	limit = 1
 	wages = 750
 	cant_spawn_as_rev = 1
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	announce_on_join = 1
 #endif
 	slot_belt = /obj/item/device/pda2/research_director
@@ -252,7 +252,7 @@
 	limit = 1
 	wages = 750
 	cant_spawn_as_rev = 1
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	announce_on_join = 1
 #endif
 	slot_belt = /obj/item/device/pda2/medical_director

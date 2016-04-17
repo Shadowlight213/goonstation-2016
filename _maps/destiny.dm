@@ -8,6 +8,7 @@
 	#define MAP_MODE "standard"
 	#define MAP_NAME "Destiny"
 	#define MAP_FILE "destiny.dmm"
+	#define DESTINY_MODE
 
 
 #elif !defined(MAP_OVERRIDE)

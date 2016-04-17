@@ -102,644 +102,644 @@
 	var/degradation = 0 //Slowly accumulates and makes new damage more severe.
 	var/warping = 0
 
-	proc/internal_sound(var/atom/source, soundin, vol as num, vary, extrarange as num, pitch)
-		playsound(source, soundin, vol, vary, extrarange, pitch)
-		for(var/mob/M in crew)
-			M.playsound_local(M, soundin, vol , vary, extrarange, pitch)
-		return
+/obj/machinery/cruiser/proc/internal_sound(var/atom/source, soundin, vol as num, vary, extrarange as num, pitch)
+	playsound(source, soundin, vol, vary, extrarange, pitch)
+	for(var/mob/M in crew)
+		M.playsound_local(M, soundin, vol , vary, extrarange, pitch)
+	return
 
-	bullet_act(var/obj/projectile/P)
-		if(P.shooter == src) return
+/obj/machinery/cruiser/bullet_act(var/obj/projectile/P)
+	if(P.shooter == src) return
 
-		var/datum/projectile/PD = P.proj_data
+	var/datum/projectile/PD = P.proj_data
 
-		var/damage = PD.power * PD.ks_ratio
-		damage = round(max(0, damage))
+	var/damage = PD.power * PD.ks_ratio
+	damage = round(max(0, damage))
 
-		var/ltlpoints = PD.power * (1 - PD.ks_ratio)
-		ltlpoints = round(max(0, ltlpoints))
+	var/ltlpoints = PD.power * (1 - PD.ks_ratio)
+	ltlpoints = round(max(0, ltlpoints))
 
-		if(shields)
-			internal_sound(src.loc, 'sound/machines/shieldimpact.ogg', 65, 1, 1)
-			damageShields(damage, PD.damage_type)
-		else
-			internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 65, 1, 1)
-			damageArmor(damage, PD.damage_type)
-			shakeCruiser(3, 1, 0.2)
+	if(shields)
+		internal_sound(src.loc, 'sound/machines/shieldimpact.ogg', 65, 1, 1)
+		damageShields(damage, PD.damage_type)
+	else
+		internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 65, 1, 1)
+		damageArmor(damage, PD.damage_type)
+		shakeCruiser(3, 1, 0.2)
 
-		return
+	return
 
-	meteorhit(var/obj/O as obj)
-		if(shields)
-			internal_sound(src.loc, 'sound/machines/shieldimpact.ogg', 65, 1, 1)
-			damageShields(80, D_KINETIC)
-			shakeCruiser(3, 1, 0.2)
-		else
-			internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 65, 1, 1)
-			damageArmor(30, D_KINETIC)
-			shakeCruiser(6, 2, 0.2)
+/obj/machinery/cruiser/meteorhit(var/obj/O as obj)
+	if(shields)
+		internal_sound(src.loc, 'sound/machines/shieldimpact.ogg', 65, 1, 1)
+		damageShields(80, D_KINETIC)
+		shakeCruiser(3, 1, 0.2)
+	else
+		internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 65, 1, 1)
+		damageArmor(30, D_KINETIC)
+		shakeCruiser(6, 2, 0.2)
 
-	ex_act(var/severity)
-		var/dmg_mult = 1
-		switch(severity)
-			if(1)
-				dmg_mult = 2.5
-			if(2)
-				dmg_mult = 1.5
-			if(3)
-				dmg_mult = 1
-			if(4 to INFINITY)
-				dmg_mult = 0.75
+/obj/machinery/cruiser/ex_act(var/severity)
+	var/dmg_mult = 1
+	switch(severity)
+		if(1)
+			dmg_mult = 2.5
+		if(2)
+			dmg_mult = 1.5
+		if(3)
+			dmg_mult = 1
+		if(4 to INFINITY)
+			dmg_mult = 0.75
 
-		var/damage = round(40 * dmg_mult)
+	var/damage = round(40 * dmg_mult)
 
-		if(shields)
-			internal_sound(src.loc, 'sound/machines/shieldimpact.ogg', 65, 1, 1)
-			damageShields(damage, D_KINETIC)
-			shakeCruiser(3, 1, 0.2)
-		else
-			internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 65, 1, 1)
-			damageArmor(damage, D_KINETIC)
-			shakeCruiser(6, 2, 0.2)
+	if(shields)
+		internal_sound(src.loc, 'sound/machines/shieldimpact.ogg', 65, 1, 1)
+		damageShields(damage, D_KINETIC)
+		shakeCruiser(3, 1, 0.2)
+	else
+		internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 65, 1, 1)
+		damageArmor(damage, D_KINETIC)
+		shakeCruiser(6, 2, 0.2)
 
-		if(shields <= 0 && prob(75))
-			var/atom/source = pick(src.interior_area.contents)
-			explosion_new(source, source, max(min(1,4-severity), 5))
-		return
+	if(shields <= 0 && prob(75))
+		var/atom/source = pick(src.interior_area.contents)
+		explosion_new(source, source, max(min(1,4-severity), 5))
+	return
 
-	New()
-		if(interior_type)
-			interior_area = locate(interior_type)
-			interior_area.ship = src
-		if(!interior_area)
-			del(src)
+/obj/machinery/cruiser/New()
+	if(interior_type)
+		interior_area = locate(interior_type)
+		interior_area.ship = src
+	if(!interior_area)
+		del(src)
 
-		SubscribeToProcess()
+	SubscribeToProcess()
 
-		shield_obj = new(src.loc)
+	shield_obj = new(src.loc)
 
-		frames = image('icons/obj/160x160.dmi',src,"frames",src.layer+1)
-		overframes = image('icons/obj/160x160.dmi',src,"overframes",src.layer+2)
-		bar_top = image('icons/obj/160x160.dmi',src,"bartop",src.layer+1)
-		bar_middle = image('icons/obj/160x160.dmi',src,"barmiddle",src.layer+1)
-		bar_bottom = image('icons/obj/160x160.dmi',src,"barbottom",src.layer+1)
+	frames = image('icons/obj/160x160.dmi',src,"frames",src.layer+1)
+	overframes = image('icons/obj/160x160.dmi',src,"overframes",src.layer+2)
+	bar_top = image('icons/obj/160x160.dmi',src,"bartop",src.layer+1)
+	bar_middle = image('icons/obj/160x160.dmi',src,"barmiddle",src.layer+1)
+	bar_bottom = image('icons/obj/160x160.dmi',src,"barbottom",src.layer+1)
 
-		bar_top.color = "#8A1919"
-		bar_middle.color = "#19688A"
-		bar_bottom.color = "#CF9417"
+	bar_top.color = "#8A1919"
+	bar_middle.color = "#19688A"
+	bar_bottom.color = "#CF9417"
 
-		camera = new(locate(src.x + 2, src.y + 2, src.z))
-		camera.name = src.name
+	camera = new(locate(src.x + 2, src.y + 2, src.z))
+	camera.name = src.name
 
-		turret_left = new/obj/item/shipcomponent/mainweapon/light_longrange(src)
-		turret_right = new/obj/item/shipcomponent/mainweapon/light_longrange(src)
-		engine = new/obj/item/shipcomponent/engine(src)
-		life_support = new/obj/item/shipcomponent/life_support(src)
+	turret_left = new/obj/item/shipcomponent/mainweapon/light_longrange(src)
+	turret_right = new/obj/item/shipcomponent/mainweapon/light_longrange(src)
+	engine = new/obj/item/shipcomponent/engine(src)
+	life_support = new/obj/item/shipcomponent/life_support(src)
 
-	Del()
-		del(camera)
-		if(interior_area)
-			interior_area = null
-		return
+/obj/machinery/cruiser/Del()
+	del(camera)
+	if(interior_area)
+		interior_area = null
+	return
 
-	attack_hand(mob/user as mob)
-		return MouseDrop_T(user, user)
+/obj/machinery/cruiser/attack_hand(mob/user as mob)
+	return MouseDrop_T(user, user)
 
-	MouseDrop_T(atom/movable/O as obj, mob/user as mob)
-		enterShip(O, user)
-		return
+/obj/machinery/cruiser/MouseDrop_T(atom/movable/O as obj, mob/user as mob)
+	enterShip(O, user)
+	return
 
-	Move(NewLoc,Dir=0,step_x=0,step_y=0)
-		var/preserve_dir = src.dir
-		. = ..(NewLoc,Dir,step_x,step_y)
-		dir = preserve_dir
-		camera.set_loc(locate(src.x + 2, src.y + 2, src.z))
-		shield_obj.set_loc(src.loc)
-		return
+/obj/machinery/cruiser/Move(NewLoc,Dir=0,step_x=0,step_y=0)
+	var/preserve_dir = src.dir
+	. = ..(NewLoc,Dir,step_x,step_y)
+	dir = preserve_dir
+	camera.set_loc(locate(src.x + 2, src.y + 2, src.z))
+	shield_obj.set_loc(src.loc)
+	return
 
-	process()
-		..()
-		if(warping) return
-		checkHealth()
-		handlePowerCosts()
-		updateIndicators()
-		handleLifeSupport()
-		return
+/obj/machinery/cruiser/process()
+	..()
+	if(warping) return
+	checkHealth()
+	handlePowerCosts()
+	updateIndicators()
+	handleLifeSupport()
+	return
 
-	proc/handleLifeSupport()
-		if(src.hasPower() && life_support)
-			atmos_fail_count = min(atmos_fail_count+1, 5)
+/obj/machinery/cruiser/proc/handleLifeSupport()
+	if(src.hasPower() && life_support)
+		atmos_fail_count = min(atmos_fail_count+1, 5)
+		for(var/turf/simulated/T in interior_area)
+			if(T.density) continue
+			if(T.air)
+				T.air.temperature = life_support.tempreg
+				T.oxygen = MOLES_O2STANDARD * 4
+				T.nitrogen = MOLES_N2STANDARD * 4
+	else
+		if((atmos_fail_count - 1) == 2)
+			internal_sound(src.loc, 'sound/machines/alarm_a.ogg', 80, 1, -1)
+		if((atmos_fail_count - 1) == 0)
+			internal_sound(src.loc, 'sound/machines/decompress.ogg', 100, 1, -1)
+
+		atmos_fail_count = max(atmos_fail_count-1, 0)
+		if(!atmos_fail_count)
 			for(var/turf/simulated/T in interior_area)
 				if(T.density) continue
-				if(T.air)
-					T.air.temperature = life_support.tempreg
-					T.oxygen = MOLES_O2STANDARD * 4
-					T.nitrogen = MOLES_N2STANDARD * 4
+				if(T.air) T.air.temperature = T0C - 100
+				T.remove_air(100)
+
+
+/obj/machinery/cruiser/proc/switchFireMode()
+	switch(firemode)
+		if(CRUISER_FIREMODE_BOTH)
+			firemode = CRUISER_FIREMODE_ALT
+			boutput(usr, "<span style=\"color:red\">Fire mode now: Alternate</span>")
+		if(CRUISER_FIREMODE_ALT)
+			firemode = CRUISER_FIREMODE_LEFT
+			boutput(usr, "<span style=\"color:red\">Fire mode now: Left only</span>")
+		if(CRUISER_FIREMODE_LEFT)
+			firemode = CRUISER_FIREMODE_RIGHT
+			boutput(usr, "<span style=\"color:red\">Fire mode now: Right only</span>")
+		if(CRUISER_FIREMODE_RIGHT)
+			firemode = CRUISER_FIREMODE_BOTH
+			boutput(usr, "<span style=\"color:red\">Fire mode now: Simultaneous</span>")
+	return
+
+/obj/machinery/cruiser/Bump(atom/O)
+	..(O)
+	if(ramming)
+		ramming--
+		O.meteorhit(src)
+		if(istype(O, /atom/movable))
+			if(!O:anchored)
+				step(O,dir)
+		internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 80, 1, -1)
+
+		if(shields)
+			damageShields(50, D_SPECIAL)
 		else
-			if((atmos_fail_count - 1) == 2)
-				internal_sound(src.loc, 'sound/machines/alarm_a.ogg', 80, 1, -1)
-			if((atmos_fail_count - 1) == 0)
-				internal_sound(src.loc, 'sound/machines/decompress.ogg', 100, 1, -1)
+			damageArmor(11, D_SPECIAL)
+			shakeCruiser(3, 2, 0.3)
 
-			atmos_fail_count = max(atmos_fail_count-1, 0)
-			if(!atmos_fail_count)
-				for(var/turf/simulated/T in interior_area)
-					if(T.density) continue
-					if(T.air) T.air.temperature = T0C - 100
-					T.remove_air(100)
-
-
-	proc/switchFireMode()
-		switch(firemode)
-			if(CRUISER_FIREMODE_BOTH)
-				firemode = CRUISER_FIREMODE_ALT
-				boutput(usr, "<span style=\"color:red\">Fire mode now: Alternate</span>")
-			if(CRUISER_FIREMODE_ALT)
-				firemode = CRUISER_FIREMODE_LEFT
-				boutput(usr, "<span style=\"color:red\">Fire mode now: Left only</span>")
-			if(CRUISER_FIREMODE_LEFT)
-				firemode = CRUISER_FIREMODE_RIGHT
-				boutput(usr, "<span style=\"color:red\">Fire mode now: Right only</span>")
-			if(CRUISER_FIREMODE_RIGHT)
-				firemode = CRUISER_FIREMODE_BOTH
-				boutput(usr, "<span style=\"color:red\">Fire mode now: Simultaneous</span>")
-		return
-
-	Bump(atom/O)
-		..(O)
-		if(ramming)
-			ramming--
-			O.meteorhit(src)
-			if(istype(O, /atom/movable))
-				if(!O:anchored)
-					step(O,dir)
-			internal_sound(src.loc, 'sound/machines/armorimpact.ogg', 80, 1, -1)
-
-			if(shields)
-				damageShields(50, D_SPECIAL)
-			else
-				damageArmor(11, D_SPECIAL)
-				shakeCruiser(3, 2, 0.3)
-
-			if(!ramming)
-				walk(src, 0)
-				src.flying = 0
-
-	proc/enableRamming()
-		src.addPowerUse("rammingMode", 90, -1)
-		internal_sound(src.loc, 'sound/machines/boost.ogg', 100, 1, -1)
-		src.speed_mod -= 2
-		src.ramming += 8
-		spawn(100)
-			src.speed_mod += 2
-			src.removePowerUse("rammingMode")
-			src.ramming = max(src.ramming - 8, 0)
+		if(!ramming)
 			walk(src, 0)
 			src.flying = 0
-		return
 
-	proc/overload_weapons()
-		src.addPowerUse("weaponOverload", 90, -1)
-		internal_sound(src.loc, 'sound/machines/weaponoverload.ogg', 80, 1, -1)
-		src.weapon_cooldown_mod -= 3
-		spawn(100)
-			src.weapon_cooldown_mod += 3
-			src.removePowerUse("weaponOverload")
-		return
+/obj/machinery/cruiser/proc/enableRamming()
+	src.addPowerUse("rammingMode", 90, -1)
+	internal_sound(src.loc, 'sound/machines/boost.ogg', 100, 1, -1)
+	src.speed_mod -= 2
+	src.ramming += 8
+	spawn(100)
+		src.speed_mod += 2
+		src.removePowerUse("rammingMode")
+		src.ramming = max(src.ramming - 8, 0)
+		walk(src, 0)
+		src.flying = 0
+	return
 
-	proc/overload_shields()
-		src.addPowerUse("shieldOverload", 90, -1)
-		src.shield_regen_always += 1
-		src.shield_regen_boost += 10
-		var/image/I = image('icons/obj/160x160.dmi',shield_obj,"shieldoverload",shield_obj.layer+1)
-		I.alpha = 150
-		shield_obj.overlays += I
-		internal_sound(src.loc, 'sound/machines/shieldoverload.ogg', 80, 0, -1)
-		spawn(150)
-			src.removePowerUse("shieldOverload")
-			src.shield_regen_always -= 1
-			src.shield_regen_boost -= 5
-			shield_obj.overlays.Cut()
-		return
+/obj/machinery/cruiser/proc/overload_weapons()
+	src.addPowerUse("weaponOverload", 90, -1)
+	internal_sound(src.loc, 'sound/machines/weaponoverload.ogg', 80, 1, -1)
+	src.weapon_cooldown_mod -= 3
+	spawn(100)
+		src.weapon_cooldown_mod += 3
+		src.removePowerUse("weaponOverload")
+	return
 
-	proc/toggleShieldModulation()
-		shield_modulation = !shield_modulation
-		internal_sound(src.loc, 'sound/machines/ArtifactAnc1.ogg', 65, 1, -1)
+/obj/machinery/cruiser/proc/overload_shields()
+	src.addPowerUse("shieldOverload", 90, -1)
+	src.shield_regen_always += 1
+	src.shield_regen_boost += 10
+	var/image/I = image('icons/obj/160x160.dmi',shield_obj,"shieldoverload",shield_obj.layer+1)
+	I.alpha = 150
+	shield_obj.overlays += I
+	internal_sound(src.loc, 'sound/machines/shieldoverload.ogg', 80, 0, -1)
+	spawn(150)
+		src.removePowerUse("shieldOverload")
+		src.shield_regen_always -= 1
+		src.shield_regen_boost -= 5
+		shield_obj.overlays.Cut()
+	return
 
-		if(shield_modulation)
-			src.addPowerUse("shieldModulation", 90, -1)
-			shield_obj.color = "#FF0000"
-		else
-			src.removePowerUse("shieldModulation")
-			shield_obj.color = "#FFFFFF"
-		return
+/obj/machinery/cruiser/proc/toggleShieldModulation()
+	shield_modulation = !shield_modulation
+	internal_sound(src.loc, 'sound/machines/ArtifactAnc1.ogg', 65, 1, -1)
 
-	proc/addPowerUse(var/key, var/amount, var/rounds = -1)
-		powerUse[key] = "[amount]=[rounds]"
-		return
+	if(shield_modulation)
+		src.addPowerUse("shieldModulation", 90, -1)
+		shield_obj.color = "#FF0000"
+	else
+		src.removePowerUse("shieldModulation")
+		shield_obj.color = "#FFFFFF"
+	return
 
-	proc/removePowerUse(var/key)
-		if(powerUse[key]) powerUse.Remove(key)
-		return
+/obj/machinery/cruiser/proc/addPowerUse(var/key, var/amount, var/rounds = -1)
+	powerUse[key] = "[amount]=[rounds]"
+	return
 
-	proc/updatePower()
-		if(engine)
-			var/adjustment = 0
-			adjustment += (1 - (power_movement / 100)) * engine.powergenerated
-			adjustment += (1 - (power_offense / 100)) * engine.powergenerated
-			adjustment += (1 - (power_defense / 100)) * engine.powergenerated
+/obj/machinery/cruiser/proc/removePowerUse(var/key)
+	if(powerUse[key]) powerUse.Remove(key)
+	return
 
-			power_produced_last = engine.powergenerated + adjustment
-			power_used_last = power_used
-			engine.power_used = power_used
-			power_used = 0
-		else
-			power_produced_last = 0
-		updateIndicators()
-		return
+/obj/machinery/cruiser/proc/updatePower()
+	if(engine)
+		var/adjustment = 0
+		adjustment += (1 - (power_movement / 100)) * engine.powergenerated
+		adjustment += (1 - (power_offense / 100)) * engine.powergenerated
+		adjustment += (1 - (power_defense / 100)) * engine.powergenerated
 
-	proc/handlePowerCosts()
-		for(var/U in powerUse) //v FUCK BYOND. FUCK. DOUBLEFUCK. TRIPLEFUCK.
-			var/params = powerUse[U]
-			var/list/L = params2list(params)
-			var/usage = text2num(L[1])
-			var/rounds = text2num(L[L[1]])
-			power_used += usage
-			if(rounds > 0)
-				if((--rounds) <= 0) removePowerUse(U)
-				else powerUse[U] = "[usage]=[rounds]"
+		power_produced_last = engine.powergenerated + adjustment
+		power_used_last = power_used
+		engine.power_used = power_used
+		power_used = 0
+	else
+		power_produced_last = 0
+	updateIndicators()
+	return
 
-		if(src.engine)
-			if(src.flying) addPowerUse("thrusters", 10, 1)
+/obj/machinery/cruiser/proc/handlePowerCosts()
+	for(var/U in powerUse) //v FUCK BYOND. FUCK. DOUBLEFUCK. TRIPLEFUCK.
+		var/params = powerUse[U]
+		var/list/L = params2list(params)
+		var/usage = text2num(L[1])
+		var/rounds = text2num(L[L[1]])
+		power_used += usage
+		if(rounds > 0)
+			if((--rounds) <= 0) removePowerUse(U)
+			else powerUse[U] = "[usage]=[rounds]"
 
-		if(turret_left)
-			addPowerUse("turretLeft", round(turret_left.power_used / 2), 1)
+	if(src.engine)
+		if(src.flying) addPowerUse("thrusters", 10, 1)
 
-		if(turret_right)
-			addPowerUse("turretRight", round(turret_right.power_used / 2), 1)
+	if(turret_left)
+		addPowerUse("turretLeft", round(turret_left.power_used / 2), 1)
 
-		if(life_support)
-			addPowerUse("lifeSupport", life_support.power_used, 1)
+	if(turret_right)
+		addPowerUse("turretRight", round(turret_right.power_used / 2), 1)
 
-		if(src.hasPower() && src.shields < src.shields_max && ((world.time - src.shields_timer) >= src.shields_delay || src.shield_regen_always))
-			addPowerUse("shieldRecharge", src.shields_recharge_cost, 1)
-			src.adjustShields(src.shields_regen + shield_regen_boost)
+	if(life_support)
+		addPowerUse("lifeSupport", life_support.power_used, 1)
 
-		power_used = max(power_used, 0)
+	if(src.hasPower() && src.shields < src.shields_max && ((world.time - src.shields_timer) >= src.shields_delay || src.shield_regen_always))
+		addPowerUse("shieldRecharge", src.shields_recharge_cost, 1)
+		src.adjustShields(src.shields_regen + shield_regen_boost)
 
-		src.updatePower()
-		var/power_area = 1
+	power_used = max(power_used, 0)
 
-		if(!src.hasPower())
-			src.adjustShields(-src.shields_max)
-			walk(src, 0)
-			src.flying = 0
-			power_area = 0
+	src.updatePower()
+	var/power_area = 1
 
-		interior_area.power_equip = power_area
-		interior_area.power_light = power_area
-		interior_area.power_environ = power_area
-		interior_area.power_change()
-		return
+	if(!src.hasPower())
+		src.adjustShields(-src.shields_max)
+		walk(src, 0)
+		src.flying = 0
+		power_area = 0
 
-	proc/hasPower()
-		if(power_used_last > power_produced_last || health <= 0) return 0
-		else return 1
-		return
+	interior_area.power_equip = power_area
+	interior_area.power_light = power_area
+	interior_area.power_environ = power_area
+	interior_area.power_change()
+	return
 
-	proc/damageArmor(var/amount, var/type = D_SPECIAL, var/use_resistance = 1)
-		if(health <= 0) return //BEEP BOOP
+/obj/machinery/cruiser/proc/hasPower()
+	if(power_used_last > power_produced_last || health <= 0) return 0
+	else return 1
+	return
 
-		if(use_resistance)
-			if(type & D_KINETIC || type & D_PIERCING || type & D_SLASHING)
+/obj/machinery/cruiser/proc/damageArmor(var/amount, var/type = D_SPECIAL, var/use_resistance = 1)
+	if(health <= 0) return //BEEP BOOP
+
+	if(use_resistance)
+		if(type & D_KINETIC || type & D_PIERCING || type & D_SLASHING)
+			amount += (amount * 0.5)
+		else if(type & D_TOXIC)
+			amount = amount //TODO: Add special
+		else if(type & D_SPECIAL)
+			amount = amount //TODO: Add special
+
+	shields_timer = world.time
+	amount = round(max(1, amount))
+	adjustArmor(-amount, type)
+	return
+
+/obj/machinery/cruiser/proc/damageShields(var/amount, var/type = D_SPECIAL, var/use_resistance = 1)
+	if(use_resistance)
+		if(type & D_ENERGY || type & D_BURNING || type & D_RADIOACTIVE)
+			if(!shield_modulation)
 				amount += (amount * 0.5)
-			else if(type & D_TOXIC)
-				amount = amount //TODO: Add special
-			else if(type & D_SPECIAL)
-				amount = amount //TODO: Add special
+		else if(type & D_KINETIC || type & D_PIERCING || type & D_SLASHING)
+			amount -= (amount * 0.25)
+		else if(type & D_TOXIC)
+			amount = amount //TODO: Add special
+		else if(type & D_SPECIAL)
+			amount = amount //TODO: Add special
 
-		shields_timer = world.time
-		amount = round(max(1, amount))
-		adjustArmor(-amount, type)
-		return
+	var/adjustment = (1 - (power_defense / 100)) * amount
+	amount += adjustment
 
-	proc/damageShields(var/amount, var/type = D_SPECIAL, var/use_resistance = 1)
-		if(use_resistance)
-			if(type & D_ENERGY || type & D_BURNING || type & D_RADIOACTIVE)
-				if(!shield_modulation)
-					amount += (amount * 0.5)
-			else if(type & D_KINETIC || type & D_PIERCING || type & D_SLASHING)
-				amount -= (amount * 0.25)
-			else if(type & D_TOXIC)
-				amount = amount //TODO: Add special
-			else if(type & D_SPECIAL)
-				amount = amount //TODO: Add special
-
-		var/adjustment = (1 - (power_defense / 100)) * amount
-		amount += adjustment
-
-		shields_timer = world.time
-		amount = round(max(1, amount))
-		adjustShields(-amount, type)
-		return
+	shields_timer = world.time
+	amount = round(max(1, amount))
+	adjustShields(-amount, type)
+	return
 
 
-	proc/adjustShields(var/amount, var/type = D_SPECIAL)
-		shields_last = shields
-		shields += amount
-		shields = max(min(shields, shields_max), 0)
+/obj/machinery/cruiser/proc/adjustShields(var/amount, var/type = D_SPECIAL)
+	shields_last = shields
+	shields += amount
+	shields = max(min(shields, shields_max), 0)
 
-		var/percent_shields = max(min((shields / shields_max), 1), 0)
-		if(shields_last > 0 && shields <= 0) //Collapse
-			if(shield_obj.icon_state != "shield_collapse")
-				internal_sound(src.loc, 'sound/machines/shielddown.ogg', 100, 1, -1)
-				shield_obj.alpha = 170
-				shield_obj.icon_state = "shield_collapse"
-				animate(shield_obj, loop = 1, time = 10, alpha = 1)
-		else if(shields_last <= 0 && shields > 0) //Reboot
-			if(shield_obj.icon_state != "shield_reboot")
-				internal_sound(src.loc, 'sound/machines/shieldup.ogg', 100, 1, -1)
-				shield_obj.alpha = 170
-				shield_obj.icon_state = "shield_reboot"
-				animate(shield_obj, loop = 1, time = 10, alpha = round(170 * percent_shields))
-		else if(shields > 0)
-			shield_obj.alpha = max(round(170 * percent_shields), 25)
+	var/percent_shields = max(min((shields / shields_max), 1), 0)
+	if(shields_last > 0 && shields <= 0) //Collapse
+		if(shield_obj.icon_state != "shield_collapse")
+			internal_sound(src.loc, 'sound/machines/shielddown.ogg', 100, 1, -1)
+			shield_obj.alpha = 170
+			shield_obj.icon_state = "shield_collapse"
+			animate(shield_obj, loop = 1, time = 10, alpha = 1)
+	else if(shields_last <= 0 && shields > 0) //Reboot
+		if(shield_obj.icon_state != "shield_reboot")
+			internal_sound(src.loc, 'sound/machines/shieldup.ogg', 100, 1, -1)
+			shield_obj.alpha = 170
+			shield_obj.icon_state = "shield_reboot"
+			animate(shield_obj, loop = 1, time = 10, alpha = round(170 * percent_shields))
+	else if(shields > 0)
+		shield_obj.alpha = max(round(170 * percent_shields), 25)
 
-		updateIndicators()
-		return
+	updateIndicators()
+	return
 
-	proc/warp()
-		warping = 1
-		internal_sound(src.loc, 'sound/machines/cruiser_warp.ogg', 80, 0, 1)
-		var/icon/warpOverlay = icon('icons/obj/160x160.dmi',"warp")
-		overlays.Add(warpOverlay)
-		animate(src, alpha = 0, time = 10)
-		shield_obj.invisibility = 101
-		//warp
-		sleep(20)
-		animate(src, alpha = 255, time = 10)
-		sleep(15)
-		overlays.Cut()
-		shield_obj.invisibility = 0
-		warping = 0
-		return
+/obj/machinery/cruiser/proc/warp()
+	warping = 1
+	internal_sound(src.loc, 'sound/machines/cruiser_warp.ogg', 80, 0, 1)
+	var/icon/warpOverlay = icon('icons/obj/160x160.dmi',"warp")
+	overlays.Add(warpOverlay)
+	animate(src, alpha = 0, time = 10)
+	shield_obj.invisibility = 101
+	//warp
+	sleep(20)
+	animate(src, alpha = 255, time = 10)
+	sleep(15)
+	overlays.Cut()
+	shield_obj.invisibility = 0
+	warping = 0
+	return
 
-	proc/adjustArmor(var/amount, var/type = D_SPECIAL)
-		if(amount < 0)
-			distributeHealthDamage(amount)
-		else
-			distributeHealthRepair(amount)
+/obj/machinery/cruiser/proc/adjustArmor(var/amount, var/type = D_SPECIAL)
+	if(amount < 0)
+		distributeHealthDamage(amount)
+	else
+		distributeHealthRepair(amount)
 
-		checkHealth()
-		updateIndicators()
-		if(amount < 0 && health <= (health_max - (health_max / 3)) && prob(10+degradation))
-			var/amount_add = nround((degradation / 2)/10)
-			startFire(1+amount_add)
-		return
+	checkHealth()
+	updateIndicators()
+	if(amount < 0 && health <= (health_max - (health_max / 3)) && prob(10+degradation))
+		var/amount_add = nround((degradation / 2)/10)
+		startFire(1+amount_add)
+	return
 
-	proc/distributeHealthRepair(var/amount)
-		var/list/components = list()
-		for(var/obj/machinery/cruiser_destroyable/D in interior_area)
-			if(D.ignore || D.health == D.health_max) continue
-			components.Add(D)
+/obj/machinery/cruiser/proc/distributeHealthRepair(var/amount)
+	var/list/components = list()
+	for(var/obj/machinery/cruiser_destroyable/D in interior_area)
+		if(D.ignore || D.health == D.health_max) continue
+		components.Add(D)
 
-		//Shuffle list???
+	//Shuffle list???
 
-		if(components.len)
-			for(var/obj/machinery/cruiser_destroyable/D in components)
-				if(!amount) break
-				var/missing = D.health_max - D.health
-				if(amount >= missing)
-					D.adjustHealth(missing)
-					amount -= missing
-				else if (missing < amount)
-					D.adjustHealth(amount)
-					amount = 0
-					break
-		return
-
-	proc/distributeHealthDamage(var/amount)
-		var/list/components = list()
-		for(var/obj/machinery/cruiser_destroyable/D in interior_area)
-			if(D.ignore || D.health == 0) continue
-			components.Add(D)
-
-		var/num_split = rand(1,4)
-
-		var/list/selected = list()
-		for(var/i=0, i<num_split, i++)
-			if(!components.len) continue
-			var/curr = pick(components)
-			selected.Add(curr)
-			components.Remove(curr)
-
-		if(selected.len)
-			while(amount < 0)
-				var/chunk = max(rand(-10, -5), amount)
-				amount += abs(chunk)
-
-				var/obj/machinery/cruiser_destroyable/D = pick(selected)
-				D.adjustHealth(chunk)
-		return
-
-	proc/getMaxHealth()
-		var/count = 0
-		for(var/obj/machinery/cruiser_destroyable/D in interior_area)
-			if(D.ignore) continue
-			count += D.health_max
-
-		health_max = count
-		return count
-
-	proc/getCurrHealth()
-		var/count = 0
-		for(var/obj/machinery/cruiser_destroyable/D in interior_area)
-			if(D.ignore) continue
-			count += D.health
-
-		health_last = health
-		health = count
-		return count
-
-	proc/checkHealth()
-		getMaxHealth()
-		getCurrHealth()
-		if(health_last <= 0 && health)
-			particleMaster.RemoveSystem(/datum/particleSystem/cruiserSmoke, src)
-		if(health_last > 0 && health <= 0)
-			destroy()
-		return
-
-	proc/startFire(var/amount = 1)
-		if(interior_area)
-			var/list/hotspot_turfs = list()
-			for(var/turf/T in interior_area)
-				if(T.density) continue
-				hotspot_turfs.Add(T)
-
-			for(var/i=0, i<amount, i++)
-				var/turf/A = pick(hotspot_turfs)
-				fireflash(A, 1)
-		return
-
-	proc/destroy()
-		particleMaster.SpawnSystem(new /datum/particleSystem/cruiserSmoke(src))
-		return
-
-	proc/updateIndicators()
-		var/percent_health = max(min((health / health_max), 1), 0)
-		bar_top.transform = matrix(percent_health, 1, MATRIX_SCALE)
-		bar_top.pixel_x = -nround( ((81 - (81 * percent_health)) / 2) )
-
-		var/percent_shields = max(min((shields / shields_max), 1), 0)
-		bar_middle.transform = matrix(percent_shields, 1, MATRIX_SCALE)
-		bar_middle.pixel_x = -nround( ((81 - (81 * percent_shields)) / 2) )
-
-		var/percent_power = max(min((power_used_last / max(1,power_produced_last)), 1), 0)
-		bar_bottom.transform = matrix(percent_power, 1, MATRIX_SCALE)
-		bar_bottom.pixel_x = -nround( ((81 - (81 * percent_power)) / 2) )
-
-		if(interior_area)
-			for(var/obj/machinery/cruiser_status_panel/S in interior_area)
-				S.setValues(percent_health, percent_shields, percent_power)
-		return
-
-	proc/recieveMovement(var/direction)
-		if(!hasPower() || !(direction == NORTH || direction == EAST || direction == SOUTH || direction == WEST))
-			return
-
-		var/base_speed = 5
-
-		if(engine)
-			base_speed = (1.5 * engine.speedmod)
-
-		var/adjustment = (1 - (power_movement / 100)) * base_speed
-		base_speed += adjustment
-
-		base_speed = max(base_speed + speed_mod, 0.1)
-
-		src.facing = direction
-		if (src.dir == direction)
-			if(flying == turn(src.dir,180))
-				walk(src, 0)
-				flying = 0
-			else
-				walk(src, src.dir, base_speed + stall)
-				flying = src.dir
-		else
-			src.dir = direction
-		return
-
-	proc/getProjectileOrigins()
-		/* //Outer edge version.
-		switch(src.dir)
-			if(NORTH)
-				return list("left"=locate(src.x, src.y + 5, src.z), "right"=locate(src.x + 4, src.y + 5, src.z))
-			if(EAST)
-				return list("left"=locate(src.x + 5, src.y + 4, src.z), "right"=locate(src.x + 5, src.y, src.z))
-			if(SOUTH)
-				return list("left"=locate(src.x + 4, src.y - 1, src.z), "right"=locate(src.x, src.y - 1, src.z))
-			if(WEST)
-				return list("left"=locate(src.x - 1, src.y, src.z), "right"=locate(src.x - 1, src.y + 4, src.z))
-		*/
-		switch(src.dir) //Inner 2 version
-			if(NORTH)
-				return list("left"=locate(src.x + 1, src.y + 5, src.z), "right"=locate(src.x + 3, src.y + 5, src.z))
-			if(EAST)
-				return list("left"=locate(src.x + 5, src.y + 3, src.z), "right"=locate(src.x + 5, src.y + 1, src.z))
-			if(SOUTH)
-				return list("left"=locate(src.x + 3, src.y - 1, src.z), "right"=locate(src.x + 1, src.y - 1, src.z))
-			if(WEST)
-				return list("left"=locate(src.x - 1, src.y + 1, src.z), "right"=locate(src.x - 1, src.y + 3, src.z))
-
-
-	proc/fireAt(var/atom/target)
-		if(!hasPower())
-			return
-
-		var/list/origins = getProjectileOrigins()
-		var/list/cooldown = 0
-
-		if(turret_left)
-			if(get_dir(origins["left"], target) != src.dir && get_dir(origins["left"], target) != turn(src.dir,45) && get_dir(origins["left"], target) != turn(src.dir,-45))
-				//internal_sound(src.loc, 'sound/machines/shielddown.ogg', 100, 1, -1)
-			else
-				if(!(firemode & CRUISER_FIREMODE_RIGHT))
-					if((firemode & CRUISER_FIREMODE_ALT && alt_weapon == 0) || !(firemode & CRUISER_FIREMODE_ALT))
-						var/obj/projectile/proj_left = initialize_projectile_ST(origins["left"], turret_left.current_projectile, target)
-						proj_left.launch()
-						proj_left.shooter = src
-
-						var/adjustment = (1 - (power_offense / 100)) * turret_left.firerate
-						cooldown = (turret_left.firerate + adjustment)
-
-						if(turret_left.current_projectile.shot_sound)
-							internal_sound(src.loc, turret_left.current_projectile.shot_sound, 80, 1, 1)
-
-		if(turret_right)
-			if(get_dir(origins["right"], target) != src.dir && get_dir(origins["right"], target) != turn(src.dir,45) && get_dir(origins["right"], target) != turn(src.dir,-45))
-				//internal_sound(src.loc, 'sound/machines/shielddown.ogg', 100, 1, -1)
-			else
-				if(!(firemode & CRUISER_FIREMODE_LEFT))
-					if((firemode & CRUISER_FIREMODE_ALT && alt_weapon == 1) || !(firemode & CRUISER_FIREMODE_ALT))
-						var/obj/projectile/proj_right = initialize_projectile_ST(origins["right"], turret_right.current_projectile, target)
-						proj_right.launch()
-						proj_right.shooter = src
-
-						var/adjustment = (1 - (power_offense / 100)) * turret_right.firerate
-						cooldown = max(turret_right.firerate + adjustment, cooldown)
-
-						if(turret_right.current_projectile.shot_sound)
-							internal_sound(src.loc, turret_right.current_projectile.shot_sound, 80, 1, 1)
-
-		alt_weapon = !alt_weapon
-
-		return max(cooldown + weapon_cooldown_mod, 0)
-
-	proc/leaveShip(mob/user as mob)
-		var/turf/T = getExitLoc()
-		var/blocked = T.density
-
-		for(var/atom/A in T)
-			if(A.density)
-				blocked = 1
+	if(components.len)
+		for(var/obj/machinery/cruiser_destroyable/D in components)
+			if(!amount) break
+			var/missing = D.health_max - D.health
+			if(amount >= missing)
+				D.adjustHealth(missing)
+				amount -= missing
+			else if (missing < amount)
+				D.adjustHealth(amount)
+				amount = 0
 				break
+	return
 
-		if(!blocked)
-			user.set_loc(getExitLoc())
-			if(ismob(user)) crew.Remove(user)
+/obj/machinery/cruiser/proc/distributeHealthDamage(var/amount)
+	var/list/components = list()
+	for(var/obj/machinery/cruiser_destroyable/D in interior_area)
+		if(D.ignore || D.health == 0) continue
+		components.Add(D)
+
+	var/num_split = rand(1,4)
+
+	var/list/selected = list()
+	for(var/i=0, i<num_split, i++)
+		if(!components.len) continue
+		var/curr = pick(components)
+		selected.Add(curr)
+		components.Remove(curr)
+
+	if(selected.len)
+		while(amount < 0)
+			var/chunk = max(rand(-10, -5), amount)
+			amount += abs(chunk)
+
+			var/obj/machinery/cruiser_destroyable/D = pick(selected)
+			D.adjustHealth(chunk)
+	return
+
+/obj/machinery/cruiser/proc/getMaxHealth()
+	var/count = 0
+	for(var/obj/machinery/cruiser_destroyable/D in interior_area)
+		if(D.ignore) continue
+		count += D.health_max
+
+	health_max = count
+	return count
+
+/obj/machinery/cruiser/proc/getCurrHealth()
+	var/count = 0
+	for(var/obj/machinery/cruiser_destroyable/D in interior_area)
+		if(D.ignore) continue
+		count += D.health
+
+	health_last = health
+	health = count
+	return count
+
+/obj/machinery/cruiser/proc/checkHealth()
+	getMaxHealth()
+	getCurrHealth()
+	if(health_last <= 0 && health)
+		particleMaster.RemoveSystem(/datum/particleSystem/cruiserSmoke, src)
+	if(health_last > 0 && health <= 0)
+		destroy()
+	return
+
+/obj/machinery/cruiser/proc/startFire(var/amount = 1)
+	if(interior_area)
+		var/list/hotspot_turfs = list()
+		for(var/turf/T in interior_area)
+			if(T.density) continue
+			hotspot_turfs.Add(T)
+
+		for(var/i=0, i<amount, i++)
+			var/turf/A = pick(hotspot_turfs)
+			fireflash(A, 1)
+	return
+
+/obj/machinery/cruiser/proc/destroy()
+	particleMaster.SpawnSystem(new /datum/particleSystem/cruiserSmoke(src))
+	return
+
+/obj/machinery/cruiser/proc/updateIndicators()
+	var/percent_health = max(min((health / health_max), 1), 0)
+	bar_top.transform = matrix(percent_health, 1, MATRIX_SCALE)
+	bar_top.pixel_x = -nround( ((81 - (81 * percent_health)) / 2) )
+
+	var/percent_shields = max(min((shields / shields_max), 1), 0)
+	bar_middle.transform = matrix(percent_shields, 1, MATRIX_SCALE)
+	bar_middle.pixel_x = -nround( ((81 - (81 * percent_shields)) / 2) )
+
+	var/percent_power = max(min((power_used_last / max(1,power_produced_last)), 1), 0)
+	bar_bottom.transform = matrix(percent_power, 1, MATRIX_SCALE)
+	bar_bottom.pixel_x = -nround( ((81 - (81 * percent_power)) / 2) )
+
+	if(interior_area)
+		for(var/obj/machinery/cruiser_status_panel/S in interior_area)
+			S.setValues(percent_health, percent_shields, percent_power)
+	return
+
+/obj/machinery/cruiser/proc/recieveMovement(var/direction)
+	if(!hasPower() || !(direction == NORTH || direction == EAST || direction == SOUTH || direction == WEST))
+		return
+
+	var/base_speed = 5
+
+	if(engine)
+		base_speed = (1.5 * engine.speedmod)
+
+	var/adjustment = (1 - (power_movement / 100)) * base_speed
+	base_speed += adjustment
+
+	base_speed = max(base_speed + speed_mod, 0.1)
+
+	src.facing = direction
+	if (src.dir == direction)
+		if(flying == turn(src.dir,180))
+			walk(src, 0)
+			flying = 0
 		else
-			boutput(usr, "<span style=\"color:red\">The exit is blocked.</span>")
+			walk(src, src.dir, base_speed + stall)
+			flying = src.dir
+	else
+		src.dir = direction
+	return
+
+/obj/machinery/cruiser/proc/getProjectileOrigins()
+	/* //Outer edge version.
+	switch(src.dir)
+		if(NORTH)
+			return list("left"=locate(src.x, src.y + 5, src.z), "right"=locate(src.x + 4, src.y + 5, src.z))
+		if(EAST)
+			return list("left"=locate(src.x + 5, src.y + 4, src.z), "right"=locate(src.x + 5, src.y, src.z))
+		if(SOUTH)
+			return list("left"=locate(src.x + 4, src.y - 1, src.z), "right"=locate(src.x, src.y - 1, src.z))
+		if(WEST)
+			return list("left"=locate(src.x - 1, src.y, src.z), "right"=locate(src.x - 1, src.y + 4, src.z))
+	*/
+	switch(src.dir) //Inner 2 version
+		if(NORTH)
+			return list("left"=locate(src.x + 1, src.y + 5, src.z), "right"=locate(src.x + 3, src.y + 5, src.z))
+		if(EAST)
+			return list("left"=locate(src.x + 5, src.y + 3, src.z), "right"=locate(src.x + 5, src.y + 1, src.z))
+		if(SOUTH)
+			return list("left"=locate(src.x + 3, src.y - 1, src.z), "right"=locate(src.x + 1, src.y - 1, src.z))
+		if(WEST)
+			return list("left"=locate(src.x - 1, src.y + 1, src.z), "right"=locate(src.x - 1, src.y + 3, src.z))
+
+
+/obj/machinery/cruiser/proc/fireAt(var/atom/target)
+	if(!hasPower())
 		return
 
-	proc/enterShip(atom/movable/O as obj, mob/user as mob)
-		if(!interior_area || O == src) return
-		var/entrance = get_turf(locate(/obj/landmark/cruiser_entrance) in interior_area)
+	var/list/origins = getProjectileOrigins()
+	var/list/cooldown = 0
 
-		if(entrance)
-			if(get_dist(O, getExitLoc()) <= 1)
-				O.set_loc(entrance)
-				if(ismob(O)) crew.Add(O)
-				boutput(user, "<span style=\"color:red\">You put [O] into [src].</span>")
-			else
-				boutput(user, "<span style=\"color:red\">[O] is too far away from [src]'s airlock.</span>")
-		return
+	if(turret_left)
+		if(get_dir(origins["left"], target) != src.dir && get_dir(origins["left"], target) != turn(src.dir,45) && get_dir(origins["left"], target) != turn(src.dir,-45))
+			//internal_sound(src.loc, 'sound/machines/shielddown.ogg', 100, 1, -1)
+		else
+			if(!(firemode & CRUISER_FIREMODE_RIGHT))
+				if((firemode & CRUISER_FIREMODE_ALT && alt_weapon == 0) || !(firemode & CRUISER_FIREMODE_ALT))
+					var/obj/projectile/proj_left = initialize_projectile_ST(origins["left"], turret_left.current_projectile, target)
+					proj_left.launch()
+					proj_left.shooter = src
 
-	proc/shakeCruiser(duration, strength=1, delay=0.2)
-		for(var/mob/M in crew)
-			shake_camera(M, duration, strength, delay)
-		return
+					var/adjustment = (1 - (power_offense / 100)) * turret_left.firerate
+					cooldown = (turret_left.firerate + adjustment)
 
-	proc/getExitLoc()
-		switch(src.dir)
-			if(NORTH)
-				return locate(src.x + 2, src.y - 1, src.z)
-			if(EAST)
-				return locate(src.x - 1, src.y + 2, src.z)
-			if(SOUTH)
-				return locate(src.x + 2, src.y + 5, src.z)
-			if(WEST)
-				return locate(src.x + 5, src.y + 2, src.z)
+					if(turret_left.current_projectile.shot_sound)
+						internal_sound(src.loc, turret_left.current_projectile.shot_sound, 80, 1, 1)
+
+	if(turret_right)
+		if(get_dir(origins["right"], target) != src.dir && get_dir(origins["right"], target) != turn(src.dir,45) && get_dir(origins["right"], target) != turn(src.dir,-45))
+			//internal_sound(src.loc, 'sound/machines/shielddown.ogg', 100, 1, -1)
+		else
+			if(!(firemode & CRUISER_FIREMODE_LEFT))
+				if((firemode & CRUISER_FIREMODE_ALT && alt_weapon == 1) || !(firemode & CRUISER_FIREMODE_ALT))
+					var/obj/projectile/proj_right = initialize_projectile_ST(origins["right"], turret_right.current_projectile, target)
+					proj_right.launch()
+					proj_right.shooter = src
+
+					var/adjustment = (1 - (power_offense / 100)) * turret_right.firerate
+					cooldown = max(turret_right.firerate + adjustment, cooldown)
+
+					if(turret_right.current_projectile.shot_sound)
+						internal_sound(src.loc, turret_right.current_projectile.shot_sound, 80, 1, 1)
+
+	alt_weapon = !alt_weapon
+
+	return max(cooldown + weapon_cooldown_mod, 0)
+
+/obj/machinery/cruiser/proc/leaveShip(mob/user as mob)
+	var/turf/T = getExitLoc()
+	var/blocked = T.density
+
+	for(var/atom/A in T)
+		if(A.density)
+			blocked = 1
+			break
+
+	if(!blocked)
+		user.set_loc(getExitLoc())
+		if(ismob(user)) crew.Remove(user)
+	else
+		boutput(usr, "<span style=\"color:red\">The exit is blocked.</span>")
+	return
+
+/obj/machinery/cruiser/proc/enterShip(atom/movable/O as obj, mob/user as mob)
+	if(!interior_area || O == src) return
+	var/entrance = get_turf(locate(/obj/landmark/cruiser_entrance) in interior_area)
+
+	if(entrance)
+		if(get_dist(O, getExitLoc()) <= 1)
+			O.set_loc(entrance)
+			if(ismob(O)) crew.Add(O)
+			boutput(user, "<span style=\"color:red\">You put [O] into [src].</span>")
+		else
+			boutput(user, "<span style=\"color:red\">[O] is too far away from [src]'s airlock.</span>")
+	return
+
+/obj/machinery/cruiser/proc/shakeCruiser(duration, strength=1, delay=0.2)
+	for(var/mob/M in crew)
+		shake_camera(M, duration, strength, delay)
+	return
+
+/obj/machinery/cruiser/proc/getExitLoc()
+	switch(src.dir)
+		if(NORTH)
+			return locate(src.x + 2, src.y - 1, src.z)
+		if(EAST)
+			return locate(src.x - 1, src.y + 2, src.z)
+		if(SOUTH)
+			return locate(src.x + 2, src.y + 5, src.z)
+		if(WEST)
+			return locate(src.x + 5, src.y + 2, src.z)
 
 /area/ship_interior/cruisertest
 	name = "Cruiser interior"
@@ -770,31 +770,31 @@
 	var/image/barMid
 	var/image/barBot
 
-	New()
-		barTop = image('icons/obj/ship.dmi',src,"statpanel1",src.layer+1)
-		barTop.color = "#8A1919"
+/obj/machinery/cruiser_status_panel/New()
+	barTop = image('icons/obj/ship.dmi',src,"statpanel1",src.layer+1)
+	barTop.color = "#8A1919"
 
-		barMid = image('icons/obj/ship.dmi',src,"statpanel2",src.layer+1)
-		barMid.color = "#19688A"
+	barMid = image('icons/obj/ship.dmi',src,"statpanel2",src.layer+1)
+	barMid.color = "#19688A"
 
-		barBot = image('icons/obj/ship.dmi',src,"statpanel3",src.layer+1)
-		barBot.color = "#CF9417"
+	barBot = image('icons/obj/ship.dmi',src,"statpanel3",src.layer+1)
+	barBot.color = "#CF9417"
 
-	proc/setValues(var/armor, var/shields, var/power)
-		barTop.transform = matrix(armor, 1, MATRIX_SCALE)
-		barTop.pixel_x = -nround( ((24 - (24 * armor)) / 2) )
+/obj/machinery/cruiser_status_panel/proc/setValues(var/armor, var/shields, var/power)
+	barTop.transform = matrix(armor, 1, MATRIX_SCALE)
+	barTop.pixel_x = -nround( ((24 - (24 * armor)) / 2) )
 
-		barMid.transform = matrix(shields, 1, MATRIX_SCALE)
-		barMid.pixel_x = -nround( ((24 - (24 * shields)) / 2) )
+	barMid.transform = matrix(shields, 1, MATRIX_SCALE)
+	barMid.pixel_x = -nround( ((24 - (24 * shields)) / 2) )
 
-		barBot.transform = matrix(power, 1, MATRIX_SCALE)
-		barBot.pixel_x = -nround( ((24 - (24 * power)) / 2) )
+	barBot.transform = matrix(power, 1, MATRIX_SCALE)
+	barBot.pixel_x = -nround( ((24 - (24 * power)) / 2) )
 
-		src.overlays.Cut()
-		src.overlays.Add(barTop)
-		src.overlays.Add(barMid)
-		src.overlays.Add(barBot)
-		return
+	src.overlays.Cut()
+	src.overlays.Add(barTop)
+	src.overlays.Add(barMid)
+	src.overlays.Add(barBot)
+	return
 
 /obj/machinery/cruiser_destroyable/cable_panel
 	name = "Cable panel"
@@ -817,9 +817,9 @@
 	name_broken = "hole"
 	repair_time = 180
 
-	New()
-		icon_broken = pick("hole1", "hole1a", "hole1b", "hole1c", "hole1d")
-		..()
+/obj/machinery/cruiser_destroyable/cable_floor/New()
+	icon_broken = pick("hole1", "hole1a", "hole1b", "hole1c", "hole1d")
+	..()
 
 /obj/machinery/cruiser_destroyable
 	name = "Panel"
@@ -840,72 +840,72 @@
 	var/repair_time = 150
 	var/rebooting = 0
 
-	meteorhit()
-		return
+/obj/machinery/cruiser_destroyable/meteorhit()
+	return
 
-	bullet_act(var/obj/projectile/P)
-		return
+/obj/machinery/cruiser_destroyable/bullet_act(var/obj/projectile/P)
+	return
 
-	ex_act(var/severity)
-		return
+/obj/machinery/cruiser_destroyable/ex_act(var/severity)
+	return
 
-	attackby(obj/item/W as obj, mob/user as mob)
-		if (rebooting) return
-		if (istype(W, tool_type) && (broken || health < health_max))
-			playsound(src.loc, "sound/machines/repairing.ogg", 85, 1)
-			var/health_adj = 1 - (health / health_max) //90% = 0,1, 10% = 0,9
-			var/repair_time_adj = round(repair_time * health_adj)
-			actions.start(new/datum/action/bar/icon/cruiser_repair(src, W, repair_time_adj), user)
-			return 1
-		return 0
+/obj/machinery/cruiser_destroyable/attackby(obj/item/W as obj, mob/user as mob)
+	if (rebooting) return
+	if (istype(W, tool_type) && (broken || health < health_max))
+		playsound(src.loc, "sound/machines/repairing.ogg", 85, 1)
+		var/health_adj = 1 - (health / health_max) //90% = 0,1, 10% = 0,9
+		var/repair_time_adj = round(repair_time * health_adj)
+		actions.start(new/datum/action/bar/icon/cruiser_repair(src, W, repair_time_adj), user)
+		return 1
+	return 0
 
-	proc/reboot() //Called when the device is rebooted / in override mode.
-		rebooting = 1
-		spawn(10) rebooting = 0
-		return "Reboot complete"
+/obj/machinery/cruiser_destroyable/proc/reboot() //Called when the device is rebooted / in override mode.
+	rebooting = 1
+	spawn(10) rebooting = 0
+	return "Reboot complete"
 
-	proc/adjustHealth(var/amount)
-		if(amount < 0 && health == 0) return
-		if(amount > 0 && health == health_max) return
+/obj/machinery/cruiser_destroyable/proc/adjustHealth(var/amount)
+	if(amount < 0 && health == 0) return
+	if(amount > 0 && health == health_max) return
 
-		health_last = health
-		health += amount
-		health = max(health, 0)
-		health = min(health, health_max)
-		checkHealth()
-		return
+	health_last = health
+	health += amount
+	health = max(health, 0)
+	health = min(health, health_max)
+	checkHealth()
+	return
 
-	proc/checkHealth()
-		if(health_last == 0 && health > 0)
-			repair()
-		else if(health_last > 0 && health == 0)
-			destroy()
-		return
+/obj/machinery/cruiser_destroyable/proc/checkHealth()
+	if(health_last == 0 && health > 0)
+		repair()
+	else if(health_last > 0 && health == 0)
+		destroy()
+	return
 
-	proc/destroy()
-		if(broken) return
-		broken = 1
-		setIcon()
-		var/area/ship_interior/I = get_area(src)
-		if(istype(I) && I.ship)
-			I.ship.shakeCruiser(4, 5, 0.4)
-			I.ship.degradation = min(I.ship.degradation + 2, 100)
-		return
+/obj/machinery/cruiser_destroyable/proc/destroy()
+	if(broken) return
+	broken = 1
+	setIcon()
+	var/area/ship_interior/I = get_area(src)
+	if(istype(I) && I.ship)
+		I.ship.shakeCruiser(4, 5, 0.4)
+		I.ship.degradation = min(I.ship.degradation + 2, 100)
+	return
 
-	proc/repair()
-		if(!broken) return
-		broken = 0
-		setIcon()
-		return
+/obj/machinery/cruiser_destroyable/proc/repair()
+	if(!broken) return
+	broken = 0
+	setIcon()
+	return
 
-	proc/setIcon()
-		if(broken)
-			icon_state = icon_broken
-			name = name_broken
-		else
-			icon_state = icon_working
-			name = name_working
-		return
+/obj/machinery/cruiser_destroyable/proc/setIcon()
+	if(broken)
+		icon_state = icon_broken
+		name = name_broken
+	else
+		icon_state = icon_working
+		name = name_working
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_component_slot
 	name = "Component slot"
@@ -918,94 +918,94 @@
 	var/ready = 1
 	var/check_blocked = 1
 
-	setIcon()
-		if(broken)
-			src.setTexture("damaged", BLEND_MULTIPLY, "damaged")
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/setIcon()
+	if(broken)
+		src.setTexture("damaged", BLEND_MULTIPLY, "damaged")
+	else
+		src.UpdateOverlays(null, "damaged")
+
+	if(open) icon_state = icon_state_open
+	else icon_state = icon_state_closed
+
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/attackby(obj/item/W as obj, mob/user as mob)
+	if(!..())
+		if(open)
+			user.drop_item()
+			W.set_loc(src.loc)
 		else
-			src.UpdateOverlays(null, "damaged")
+			attack_hand(user)
+	return
 
-		if(open) icon_state = icon_state_open
-		else icon_state = icon_state_closed
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/destroy()
+	. = ..()
+	open(null, 1)
+	return .
 
-	attackby(obj/item/W as obj, mob/user as mob)
-		if(!..())
-			if(open)
-				user.drop_item()
-				W.set_loc(src.loc)
-			else
-				attack_hand(user)
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/reboot()
+	if(rebooting) return "Device is busy."
+	rebooting = 1
+	open()
+	sleep(repair_time / 2)
+	if(health == 0)
+		adjustHealth(1)
+	rebooting = 0
+	close()
+	return "Reboot complete."
 
-	destroy()
-		. = ..()
-		open(null, 1)
-		return .
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/proc/open(var/mob/user = null, var/ignore_blocked = 0)
+	if(open) return
 
-	reboot()
-		if(rebooting) return "Device is busy."
-		rebooting = 1
-		open()
-		sleep(repair_time / 2)
-		if(health == 0)
-			adjustHealth(1)
-		rebooting = 0
-		close()
-		return "Reboot complete."
-
-	proc/open(var/mob/user = null, var/ignore_blocked = 0)
-		if(open) return
-
-		var/blocked = src.loc.density
-		for(var/atom/B in src.loc)
-			if(B.density)
-				blocked = 1
-				break
-		if(check_blocked && blocked && !ignore_blocked)
-			if(user)
-				boutput(user, "<span style=\"color:red\">Something is preventing the [src] from opening.</span>")
-		else
-			ready = 0
-			spawn(10) ready = 1
-			playsound(src.loc, 'sound/machines/hydraulic.ogg', 50, 0, -1)
-			open = 1
-			setIcon()
-			uninstall_component()
-			density = 1
-		return
-
-	proc/close(var/mob/user = null)
-		if(!open) return
-		if(rebooting)
-			boutput(user, "<span style=\"color:red\">This device is currently disabled.</span>")
-			return
+	var/blocked = src.loc.density
+	for(var/atom/B in src.loc)
+		if(B.density)
+			blocked = 1
+			break
+	if(check_blocked && blocked && !ignore_blocked)
+		if(user)
+			boutput(user, "<span style=\"color:red\">Something is preventing the [src] from opening.</span>")
+	else
 		ready = 0
 		spawn(10) ready = 1
-		playsound(src.loc, 'sound/machines/weapons-deploy.ogg', 60, 0, -1)
-		open = 0
+		playsound(src.loc, 'sound/machines/hydraulic.ogg', 50, 0, -1)
+		open = 1
 		setIcon()
-		install_component()
-		density = 0
-		return
+		uninstall_component()
+		density = 1
+	return
 
-	attack_hand(mob/user as mob)
-		if(!ready) return
-		if(open)
-			if(broken)
-				boutput(user, "[src] is broken. It needs to be repaired.</span>")
-			else
-				close(user)
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/proc/close(var/mob/user = null)
+	if(!open) return
+	if(rebooting)
+		boutput(user, "<span style=\"color:red\">This device is currently disabled.</span>")
+		return
+	ready = 0
+	spawn(10) ready = 1
+	playsound(src.loc, 'sound/machines/weapons-deploy.ogg', 60, 0, -1)
+	open = 0
+	setIcon()
+	install_component()
+	density = 0
+	return
+
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/attack_hand(mob/user as mob)
+	if(!ready) return
+	if(open)
+		if(broken)
+			boutput(user, "[src] is broken. It needs to be repaired.</span>")
 		else
-			if(broken)
-				boutput(user, "[src] is broken. It needs to be repaired.</span>")
-				return
-			open(user)
+			close(user)
+	else
+		if(broken)
+			boutput(user, "[src] is broken. It needs to be repaired.</span>")
+			return
+		open(user)
 
 
-	proc/install_component()
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/proc/install_component()
+	return
 
-	proc/uninstall_component()
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/proc/uninstall_component()
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon
 	name = "Weapon slot"
@@ -1013,60 +1013,60 @@
 
 /obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon/left
 	name = "Left turret slot"
-	install_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship)
-			for(var/atom/movable/A in src.loc)
-				if(istype(A, container_type))
-					A.set_loc(interior.ship)
-					interior.ship.turret_left = A
-					break
-		return
-	uninstall_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship && interior.ship.turret_left)
-			interior.ship.turret_left.set_loc(src.loc)
-			interior.ship.turret_left = null
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon/left/install_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship)
+		for(var/atom/movable/A in src.loc)
+			if(istype(A, container_type))
+				A.set_loc(interior.ship)
+				interior.ship.turret_left = A
+				break
+	return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon/left/uninstall_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship && interior.ship.turret_left)
+		interior.ship.turret_left.set_loc(src.loc)
+		interior.ship.turret_left = null
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon/right
 	name = "Right turret slot"
-	install_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship)
-			for(var/atom/movable/A in src.loc)
-				if(istype(A, container_type))
-					A.set_loc(interior.ship)
-					interior.ship.turret_right = A
-					break
-		return
-	uninstall_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship && interior.ship.turret_right)
-			interior.ship.turret_right.set_loc(src.loc)
-			interior.ship.turret_right = null
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon/right/install_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship)
+		for(var/atom/movable/A in src.loc)
+			if(istype(A, container_type))
+				A.set_loc(interior.ship)
+				interior.ship.turret_right = A
+				break
+	return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/weapon/right/uninstall_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship && interior.ship.turret_right)
+		interior.ship.turret_right.set_loc(src.loc)
+		interior.ship.turret_right = null
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_component_slot/engine
 	name = "Engine core"
 	container_type = /obj/item/shipcomponent/engine
 	health = 75
 	health_max = 75
-	install_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship)
-			for(var/atom/movable/A in src.loc)
-				if(istype(A, container_type))
-					A.set_loc(interior.ship)
-					interior.ship.engine = A
-					break
-		return
-	uninstall_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship && interior.ship.engine)
-			interior.ship.engine.set_loc(src.loc)
-			interior.ship.engine = null
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/engine/install_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship)
+		for(var/atom/movable/A in src.loc)
+			if(istype(A, container_type))
+				A.set_loc(interior.ship)
+				interior.ship.engine = A
+				break
+	return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/engine/uninstall_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship && interior.ship.engine)
+		interior.ship.engine.set_loc(src.loc)
+		interior.ship.engine = null
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_component_slot/life_support
 	name = "Life support slot"
@@ -1077,22 +1077,22 @@
 	container_type = /obj/item/shipcomponent/life_support
 	check_blocked = 0
 
-	install_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship)
-			for(var/atom/movable/A in src.loc)
-				if(istype(A, container_type))
-					A.set_loc(interior.ship)
-					interior.ship.life_support = A
-					break
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/life_support/install_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship)
+		for(var/atom/movable/A in src.loc)
+			if(istype(A, container_type))
+				A.set_loc(interior.ship)
+				interior.ship.life_support = A
+				break
+	return
 
-	uninstall_component()
-		var/area/ship_interior/interior = get_area(src)
-		if(interior && interior.ship && interior.ship.life_support)
-			interior.ship.life_support.set_loc(src.loc)
-			interior.ship.life_support = null
-		return
+/obj/machinery/cruiser_destroyable/cruiser_component_slot/life_support/uninstall_component()
+	var/area/ship_interior/interior = get_area(src)
+	if(interior && interior.ship && interior.ship.life_support)
+		interior.ship.life_support.set_loc(src.loc)
+		interior.ship.life_support = null
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_exit
 	name = "ship exit"
@@ -1103,15 +1103,15 @@
 	density = 1
 	ignore = 1
 
-	bullet_act(var/obj/projectile/P)
-		return
-	ex_act(var/severity)
-		return
+/obj/machinery/cruiser_destroyable/cruiser_exit/bullet_act(var/obj/projectile/P)
+	return
+/obj/machinery/cruiser_destroyable/cruiser_exit/ex_act(var/severity)
+	return
 
-	attack_hand(mob/user as mob)
-		var/area/ship_interior/interior = get_area(src)
-		if(interior.ship)
-			interior.ship.leaveShip(user)
+/obj/machinery/cruiser_destroyable/cruiser_exit/attack_hand(mob/user as mob)
+	var/area/ship_interior/interior = get_area(src)
+	if(interior.ship)
+		interior.ship.leaveShip(user)
 
 /obj/machinery/cruiser_camera_screen
 	name = "camera computer"
@@ -1120,15 +1120,15 @@
 	density = 1
 	anchored = 1
 
-	attack_hand(mob/user as mob)
-		if(istype(user.abilityHolder, /datum/abilityHolder/composite))
-			var/datum/abilityHolder/composite/C = user.abilityHolder
-			C.addHolder(/datum/abilityHolder/cruiser)
-			C.addAbility(/datum/targetable/cruiser/cancel_camera)
-			user.client.view = 11
-			var/area/ship_interior/I = get_area(src)
-			user.set_eye(I.ship)
-		return
+/obj/machinery/cruiser_camera_screen/attack_hand(mob/user as mob)
+	if(istype(user.abilityHolder, /datum/abilityHolder/composite))
+		var/datum/abilityHolder/composite/C = user.abilityHolder
+		C.addHolder(/datum/abilityHolder/cruiser)
+		C.addAbility(/datum/targetable/cruiser/cancel_camera)
+		user.client.view = 11
+		var/area/ship_interior/I = get_area(src)
+		user.set_eye(I.ship)
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_pod
 	icon = 'icons/obj/64x64.dmi'
@@ -1147,121 +1147,121 @@
 	health = 85
 	health_max = 85
 
-	remove_air(amount)
-		return src.loc.remove_air(amount)
+/obj/machinery/cruiser_destroyable/cruiser_pod/remove_air(amount)
+	return src.loc.remove_air(amount)
 
-	return_air()
-		return src.loc.return_air()
+/obj/machinery/cruiser_destroyable/cruiser_pod/return_air()
+	return src.loc.return_air()
 
-	bullet_act(var/obj/projectile/P)
-		for(var/atom/A in src)
-			A.bullet_act(P)
+/obj/machinery/cruiser_destroyable/cruiser_pod/bullet_act(var/obj/projectile/P)
+	for(var/atom/A in src)
+		A.bullet_act(P)
+	return
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/ex_act(var/severity)
+	for(var/atom/A in src)
+		A.ex_act(severity)
+	return
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/setIcon()
+	if(broken)
+		src.setTexture("damaged", BLEND_MULTIPLY, "damaged")
+	else
+		src.UpdateOverlays(null, "damaged")
+	if(using) icon_state = icon_state_full
+	else icon_state = icon_state_empty
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/destroy()
+	. = ..()
+	exitPod()
+	return .
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/reboot()
+	if(rebooting) return "Device is busy."
+	rebooting = 1
+	exitPod()
+	sleep(repair_time / 2)
+	if(health == 0)
+		adjustHealth(1)
+	rebooting = 0
+	return "Reboot complete."
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/New()
+	interior = get_area(src)
+	icon_state = icon_state_empty
+	AbHolder = new()
+	AbHolder.addAbility(/datum/targetable/cruiser/exit_pod)
+	for(var/T in abilities)
+		AbHolder.addAbility(T)
+	SubscribeToProcess()
+	return
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/attack_hand(mob/user as mob)
+	if(broken)
+		boutput(user, "<span style=\"color:red\">This pod is broken and must be repaired before it can be used again.</span>")
 		return
-
-	ex_act(var/severity)
-		for(var/atom/A in src)
-			A.ex_act(severity)
+	if(using)
+		boutput(user, "<span style=\"color:red\">This pod is already being used.</span>")
 		return
+	else
+		enterPod(user)
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/MouseDrop_T(atom/movable/O as obj, mob/user as mob)
+	if(ismob(O) && O:client)
+		attack_hand(O)
+	return
+
+/obj/machinery/cruiser_destroyable/cruiser_pod/proc/enterPod(mob/user as mob)
+	var/obj/machinery/cruiser/C = interior.ship
+	if(rebooting)
+		boutput(user, "<span style=\"color:red\">This device is currently disabled.</span>")
+		return
+	using = user
+	user.set_loc(src)
+	user.set_eye(C.camera)
+	user.client.view = 11
+	if(ishuman(user) && istype(user.abilityHolder, /datum/abilityHolder/composite))
+		var/datum/abilityHolder/composite/H = user.abilityHolder
+		H.addHolderInstance(AbHolder)
+		AbHolder.resumeAllAbilities()
+	if(C)
+		user.client.images += C.frames
+		user.client.images += C.overframes
+		user.client.images += C.bar_top
+		user.client.images += C.bar_middle
+		user.client.images += C.bar_bottom
 
 	setIcon()
-		if(broken)
-			src.setTexture("damaged", BLEND_MULTIPLY, "damaged")
-		else
-			src.UpdateOverlays(null, "damaged")
-		if(using) icon_state = icon_state_full
-		else icon_state = icon_state_empty
+	return
 
-	destroy()
-		. = ..()
-		exitPod()
-		return .
+/obj/machinery/cruiser_destroyable/cruiser_pod/proc/exitPod()
+	var/obj/machinery/cruiser/C = interior.ship
+	if(!using) return
+	using.set_loc(src.loc)
 
-	reboot()
-		if(rebooting) return "Device is busy."
-		rebooting = 1
-		exitPod()
-		sleep(repair_time / 2)
-		if(health == 0)
-			adjustHealth(1)
-		rebooting = 0
-		return "Reboot complete."
+	using.set_eye(null)
+	using.client.view = world.view
+	if(ishuman(using) && istype(using.abilityHolder, /datum/abilityHolder/composite))
+		using.targeting_spell = null
+		using.update_cursor()
+		var/datum/abilityHolder/composite/H = using.abilityHolder
+		AbHolder.suspendAllAbilities()
+		H.removeHolder(/datum/abilityHolder/cruiser)
 
-	New()
-		interior = get_area(src)
-		icon_state = icon_state_empty
-		AbHolder = new()
-		AbHolder.addAbility(/datum/targetable/cruiser/exit_pod)
-		for(var/T in abilities)
-			AbHolder.addAbility(T)
-		SubscribeToProcess()
-		return
+	if(C)
+		using.client.images -= C.frames
+		using.client.images -= C.overframes
+		using.client.images -= C.bar_top
+		using.client.images -= C.bar_middle
+		using.client.images -= C.bar_bottom
 
-	attack_hand(mob/user as mob)
-		if(broken)
-			boutput(user, "<span style=\"color:red\">This pod is broken and must be repaired before it can be used again.</span>")
-			return
-		if(using)
-			boutput(user, "<span style=\"color:red\">This pod is already being used.</span>")
-			return
-		else
-			enterPod(user)
+	using = null
+	setIcon()
+	return
 
-	MouseDrop_T(atom/movable/O as obj, mob/user as mob)
-		if(ismob(O) && O:client)
-			attack_hand(O)
-		return
-
-	proc/enterPod(mob/user as mob)
-		var/obj/machinery/cruiser/C = interior.ship
-		if(rebooting)
-			boutput(user, "<span style=\"color:red\">This device is currently disabled.</span>")
-			return
-		using = user
-		user.set_loc(src)
-		user.set_eye(C.camera)
-		user.client.view = 11
-		if(ishuman(user) && istype(user.abilityHolder, /datum/abilityHolder/composite))
-			var/datum/abilityHolder/composite/H = user.abilityHolder
-			H.addHolderInstance(AbHolder)
-			AbHolder.resumeAllAbilities()
-		if(C)
-			user.client.images += C.frames
-			user.client.images += C.overframes
-			user.client.images += C.bar_top
-			user.client.images += C.bar_middle
-			user.client.images += C.bar_bottom
-
-		setIcon()
-		return
-
-	proc/exitPod()
-		var/obj/machinery/cruiser/C = interior.ship
-		if(!using) return
-		using.set_loc(src.loc)
-
-		using.set_eye(null)
-		using.client.view = world.view
-		if(ishuman(using) && istype(using.abilityHolder, /datum/abilityHolder/composite))
-			using.targeting_spell = null
-			using.update_cursor()
-			var/datum/abilityHolder/composite/H = using.abilityHolder
-			AbHolder.suspendAllAbilities()
-			H.removeHolder(/datum/abilityHolder/cruiser)
-
-		if(C)
-			using.client.images -= C.frames
-			using.client.images -= C.overframes
-			using.client.images -= C.bar_top
-			using.client.images -= C.bar_middle
-			using.client.images -= C.bar_bottom
-
-		using = null
-		setIcon()
-		return
-
-	process()
-		..()
-		return
+/obj/machinery/cruiser_destroyable/cruiser_pod/process()
+	..()
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_pod/movement
 	name = "Navigation pod"
@@ -1269,11 +1269,11 @@
 	icon_state_empty = "pod_command_0"
 	abilities = list(/datum/targetable/cruiser/ram)
 
-	relaymove(mob/user, direction)
-		var/obj/machinery/cruiser/C = interior.ship
-		if (C)
-			C.recieveMovement(direction)
-		return
+/obj/machinery/cruiser_destroyable/cruiser_pod/movement/relaymove(mob/user, direction)
+	var/obj/machinery/cruiser/C = interior.ship
+	if (C)
+		C.recieveMovement(direction)
+	return
 
 /obj/machinery/cruiser_destroyable/cruiser_pod/security
 	name = "Security pod"

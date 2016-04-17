@@ -18,17 +18,17 @@
 	targeted = 1
 	max_range = 3000
 
-	castcheck(var/mob/M)
-		if (M.client && M.client.holder)
-			return 1
-
-	handleCast(var/atom/selected)
-		dothepixelthing(selected)
-		var/mob/M = usr
-		var/datum/targetable/pixelpicker/R = new()
-		M.targeting_spell = R
-		M.update_cursor()
+/datum/targetable/pixelpicker/castcheck(var/mob/M)
+	if (M.client && M.client.holder)
 		return 1
+
+/datum/targetable/pixelpicker/handleCast(var/atom/selected)
+	dothepixelthing(selected)
+	var/mob/M = usr
+	var/datum/targetable/pixelpicker/R = new()
+	M.targeting_spell = R
+	M.update_cursor()
+	return 1
 
 /proc/pixelmagic()
 	var/mob/M = usr
@@ -77,29 +77,29 @@
 	desc = "it's an improvised spear."
 	icon = null
 
-	rebuild()
-		..()
-		name = "[core.name]-[head.name] spear"
-		desc = "It's an improvised spear. The handle is made from \a [core.name] and the head is \a [head.name]."
-		//literally turning the used items into the parts of the spear. Im not sure what i will use this for.
-		core.icon = icon('icons/obj/crafting.dmi',"spearbody")
-		head.icon = icon('icons/obj/crafting.dmi',"spearhead")
+/obj/item/craftedmelee/spear/rebuild()
+	..()
+	name = "[core.name]-[head.name] spear"
+	desc = "It's an improvised spear. The handle is made from \a [core.name] and the head is \a [head.name]."
+	//literally turning the used items into the parts of the spear. Im not sure what i will use this for.
+	core.icon = icon('icons/obj/crafting.dmi',"spearbody")
+	head.icon = icon('icons/obj/crafting.dmi',"spearhead")
 
-		core.pixel_x = 0
-		core.pixel_y = 0
+	core.pixel_x = 0
+	core.pixel_y = 0
 
-		head.pixel_x = 0
-		head.pixel_y = 0
+	head.pixel_x = 0
+	head.pixel_y = 0
 
-		src.overlays.Cut()
-		src.overlays.Add(image(icon = core,loc = src, layer = HUD_LAYER+2)) //This will cause the item to draw above the ui even when its on the ground. That's crap
-		src.overlays.Add(image(icon = head,loc = src, layer = HUD_LAYER+2)) //But if i don't set it the item disappears under the inventory slots because it's purely overlays. :gonk:
+	src.overlays.Cut()
+	src.overlays.Add(image(icon = core,loc = src, layer = HUD_LAYER+2)) //This will cause the item to draw above the ui even when its on the ground. That's crap
+	src.overlays.Add(image(icon = head,loc = src, layer = HUD_LAYER+2)) //But if i don't set it the item disappears under the inventory slots because it's purely overlays. :gonk:
 
-		src.material = head.material
-		return
+	src.material = head.material
+	return
 
-	attack(mob/M as mob, mob/user as mob) //TBI
-		return ..(M,user)
+/obj/item/craftedmelee/spear/attack(mob/M as mob, mob/user as mob) //TBI
+	return ..(M,user)
 
 /obj/item/craftedmelee
 	name = "melee weapon"
@@ -107,8 +107,8 @@
 	var/obj/item/core = null
 	var/obj/item/head = null
 
-	proc/rebuild() //will rebuild the icon and properties of the weapon based on its materials.
-		return
+/obj/item/craftedmelee/proc/rebuild() //will rebuild the icon and properties of the weapon based on its materials.
+	return
 
 /obj/item/craftedcrap
 	name = "???"
@@ -116,26 +116,26 @@
 	var/obj/item/item1 = null
 	var/obj/item/item2 = null
 
-	proc/rebuild() //will rebuild the icon and properties of the weapon based on its materials.
-		var/icon/crapicon = icon(item1.icon, item1.icon_state)
-		crapicon.Blend(icon(item2.icon, item2.icon_state), ICON_OVERLAY)
-		icon = crapicon
-		setTexture(pick("tape1", "tape2"), ICON_OVERLAY , "tape")
-		var/part1 = copytext(item1.name, 1, round(length(item1.name) / 2))
-		var/part2 = copytext(item2.name, round(length(item2.name) / 2), 0)
-		name = "[part1][part2]"
-		desc = "Someone taped together \a [item1.name] and \a [item2.name]. Great."
+/obj/item/craftedcrap/proc/rebuild() //will rebuild the icon and properties of the weapon based on its materials.
+	var/icon/crapicon = icon(item1.icon, item1.icon_state)
+	crapicon.Blend(icon(item2.icon, item2.icon_state), ICON_OVERLAY)
+	icon = crapicon
+	setTexture(pick("tape1", "tape2"), ICON_OVERLAY , "tape")
+	var/part1 = copytext(item1.name, 1, round(length(item1.name) / 2))
+	var/part2 = copytext(item2.name, round(length(item2.name) / 2), 0)
+	name = "[part1][part2]"
+	desc = "Someone taped together \a [item1.name] and \a [item2.name]. Great."
+	return
+
+/obj/item/craftedcrap/attack(mob/M as mob, mob/user as mob)
+	if(!item1 || !item2)
+		del(src)
 		return
 
-	attack(mob/M as mob, mob/user as mob)
-		if(!item1 || !item2)
-			del(src)
-			return
-
-		if(prob(50))
-			return item1.attack(M, user)
-		else
-			return item2.attack(M, user)
+	if(prob(50))
+		return item1.attack(M, user)
+	else
+		return item2.attack(M, user)
 
 
 /proc/makeshittyweapon()
@@ -178,37 +178,37 @@
 	var/list/users = list()
 	var/use_delay = 30
 
-	Click(location,control,params)
-		if(istype(usr, /mob/dead) || istype(usr, /mob/wraith))
+/obj/item/ghostboard/Click(location,control,params)
+	if(istype(usr, /mob/dead) || istype(usr, /mob/wraith))
 
-			if(!users.Find(usr))
-				users[usr] = 0
+		if(!users.Find(usr))
+			users[usr] = 0
 
-			if((world.time - users[usr]) >= use_delay)
-				var/list/words = list()
-				for(var/i=0, i<rand(5, 10), i++)
-					var/picked = pick(strings("ouija_board.txt", "ouija_board_words"))
-					if(!words.Find(picked)) words.Add(picked)
+		if((world.time - users[usr]) >= use_delay)
+			var/list/words = list()
+			for(var/i=0, i<rand(5, 10), i++)
+				var/picked = pick(strings("ouija_board.txt", "ouija_board_words"))
+				if(!words.Find(picked)) words.Add(picked)
 
-				if(words.len)
-					var/selected = input(usr, "Select a word:", src.name) as null|anything in words
-					if(!selected) return
+			if(words.len)
+				var/selected = input(usr, "Select a word:", src.name) as null|anything in words
+				if(!selected) return
 
-					if((world.time - users[usr]) < use_delay)
-						usr.show_text("Please wait a moment before using the board again.", "red")
-						return
+				if((world.time - users[usr]) < use_delay)
+					usr.show_text("Please wait a moment before using the board again.", "red")
+					return
 
-					users[usr] = world.time
+				users[usr] = world.time
 
-					spawn(0)
-						if(src && selected)
-							animate_float(src, 1, 5, 1)
-							for (var/mob/O in observersviewers(7, src))
-								O.show_message("<B><span style=\"color:blue\">The board spells out a message ... \"[selected]\"</span></B>", 1)
-			else
-				usr.show_text("Please wait a moment before using the board again.", "red")
+				spawn(0)
+					if(src && selected)
+						animate_float(src, 1, 5, 1)
+						for (var/mob/O in observersviewers(7, src))
+							O.show_message("<B><span style=\"color:blue\">The board spells out a message ... \"[selected]\"</span></B>", 1)
 		else
-			return ..(location,control,params)
+			usr.show_text("Please wait a moment before using the board again.", "red")
+	else
+		return ..(location,control,params)
 
 /proc/fartes()
 	for(var/imageToLoad in flist("images/"))
@@ -234,14 +234,14 @@
 	icon = 'icons/obj/decals.dmi'
 	icon_state = "pen"
 
-	attackby(obj/item/W as obj, mob/user as mob)
-		if(istype(W,/obj/item/device/key))
-			boutput(user, "[W] disappears suddenly as you bring it close to the inscription ... huh")
-			del(W)
-		if(istype(W,/obj/item/pen))
-			boutput(user, "A terrible noise fills the air as the inscription seemingly rejects [W].")
-			playsound(src.loc, "hellhorn_12.ogg", 100, 1)
-		return
+/obj/peninscription/attackby(obj/item/W as obj, mob/user as mob)
+	if(istype(W,/obj/item/device/key))
+		boutput(user, "[W] disappears suddenly as you bring it close to the inscription ... huh")
+		del(W)
+	if(istype(W,/obj/item/pen))
+		boutput(user, "A terrible noise fills the air as the inscription seemingly rejects [W].")
+		playsound(src.loc, "hellhorn_12.ogg", 100, 1)
+	return
 
 /obj/burning_barrel
 	name = "burning barrel"
@@ -255,19 +255,19 @@
 	var/datum/particleSystem/barrelSmoke/particles
 	var/datum/light/light
 
-	New()
-		particles = particleMaster.SpawnSystem(new /datum/particleSystem/barrelSmoke(src))
-		light = new /datum/light/point
-		light.attach(src)
-		light.set_brightness(1)
-		light.set_color(0.5, 0.3, 0)
-		light.enable()
+/obj/burning_barrel/New()
+	particles = particleMaster.SpawnSystem(new /datum/particleSystem/barrelSmoke(src))
+	light = new /datum/light/point
+	light.attach(src)
+	light.set_brightness(1)
+	light.set_color(0.5, 0.3, 0)
+	light.enable()
 
-		..()
+	..()
 
-	Del()
-		particleMaster.RemoveSystem(/datum/particleSystem/barrelSmoke, src)
-		..()
+/obj/burning_barrel/Del()
+	particleMaster.RemoveSystem(/datum/particleSystem/barrelSmoke, src)
+	..()
 
 /obj/hh_portal_exit
 	icon = 'icons/misc/exploration.dmi'
@@ -278,35 +278,35 @@
 	density = 1
 	opacity = 0
 
-	Bumped(atom/movable/AM)
-		if(!ismob(AM)) return
-		var/mob/M = AM
+/obj/hh_portal_exit/Bumped(atom/movable/AM)
+	if(!ismob(AM)) return
+	var/mob/M = AM
 
-		if(M.adventure_variables.hh_energy < 3)
-			boutput(M, "<span style=\"color:red\">You can't seem to pass through the energy ... </span>")
-			return
+	if(M.adventure_variables.hh_energy < 3)
+		boutput(M, "<span style=\"color:red\">You can't seem to pass through the energy ... </span>")
+		return
 
-		var/mob/dead/hhghost/H = new(AM.loc)
-		H.client = M.client
-		H.original = M
-		M.set_loc(H)
+	var/mob/dead/hhghost/H = new(AM.loc)
+	H.client = M.client
+	H.original = M
+	M.set_loc(H)
 
-		AM = H
+	AM = H
 
-		var/area/srcar = AM.loc.loc
-		srcar.Exited(AM)
+	var/area/srcar = AM.loc.loc
+	srcar.Exited(AM)
 
-		var/obj/target = locate(/obj/landmark/hh_exit)
+	var/obj/target = locate(/obj/landmark/hh_exit)
 
-		if (!istype(target))
-			return
+	if (!istype(target))
+		return
 
-		var/turf/trg_turf = target.loc
+	var/turf/trg_turf = target.loc
 
-		var/area/trgar = trg_turf.loc
-		trgar.Entered(AM, AM.loc)
+	var/area/trgar = trg_turf.loc
+	trgar.Entered(AM, AM.loc)
 
-		AM.set_loc(trg_turf)
+	AM.set_loc(trg_turf)
 
 /obj/hh_portal_entry
 	icon = 'icons/misc/exploration.dmi'
@@ -317,36 +317,36 @@
 	density = 1
 	opacity = 0
 
-	Bumped(atom/movable/AM)
-		if(!AM.reagents) return
-		if(!ismob(AM)) return
+/obj/hh_portal_entry/Bumped(atom/movable/AM)
+	if(!AM.reagents) return
+	if(!ismob(AM)) return
 
-		if(AM.reagents.has_reagent("anima") && !AM.reagents.has_reagent("anima", 10))
-			boutput(AM, "<span style=\"color:red\">The portal briefly glows as you get near but quickly dulls again. It seems like you have done SOMETHING correctly but it isn't quite enough.</span>")
-			return
-
-		if(!AM.reagents.has_reagent("anima"))
-			boutput(AM, "<span style=\"color:red\">The strange energy in front of you becomes solid as you approach ...</span>")
-			return
-
-		AM.reagents.del_reagent("anima")
-
-		var/area/srcar = AM.loc.loc
-		srcar.Exited(AM)
-
-		var/obj/target = locate(/obj/landmark/hh_entry)
-
-		if (!istype(target))
-			return
-
-		var/turf/trg_turf = target.loc
-
-		var/area/trgar = trg_turf.loc
-		trgar.Entered(AM, AM.loc)
-
-		AM.set_loc(trg_turf)
-
+	if(AM.reagents.has_reagent("anima") && !AM.reagents.has_reagent("anima", 10))
+		boutput(AM, "<span style=\"color:red\">The portal briefly glows as you get near but quickly dulls again. It seems like you have done SOMETHING correctly but it isn't quite enough.</span>")
 		return
+
+	if(!AM.reagents.has_reagent("anima"))
+		boutput(AM, "<span style=\"color:red\">The strange energy in front of you becomes solid as you approach ...</span>")
+		return
+
+	AM.reagents.del_reagent("anima")
+
+	var/area/srcar = AM.loc.loc
+	srcar.Exited(AM)
+
+	var/obj/target = locate(/obj/landmark/hh_entry)
+
+	if (!istype(target))
+		return
+
+	var/turf/trg_turf = target.loc
+
+	var/area/trgar = trg_turf.loc
+	trgar.Entered(AM, AM.loc)
+
+	AM.set_loc(trg_turf)
+
+	return
 
 /obj/landmark/hh_exit
 	name = "hh_exit"
@@ -367,29 +367,29 @@
 	invisibility = 100
 	var/image/oimage = null
 
-	New()
-		oimage = image('icons/misc/exploration.dmi',src,"sfrag")
-		orbicons.Add(oimage)
-		return ..()
+/obj/hh_sfrag/New()
+	oimage = image('icons/misc/exploration.dmi',src,"sfrag")
+	orbicons.Add(oimage)
+	return ..()
 
-	Del()
-		orbicons.Remove(oimage)
-		del(oimage)
-		..()
+/obj/hh_sfrag/Del()
+	orbicons.Remove(oimage)
+	del(oimage)
+	..()
 
-	HasEntered(atom/A)
-		if(!istype(A,/mob/dead/hhghost)) return
-		var/mob/dead/hhghost/M = A
-		M.adventure_variables.hh_soul += 1
-		particleMaster.SpawnSystem(new /datum/particleSystem/elecburst(M))
+/obj/hh_sfrag/HasEntered(atom/A)
+	if(!istype(A,/mob/dead/hhghost)) return
+	var/mob/dead/hhghost/M = A
+	M.adventure_variables.hh_soul += 1
+	particleMaster.SpawnSystem(new /datum/particleSystem/elecburst(M))
 
-		if(M.adventure_variables.hh_soul > 15)
-			M.original.set_loc(src.loc)
-			M.original.client = M.client
-			del(M)
+	if(M.adventure_variables.hh_soul > 15)
+		M.original.set_loc(src.loc)
+		M.original.client = M.client
+		del(M)
 
-		del(src)
-		return
+	del(src)
+	return
 
 /obj/hh_energyorb
 	name = "scintilating energy"
@@ -400,13 +400,13 @@
 	density = 0
 	opacity = 0
 
-	HasEntered(atom/A)
-		if(!ismob(A) || !istype(A,/mob/living)) return
-		qdel(src)
-		var/mob/living/M = A
-		M.adventure_variables.hh_energy += 1
-		particleMaster.SpawnSystem(new /datum/particleSystem/energysp(M))
-		return
+/obj/hh_energyorb/HasEntered(atom/A)
+	if(!ismob(A) || !istype(A,/mob/living)) return
+	qdel(src)
+	var/mob/living/M = A
+	M.adventure_variables.hh_energy += 1
+	particleMaster.SpawnSystem(new /datum/particleSystem/energysp(M))
+	return
 
 /obj/decal/nothing
 	name = "nothing"
@@ -467,42 +467,42 @@
 	w_class = 1.0
 	var/firing = 0
 
-	afterattack(atom/target as mob|obj|turf|area, mob/user as mob)
-		shoot(target, user)
-		return
+/obj/item/teslacannon/afterattack(atom/target as mob|obj|turf|area, mob/user as mob)
+	shoot(target, user)
+	return
 
-	proc/shoot(var/atom/target, var/mob/user)
-		if(firing) return
-		firing = 1
-		user.canmove = 0
-		var/turf/current = get_turf(user)
-		var/turf/trg_loc = get_turf(target)
-		var/list/sounds = list('sound/effects/elec_bigzap.ogg','sound/effects/elec_bzzz.ogg','sound/effects/electric_shock.ogg')
-		while(current != trg_loc)
-			playsound(get_turf(user), pick(sounds), 15, 1)
-			current = get_step(current, get_dir(current, trg_loc))
-			user.dir = get_dir(user, current)
-			var/obj/beam_dummy/B = showLine(get_turf(user), current, "lght", 5)
-			var/list/affected = B.affected
-			for(var/turf/T in affected)
-				animate_flash_color_fill(T,"#aaddff",1,5)
-				for(var/mob/M in T)
-					M.weakened += 2
-					random_burn_damage(M, 10)
+/obj/item/teslacannon/proc/shoot(var/atom/target, var/mob/user)
+	if(firing) return
+	firing = 1
+	user.canmove = 0
+	var/turf/current = get_turf(user)
+	var/turf/trg_loc = get_turf(target)
+	var/list/sounds = list('sound/effects/elec_bigzap.ogg','sound/effects/elec_bzzz.ogg','sound/effects/electric_shock.ogg')
+	while(current != trg_loc)
+		playsound(get_turf(user), pick(sounds), 15, 1)
+		current = get_step(current, get_dir(current, trg_loc))
+		user.dir = get_dir(user, current)
+		var/obj/beam_dummy/B = showLine(get_turf(user), current, "lght", 5)
+		var/list/affected = B.affected
+		for(var/turf/T in affected)
+			animate_flash_color_fill(T,"#aaddff",1,5)
+			for(var/mob/M in T)
+				M.weakened += 2
+				random_burn_damage(M, 10)
 
-				if(istype(T, /turf/simulated/floor))
-					if(!T:broken)
-						if(T:burnt)
-							T:break_tile()
-						else
-							T:burn_tile()
-			spawn(6) qdel(B)
-			sleep(3)
-		sleep(1)
+			if(istype(T, /turf/simulated/floor))
+				if(!T:broken)
+					if(T:burnt)
+						T:break_tile()
+					else
+						T:burn_tile()
+		spawn(6) qdel(B)
+		sleep(3)
+	sleep(1)
 
-		user.canmove = 1
-		firing = 0
-		return
+	user.canmove = 1
+	firing = 0
+	return
 
 
 //Fix portal creation for areas and such.
@@ -516,115 +516,114 @@
 	invisibility = 100
 	icon = 'icons/effects/ULIcons.dmi'
 	icon_state = "7-3-0"
-	var
-		procName = null   //Name of the proc being called.
-		procTarget = null //Owner of the proc being called.
-		list/turf/procArgs = list()
-		procCooldown = 0
-		canTrigger = 1
+	var/procName = null   //Name of the proc being called.
+	var/procTarget = null //Owner of the proc being called.
+	var/list/turf/procArgs = list()
+	var/procCooldown = 0
+	var/canTrigger = 1
 
-	proc/copy_to(var/turf/T)
-		if(!T) return
-		var/obj/proctrigger/P = new/obj/proctrigger(T)
-		P.procName = src.procName
-		P.procTarget = src.procTarget
-		P.procArgs = src.procArgs.Copy()
-		P.procCooldown = src.procCooldown
-		return
+/obj/proctrigger/proc/copy_to(var/turf/T)
+	if(!T) return
+	var/obj/proctrigger/P = new/obj/proctrigger(T)
+	P.procName = src.procName
+	P.procTarget = src.procTarget
+	P.procArgs = src.procArgs.Copy()
+	P.procCooldown = src.procCooldown
+	return
 
-	MouseDrop(over_object,src_location,over_location,src_control,over_control,params)
-		var/turf/trgTurf = get_turf(over_object)
-		if(istype(trgTurf))
-			switch(alert("Do you want to create a copy of the trigger on this tile?",,"Yes","No"))
-				if("Yes")
-					copy_to(trgTurf)
-					boutput(usr, "<span style=\"color:green\">*** All done ***</span>")
-				if("No")
-					return
-		return
-
-	Crossed(atom/movable/O)
-		if(!canTrigger) return
-		canTrigger = 0
-		spawn(procCooldown) canTrigger = 1
-
-		if(length(procName))
-			var/list/modList = list()
-
-			for(var/x in procArgs)
-				if(x == "***trigger***")
-					modList += O
-				else
-					modList += x
-
-			if (procTarget)
-				if(procTarget == "***trigger***")
-					if(hascall(O, procName))
-						call(O,procName)(arglist(modList))
-				else
-					if(hascall(procTarget, procName))
-						call(procTarget,procName)(arglist(modList))
-			else
-				call(procName)(arglist(modList))
-		return
-
-	Click()
-		if(!usr.client.holder) return //basic admin check
-		var/target = null
-
-		switch(alert("Proc owned by obj?",,"Yes","No"))
+/obj/proctrigger/MouseDrop(over_object,src_location,over_location,src_control,over_control,params)
+	var/turf/trgTurf = get_turf(over_object)
+	if(istype(trgTurf))
+		switch(alert("Do you want to create a copy of the trigger on this tile?",,"Yes","No"))
 			if("Yes")
-				switch(alert("Proc owned by triggering object?",,"Yes","No"))
-					if("Yes")
-						target = "***trigger***"
-					if("No")
-						target = input("Select target:","Target",null) as obj|mob|area|turf in world
+				copy_to(trgTurf)
+				boutput(usr, "<span style=\"color:green\">*** All done ***</span>")
 			if("No")
-				target = null
+				return
+	return
 
-		var/procname = input("Procpath","path:", null) as text
-		var/argnum = input("Number of arguments:","Number", 0) as num
-		var/list/listargs = list()
+/obj/proctrigger/Crossed(atom/movable/O)
+	if(!canTrigger) return
+	canTrigger = 0
+	spawn(procCooldown) canTrigger = 1
 
-		for(var/i=0, i<argnum, i++)
-			var/class = input("Type of Argument #[i]","Variable Type", null) in list("text","num","type","reference","mob reference", "icon","file", "*triggering object*","cancel")
-			switch(class)
-				if("-cancel-")
-					return
+	if(length(procName))
+		var/list/modList = list()
 
-				if("*triggering object*")
-					listargs += "***trigger***"
+		for(var/x in procArgs)
+			if(x == "***trigger***")
+				modList += O
+			else
+				modList += x
 
-				if("text")
-					listargs += input("Enter new text:","Text",null) as text
+		if (procTarget)
+			if(procTarget == "***trigger***")
+				if(hascall(O, procName))
+					call(O,procName)(arglist(modList))
+			else
+				if(hascall(procTarget, procName))
+					call(procTarget,procName)(arglist(modList))
+		else
+			call(procName)(arglist(modList))
+	return
 
-				if("num")
-					listargs += input("Enter new number:","Num", 0) as num
+/obj/proctrigger/Click()
+	if(!usr.client.holder) return //basic admin check
+	var/target = null
 
-				if("type")
-					listargs += input("Enter type:","Type", null) in typesof(/obj,/mob,/area,/turf)
+	switch(alert("Proc owned by obj?",,"Yes","No"))
+		if("Yes")
+			switch(alert("Proc owned by triggering object?",,"Yes","No"))
+				if("Yes")
+					target = "***trigger***"
+				if("No")
+					target = input("Select target:","Target",null) as obj|mob|area|turf in world
+		if("No")
+			target = null
 
-				if("reference")
-					listargs += input("Select reference:","Reference", null) as mob|obj|turf|area in world
+	var/procname = input("Procpath","path:", null) as text
+	var/argnum = input("Number of arguments:","Number", 0) as num
+	var/list/listargs = list()
 
-				if("mob reference")
-					listargs += input("Select reference:","Reference", null) as mob in world
+	for(var/i=0, i<argnum, i++)
+		var/class = input("Type of Argument #[i]","Variable Type", null) in list("text","num","type","reference","mob reference", "icon","file", "*triggering object*","cancel")
+		switch(class)
+			if("-cancel-")
+				return
 
-				if("file")
-					listargs += input("Pick file:","File", null) as file
+			if("*triggering object*")
+				listargs += "***trigger***"
 
-				if("icon")
-					listargs += input("Pick icon:","Icon", null) as icon
+			if("text")
+				listargs += input("Enter new text:","Text",null) as text
 
-		procArgs = listargs
-		procName = procname
-		procTarget = target
-		boutput(usr, "<span style=\"color:green\">*** All done ***</span>")
+			if("num")
+				listargs += input("Enter new number:","Num", 0) as num
 
-		return
+			if("type")
+				listargs += input("Enter type:","Type", null) in typesof(/obj,/mob,/area,/turf)
 
-	ex_act()
-		return
+			if("reference")
+				listargs += input("Select reference:","Reference", null) as mob|obj|turf|area in world
+
+			if("mob reference")
+				listargs += input("Select reference:","Reference", null) as mob in world
+
+			if("file")
+				listargs += input("Pick file:","File", null) as file
+
+			if("icon")
+				listargs += input("Pick icon:","Icon", null) as icon
+
+	procArgs = listargs
+	procName = procname
+	procTarget = target
+	boutput(usr, "<span style=\"color:green\">*** All done ***</span>")
+
+	return
+
+ex_act()
+	return
 
 /obj/objspawner			   //Thing that continously spawns objects. For event's or something. I wouldn't use this on the actual map. It's not very efficient.
 	name = "ObjSpawner"
@@ -639,35 +638,35 @@
 	var/spawn_check_rate = 10  //How often we check if we need to spawn something.
 	var/spawn_type = null	   //Type to spawn
 
-	proc/runIt()
-		if(istext(spawn_type))
-			spawn_type = text2path(spawn_type)
-		if(ispath(spawn_type))
-			if(!(locate(spawn_type) in src.loc))
-				sleep(spawn_rate)
-				new spawn_type(src.loc)
-		spawn(spawn_check_rate)
-			runIt()
-		return
+/obj/objspawner/proc/runIt()
+	if(istext(spawn_type))
+		spawn_type = text2path(spawn_type)
+	if(ispath(spawn_type))
+		if(!(locate(spawn_type) in src.loc))
+			sleep(spawn_rate)
+			new spawn_type(src.loc)
+	spawn(spawn_check_rate)
+		runIt()
+	return
 
-	Click()
-		if(!usr.client.holder) return //basic admin check
-		var/nSpawn = input(usr, "Select spawn type") in typesof(/obj)
-		var/nCheck = input(usr, "Spawn check delay") as num
-		var/nRate = input(usr, "Spawn check delay") as num
-		if(nSpawn && nCheck && nRate)
-			spawn_rate = nRate
-			spawn_check_rate = nCheck
-			spawn_type = nSpawn
-			boutput(usr, "<span style=\"color:green\">*** All done ***</span>")
-		return
+/obj/objspawner/Click()
+	if(!usr.client.holder) return //basic admin check
+	var/nSpawn = input(usr, "Select spawn type") in typesof(/obj)
+	var/nCheck = input(usr, "Spawn check delay") as num
+	var/nRate = input(usr, "Spawn check delay") as num
+	if(nSpawn && nCheck && nRate)
+		spawn_rate = nRate
+		spawn_check_rate = nCheck
+		spawn_type = nSpawn
+		boutput(usr, "<span style=\"color:green\">*** All done ***</span>")
+	return
 
-	New()
-		spawn(0) runIt()
-		return ..()
+/obj/objspawner/New()
+	spawn(0) runIt()
+	return ..()
 
-	ex_act()
-		return
+/obj/objspawner/ex_act()
+	return
 
 /proc/gobuzz()
 	if(buzztile)

@@ -10,7 +10,7 @@
 	var/ghost_confirmation_delay = 1200 // 2 min to acknowledge or deny respawn offer.
 	var/respawn_lock = 0
 	var/admin_override = 0
-#if defined(MAP_OVERRIDE_DESTINY)
+#ifdef DESTINY_MODE
 	disabled = 1
 #endif
 

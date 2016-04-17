@@ -8,7 +8,7 @@
 	var/bhole_delay = 50 // 5 seconds
 	var/sound/bhole_spawn = 'sound/machines/satcrash.ogg'
 	var/sound/bhole_warning = 'sound/ambience/creaking_metal.ogg'
-#if defined(MAP_OVERRIDE_DESTINY)
+#ifdef DESTINY_MODE
 	disabled = 1
 #endif
 

@@ -180,7 +180,7 @@
 	var/punchMessage = "punches"
 	var/kickMessage = "kicks"
 
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	var/last_cryotron_message = 0 // to stop relaymove spam  :I
 #endif
 

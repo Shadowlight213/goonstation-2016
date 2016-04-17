@@ -234,7 +234,7 @@ mob/new_player/proc/AttemptLateSpawn(var/datum/job/JOB)
 					if (!A.stat && A.announces_arrivals)
 						A.announce_arrival("[character.real_name]","[JOB.name]")
 
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 		var/obj/cryotron/starting_loc = null
 		if (ishuman(character) && rp_latejoin && rp_latejoin.len)
 			starting_loc = pick(rp_latejoin)

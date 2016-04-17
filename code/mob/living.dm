@@ -1,5 +1,5 @@
 // living
-#define DEATHSHUTTLEDELAY 10800
+#define DEATHSHUTTLEDELAY 6000
 /mob/living
 	var/t_plasma = null
 	var/t_oxygen = null
@@ -58,7 +58,7 @@
 	var/sound_snap = 'sound/effects/snap.ogg'
 	var/sound_fingersnap = 'sound/effects/fingersnap.ogg'
 
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	var/hibernating = 0 // if they're stored in the cryotron, Life() gets skipped
 #endif
 
@@ -103,7 +103,7 @@
 	return ..(gibbed)
 
 /mob/living/Life(datum/controller/process/mobs/parent)
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	if (hibernating)
 		if (istype(src.loc, /obj/cryotron))
 			if (!stat)
@@ -167,7 +167,7 @@
 	if (. == 100)
 		return 100
 
-#ifdef MAP_OVERRIDE_DESTINY
+#ifdef DESTINY_MODE
 	if (src.hibernating && istype(src.loc, /obj/cryotron))
 		var/obj/cryotron/cryo = src.loc
 		if (cryo.exit_prompt(src))
