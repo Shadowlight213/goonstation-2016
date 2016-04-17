@@ -32,8 +32,8 @@ install:
   - pip install --user beautifulsoup4 -q
 
 before_script:
-  - chmod +x ./install-byond.sh
-  - ./install-byond.sh
+  - chmod +x ./byond-install.sh
+  - ./byond-install.sh
   - shopt -s globstar
 
 script:
