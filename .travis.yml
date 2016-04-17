@@ -33,7 +33,7 @@ install:
 
 before_script:
   - chmod +x ./byond-install.sh
-  - ./install-byond.sh
+  - ./byond-install.sh
   - shopt -s globstar
 
 script:
