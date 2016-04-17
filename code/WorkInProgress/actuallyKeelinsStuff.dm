@@ -622,7 +622,7 @@
 
 	return
 
-ex_act()
+/obj/proctrigger/ex_act()
 	return
 
 /obj/objspawner			   //Thing that continously spawns objects. For event's or something. I wouldn't use this on the actual map. It's not very efficient.
