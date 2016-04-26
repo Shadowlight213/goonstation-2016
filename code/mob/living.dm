@@ -75,6 +75,12 @@
 /mob/living/Stat()
 	..()
 
+
+/mob/living/Logout() //Delay is so lagspikes dont accidentally trigger the proc.
+	spawn(2400)
+		Alldednohope()
+	..()
+
 /mob/living/disposing()
 	ai_target = null
 	ai_target_old.len = 0
@@ -86,16 +92,10 @@
 	..()
 
 /mob/living/death(gibbed)
-	if (src.key) statlog_death(src,gibbed)
+	if (src.key)
+		statlog_death(src,gibbed)
 	if (src.client && (ticker.round_elapsed_ticks >= DEATHSHUTTLEDELAY))
-		var/num_players = 0
-		for(var/mob/players in mobs)
-			if (players.client && players.stat != 2) num_players++
-
-		if (num_players <= 0)
-			if (!emergency_shuttle.online && ticker && ticker.current_state != GAME_STATE_FINISHED && ticker.mode.crew_shortage_enabled && config.deadshuttle)
-				emergency_shuttle.incall()
-				boutput(world, "<span style=\"color:blue\"><B>Alert: Due to crew shortages and fatalities, the emergency shuttle has been called. It will arrive in [round(emergency_shuttle.timeleft()/60)] minutes.</B></span>")
+		Alldednohope()
 
 	if (deathConfettiActive) //Active if XMAS or manually toggled
 		src.deathConfetti()

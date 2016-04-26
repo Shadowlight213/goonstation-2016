@@ -2915,3 +2915,15 @@
 		return_name = capitalize(pick(first_names_male + first_names_female) + " " + capitalize(pick(last_names)))
 	return return_name
 
+
+
+/proc/Alldednohope()
+	var/num_players = 0
+	for(var/mob/players in mobs)
+		if (players.client && players.stat != 2)
+			num_players++
+
+	if (num_players <= 0)
+		if (!emergency_shuttle.online && ticker && ticker.current_state != GAME_STATE_FINISHED && ticker.mode.crew_shortage_enabled && config.deadshuttle)
+			emergency_shuttle.incall()
+			boutput(world, "<span style=\"color:blue\"><B>Alert: Due to crew shortages and fatalities, the emergency shuttle has been called. It will arrive in [round(emergency_shuttle.timeleft()/60)] minutes.</B></span>")
