@@ -287,7 +287,7 @@ macro "wasd"
 		is-disabled = false
 	elem "wasd-northeast"
 		name = "E"
-		command = ".northeast"
+		command = "equip"
 		is-disabled = false
 	elem "eyebrow_2"
 		name = "CTRL+E"
@@ -347,7 +347,7 @@ macro "wasd"
 		is-disabled = false
 	elem "flip_2"
 		name = "R"
-		command = "say \"*flip\""
+		command = "togglethrow"
 		is-disabled = false
 	elem "flip_3"
 		name = "CTRL+R"
@@ -391,7 +391,7 @@ macro "wasd"
 		is-disabled = false
 	elem "wasd-togglethrow"
 		name = "X"
-		command = "togglethrow"
+		command = "swaphands"
 		is-disabled = false
 	elem "flex_2"
 		name = "CTRL+X"
@@ -406,7 +406,7 @@ macro "wasd"
 		command = "say \"*snap\""
 		is-disabled = false
 	elem "wasd-southwest"
-		name = "Z+REP"
+		name = "Z"
 		command = ".southwest"
 		is-disabled = false
 	elem "adminhelp"

@@ -368,10 +368,9 @@ var/global/curr_day = null
 			winset(src, "[macro][key]down", "parent=[macro];name=[key];command=\".keydown [key]\"")
 			winset(src, "[macro][key]up", "parent=[macro];name=[key]+UP;command=\".keyup [key]\"")
 
-///client/Southwest()
-	//
-	//return
-
+//client/Southwest()
+//	return
+/*
 /client/Northeast()
 	if (isobj(src.mob.loc))
 		var/obj/O = src.mob.loc
@@ -380,7 +379,7 @@ var/global/curr_day = null
 	if (isliving(src.mob))
 		var/mob/living/L = src.mob
 		L.swap_hand()
-
+*/
 /client/Southeast()
 	if (isobj(src.mob.loc))
 		var/obj/O = src.mob.loc
@@ -448,6 +447,13 @@ var/global/curr_day = null
 	set hidden = 1
 	if (!src.mob.stat && (ishuman(src.mob) || istype(src.mob, /mob/living/critter)) && isturf(src.mob.loc) && !src.mob.restrained())
 		src.mob:toggle_throw_mode()
+	return
+
+/client/verb/swaphands()
+	set hidden = 1
+	if (isliving(src.mob))
+		var/mob/living/L = src.mob
+		L.swap_hand()
 	return
 
 /client/verb/togglepoint(force_off as num) // force_off is set to 1 when the button for this is released in WASD mode (currently B), else it's 0
