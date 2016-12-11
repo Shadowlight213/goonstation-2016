@@ -195,9 +195,14 @@ datum/shuttle_controller
 
 						for (var/obj/machinery/door/D in start_location)
 							D.close()
-							if (istype(D, /obj/machinery/door/airlock/external))
-								D.locked = 1
-								D.update_icon()
+							if (map_setting == "COG2")
+								if (istype(D, /obj/machinery/door/airlock/pyro/external))
+									D.locked = 1
+									D.update_icon()
+							else
+								if (istype(D, /obj/machinery/door/airlock/external))
+									D.locked = 1
+									D.update_icon()
 
 						for (var/mob/M in start_location)
 							shake_camera(M, 32, 4)
@@ -262,9 +267,15 @@ datum/shuttle_controller
 						for (var/mob/M in start_location)
 							M.removeOverlayComposition(/datum/overlayComposition/shuttle_warp)
 
-						for (var/obj/machinery/door/airlock/external/D in start_location)
-							D.locked = 0
-							D.update_icon()
+						for (var/obj/machinery/door/D in start_location)
+							if (map_setting == "COG2")
+								if (istype(D, /obj/machinery/door/airlock/pyro/external))
+									D.locked = 0
+									D.update_icon()
+							else
+								if (istype(D, /obj/machinery/door/airlock/external))
+									D.locked = 0
+									D.update_icon()
 
 						for (var/turf/space/S in start_location)
 							S.icon_state = "[rand(1,25)]"

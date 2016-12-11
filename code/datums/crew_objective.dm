@@ -111,8 +111,10 @@
 			explanation_text = "End the round alive but not on the station or escape levels."
 			medal_name = "Unperson"
 			check_completion()
-				if(owner.current && owner.current.stat != 2 && owner.current.z != 1 && owner.current.z != 2) return 1
-				else return 0
+				if(owner.current && owner.current.stat != 2 && owner.current.z != 1 && !istype(get_area(owner.current),/area/shuttle/escape/centcom))
+					return 1
+				else
+					return 0
 
 	chiefengineer
 		power

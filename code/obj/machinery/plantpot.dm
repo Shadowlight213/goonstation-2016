@@ -912,10 +912,6 @@
 					HYPadd_harvest_reagents(F,growing,DNA,quality_status)
 					// We also want to put any reagents the plant produces into the new item.
 
-				else if (istype(CROP,/obj/item/plant/))
-					// If we've got a herb or some other thing like wheat or shit like that.
-					HYPadd_harvest_reagents(CROP,growing,DNA,quality_status)
-
 				else if (istype(CROP,/obj/item/reagent_containers/food/snacks/mushroom/))
 					// Mushrooms mostly act the same as herbs, except you can eat them.
 					var/obj/item/reagent_containers/food/snacks/mushroom/M = CROP
@@ -931,6 +927,11 @@
 					else if (quality_status == "rotten")
 						M.heal_amt = 0
 
+					HYPadd_harvest_reagents(CROP,growing,DNA,quality_status)
+
+				else if (istype(CROP,/obj/item/plant/))
+					// If we've got a herb or some other thing like wheat or shit like that.
+					// Also anything that might contain a reagent that wasn't covered above.
 					HYPadd_harvest_reagents(CROP,growing,DNA,quality_status)
 
 				else if (istype(CROP,/obj/critter/))
@@ -1220,6 +1221,7 @@ proc/HYPadd_harvest_reagents(var/obj/item/I,var/datum/plant/growing,var/datum/pl
 	var/basecapacity = 8
 	if (istype(I,/obj/item/plant/)) basecapacity = 15
 	else if (istype(I,/obj/item/reagent_containers/food/snacks/mushroom)) basecapacity = 5
+	else if (istype(I,/obj/item/reagent_containers/food/snacks/ingredient/meat/synthmeat)) basecapacity = 2
 	// First we decide how much reagents to begin with certain items should hold.
 
 	for(var/datum/plant_gene_strain/quality/Q in DNA.commuts)

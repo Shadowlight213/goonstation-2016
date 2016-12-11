@@ -601,6 +601,11 @@ var/list/clonepod_accepted_reagents = list("blood"=0.5,"synthflesh"=1,"beff"=0.7
 			boutput(user, "<span style=\"color:red\">There is nothing loaded to reclaim!</span>")
 			return
 
+		if (src.occupant.loc != src)
+			src.occupant = null
+			boutput(user, "<span style=\"color:red\">There is nothing loaded to reclaim!</span>")
+			return
+
 		user.visible_message("<b>[user]</b> activates [src]!", "You activate [src].")
 		if (istype(src.occupant))
 			logTheThing("combat", user, src.occupant, "activated [src.name] with %target% ([src.occupant.stat == 2 ? "dead" : "alive"]) inside at [log_loc(src)].")

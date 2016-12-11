@@ -311,7 +311,15 @@
 
 			if (H.w_uniform)
 				var/obj/item/clothing/M = H.w_uniform
-				if (istype(M, /obj/item/clothing/under/rank/captain))
+				if (istype(M, /obj/item/clothing/under/rank/captain/dress))
+					var/prev = M.name
+					M.icon_state = "captain-dress-blue"
+					M.item_state = "captain-dress-blue"
+					M.name = "administrator's uniform"
+					M.desc = "A uniform specifically for NanoTrasen commanders. (Base Item: [prev])"
+					H.set_clothing_icon_dirty()
+
+				else if (istype(M, /obj/item/clothing/under/rank/captain))
 					var/prev = M.name
 					M.icon_state = "captain-blue"
 					M.item_state = "captain-blue"
