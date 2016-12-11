@@ -226,7 +226,7 @@ var/list/hasvar_type_cache = list()
 /proc/hex2num(hex)
 
 	if (!( istext(hex) ))
-		CRASH("hex2num not given a hexadecimal string argument (user error)")
+		CRASH("hex2num not given a hexadecimal string argument: [hex] (user error)")
 		return
 	. = 0
 	var/power = 0
@@ -253,7 +253,7 @@ var/list/hasvar_type_cache = list()
 			if("f", "F")
 				. += 16 ** power * 15
 			else
-				CRASH("hex2num given non-hexadecimal string (user error)")
+				CRASH("hex2num given non-hexadecimal string: [char] (user error)")
 				return
 		power++
 		Label_290:
@@ -264,7 +264,7 @@ var/list/hasvar_type_cache = list()
 	if (placeholder == null)
 		placeholder = 2
 	if (!( isnum(num) ))
-		CRASH("num2hex not given a numeric argument (user error)")
+		CRASH("num2hex not given a numeric argument: [num] (user error)")
 		return
 	if (!( num ))
 		return "0"
