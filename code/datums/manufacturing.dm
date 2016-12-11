@@ -14,28 +14,28 @@
 	var/sanity_check_exemption = 0
 	var/apply_material = 0
 
-	New()
-		if (!sanity_check_exemption)
-			src.sanity_check()
+/datum/manufacture/New()
+	if (!sanity_check_exemption)
+		src.sanity_check()
 
-	proc/sanity_check()
-		if (item_paths.len != item_names.len || item_paths.len != item_amounts.len || item_names.len != item_amounts.len)
-			logTheThing("debug", null, null, "<b>Manufacturer:</b> [src.name] schematic requirement lists not properly configured")
-			qdel(src)
-			return
-		if (!item_outputs.len)
-			logTheThing("debug", null, null, "<b>Manufacturer:</b> [src.name] schematic output list not properly configured")
-			qdel(src)
-			return
+/datum/manufacture/proc/sanity_check()
+	if (item_paths.len != item_names.len || item_paths.len != item_amounts.len || item_names.len != item_amounts.len)
+		logTheThing("debug", null, null, "<b>Manufacturer:</b> [src.name] schematic requirement lists not properly configured")
+		qdel(src)
+		return
+	if (!item_outputs.len)
+		logTheThing("debug", null, null, "<b>Manufacturer:</b> [src.name] schematic output list not properly configured")
+		qdel(src)
+		return
 
-	proc/modify_output(var/obj/machinery/manufacturer/M, var/atom/A,var/list/materials)
-		// use this if you want the outputted item to be customised in any way by the manufacturer
-		if (M.malfunction && M.text_bad_output_adjective.len > 0 && prob(66))
-			A.name = "[pick(M.text_bad_output_adjective)] [A.name]"
-			//A.quality -= rand(25,50)
-		if (src.apply_material && materials.len > 0)
-			A.setMaterial(getCachedMaterial(materials[1]))
-		return 1
+/datum/manufacture/proc/modify_output(var/obj/machinery/manufacturer/M, atom/A,list/materials)
+	// use this if you want the outputted item to be customised in any way by the manufacturer
+	if (M.malfunction && M.text_bad_output_adjective.len > 0 && prob(66))
+		A.name = "[pick(M.text_bad_output_adjective)] [A.name]"
+		//A.quality -= rand(25,50)
+	if (src.apply_material && materials.len > 0)
+		A.setMaterial(getCachedMaterial(materials[1]))
+	return 1
 
 /datum/manufacture/mechanics
 	name = "Reverse-Engineered Schematic"
@@ -45,21 +45,21 @@
 	item_outputs = list(/obj/item/electronics/frame)
 	var/frame_path = null
 
-	modify_output(var/obj/machinery/manufacturer/M, var/atom/A)
-		if (!(..()))
-			return
+/datum/manufacture/mechanics/modify_output(var/obj/machinery/manufacturer/M, atom/A)
+	if (!(..()))
+		return
 
-		if (istype(A,/obj/item/electronics/frame/))
-			var/obj/item/electronics/frame/F = A
-			if (ispath(src.frame_path))
-				F.name = "[src.name] frame"
-				F.store_type = src.frame_path
-				F.viewstat = 2
-				F.secured = 2
-				F.icon_state = "dbox"
-			else
-				qdel(F)
-				return
+	if (istype(A,/obj/item/electronics/frame/))
+		var/obj/item/electronics/frame/F = A
+		if (ispath(src.frame_path))
+			F.name = "[src.name] frame"
+			F.store_type = src.frame_path
+			F.viewstat = 2
+			F.secured = 2
+			F.icon_state = "dbox"
+		else
+			qdel(F)
+			return
 
 /*
 /datum/manufacture/iron
@@ -572,26 +572,26 @@
 	category = "Resource"
 	apply_material = 0
 
-	modify_output(var/obj/machinery/manufacturer/M, var/atom/A,var/list/materials)
-		..()
-		var/obj/item/cable_coil/coil = A
-		var/min_cond = 1
-		var/max_cond = 0
-		var/min_cond_mat = null
-		var/max_cond_mat = null
-		for (var/mat_id in materials)
-			var/datum/material/cand = getCachedMaterial(mat_id)
-			if (!cand)
-				continue
-			if (cand.getProperty(PROP_ELECTRICAL) < min_cond)
-				min_cond = cand.getProperty(PROP_ELECTRICAL)
-				min_cond_mat = cand
-			else if (cand.getProperty(PROP_ELECTRICAL) > max_cond)
-				max_cond = cand.getProperty(PROP_ELECTRICAL)
-				max_cond_mat = cand
-		coil.setInsulator(min_cond_mat)
-		coil.setConductor(max_cond_mat)
-		return 1
+/datum/manufacture/cable/modify_output(obj/machinery/manufacturer/M, atom/A,list/materials)
+	..()
+	var/obj/item/cable_coil/coil = A
+	var/min_cond = 1
+	var/max_cond = 0
+	var/min_cond_mat = null
+	var/max_cond_mat = null
+	for (var/mat_id in materials)
+		var/datum/material/cand = getCachedMaterial(mat_id)
+		if (!cand)
+			continue
+		if (cand.getProperty(PROP_ELECTRICAL) < min_cond)
+			min_cond = cand.getProperty(PROP_ELECTRICAL)
+			min_cond_mat = cand
+		else if (cand.getProperty(PROP_ELECTRICAL) > max_cond)
+			max_cond = cand.getProperty(PROP_ELECTRICAL)
+			max_cond_mat = cand
+	coil.setInsulator(min_cond_mat)
+	coil.setConductor(max_cond_mat)
+	return 1
 
 /datum/manufacture/RCD
 	name = "Rapid Construction Device"
