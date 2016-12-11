@@ -47,8 +47,10 @@ var/global/datum/controller/gameticker/ticker
 	if(master_mode in list("secret","wizard","alien"))
 		src.hide_mode = 1
 
-	if((master_mode=="random") || (master_mode=="secret")) src.mode = config.pick_random_mode()
-	else src.mode = config.pick_mode(master_mode)
+	if((master_mode=="random") || (master_mode=="secret"))
+		src.mode = config.pick_random_mode()
+	else
+		src.mode = config.pick_mode(master_mode)
 
 	if(hide_mode)
 		var/modes = sortList(config.get_used_mode_names())

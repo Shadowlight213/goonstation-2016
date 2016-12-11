@@ -335,13 +335,12 @@
 
 /datum/configuration/proc/pick_mode(mode_name)
 	// I wish I didn't have to instance the game modes in order to look up
-	// their information, but it is the only way (at least that I know of).
+	// their information, but it is the only way (at least that I know of).//You use initial() dummy :P
 	for (var/T in (typesof(/datum/game_mode) - /datum/game_mode))
-		var/datum/game_mode/M = new T()
-		if (M.config_tag && M.config_tag == mode_name)
-			return M
-		qdel(M)
-
+		var/datum/game_mode/M = T
+		if(initial(M.config_tag) && initial(M.config_tag) == mode_name)
+			var/datum/game_mode/NM = new M
+			return NM
 	return null
 
 /datum/configuration/proc/pick_random_mode()

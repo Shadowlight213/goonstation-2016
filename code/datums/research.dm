@@ -27,127 +27,127 @@
 	var/items_to_research
 
 
-	New()
-	//Max tiers is the maximum, make sure this is kept whenever research is created
-		if(src.starting_tier > src.max_tiers)
-			src.starting_tier = src.max_tiers
-		src.tier = src.starting_tier
-		items_to_research = new/list(src.max_tiers,src.max_per_list)
-		researched_items = new/list(src.max_tiers,src.max_per_list)
+/datum/research/New()
+//Max tiers is the maximum, make sure this is kept whenever research is created
+	if(src.starting_tier > src.max_tiers)
+		src.starting_tier = src.max_tiers
+	src.tier = src.starting_tier
+	items_to_research = new/list(src.max_tiers,src.max_per_list)
+	researched_items = new/list(src.max_tiers,src.max_per_list)
 
-	proc/check_if_tier_completed()
-		//this is for detecting if we still have things to research in the current tier
-		//prevents people from spamming the advance tier button
-		//as far as i know the .len for items to research would just return src.max_per_list
-		//hence the reason for the for loop
+/datum/research/proc/check_if_tier_completed()
+	//this is for detecting if we still have things to research in the current tier
+	//prevents people from spamming the advance tier button
+	//as far as i know the .len for items to research would just return src.max_per_list
+	//hence the reason for the for loop
 
-		//This needs to be re-did for each research. For eg, the variable a has to be a datum/ailment for
-		//disease research, though if you're researching objects it needs to be /obj/
-		//otherwise it will always return 1, as for some reason it counts when you just use var/a
+	//This needs to be re-did for each research. For eg, the variable a has to be a datum/ailment for
+	//disease research, though if you're researching objects it needs to be /obj/
+	//otherwise it will always return 1, as for some reason it counts when you just use var/a
 
-		var/count = 0
-		for(var/a in src.items_to_research[src.tier])
-			count++
-		if(!count)
-			return 1
+	var/count = 0
+	for(var/a in src.items_to_research[src.tier])
+		count++
+	if(!count)
+		return 1
+	return 0
+
+
+/datum/research/proc/advance_tier()
+	if (!check_if_tier_completed()) return 0 // Dont do anything if they havent finished the tier yet
+	if (src.tier < src.max_tiers) src.tier++
+	else if (src.tier >= src.max_tiers) return 0 // Don't advance if we're at or above max tiers
+
+	if(src.tier > src.max_tiers)
+		// If they've somehow advanced when they're already at max, fix it and don't tell everyone about it
+		src.tier = src.max_tiers
+	else if (src.tier == src.max_tiers)
+		//Let the world know that we've finished our research
+		var/cashbonus = src.max_tiers * 10000
+		wagesystem.station_budget += cashbonus
+		return command_alert("Centcom congratulates the scientists of the station for reaching the maximum tier of [src.name]. As a reward for your hard work, we have added $[cashbonus] to the station budget.","Research Announcement")
+	else
+		//Let everyone know when we have advanced a tier
+		return command_alert("Centcom congratulates the scientists of the station for reaching Tier [src.tier] of [src.name].","Research Announcement")
+
+//Starts the research, sets the research item text.
+//Sets time default to 0 so research can be set up without it being time based
+//eg engineering research could be based on collecting items, setting up the engine etc.
+/datum/research/proc/start_research(var/time = 0, var/research_item, var/applytimebonus = 1)
+	//already researching
+	if(is_researching)
 		return 0
+	//can't find it in in the list of shit we need to research
+	var/list/tier_items = src.items_to_research[src.tier]
+	if(!tier_items.Find(research_item))
+		return 0
+	// apply time bonus
+	if (applytimebonus)
+		for(var/i = robotics_research.starting_tier, i <= robotics_research.max_tiers, i++)
+			for(var/datum/roboresearch/X in robotics_research.researched_items[i])
+				if (X.resebonus && X.resemulti != 0 && time != 0) time /= X.resemulti
+		if (wagesystem.research_budget >= 5000)
+			time /= 2
+			wagesystem.research_budget -= 5000
+	// start that shit
+	is_researching = 1
+	src.current_research = research_item
+	//Only if we're considering time
+	if(time)
+		//when it'll be finished in seconds
+		src.current_research_time = round((world.timeofday + time) / 10, 1)
+	return 1
 
+//End research, sets research item to null and updates finished research list
+/datum/research/proc/end_research()
+	//already finished or timeleft is not zero
+	if(!is_researching)
+		boutput(world, "Uh oh, research has fucked up. Line 68, research.dm. Report this to a coder.")
+		//this shouldn't happen
+		return 0
+	src.is_researching = 0
+	src.items_to_research[tier] -= src.current_research
+	src.researched_items[tier] += src.current_research
+	score_researchdone += 1
+	src.current_research = null
+	return 1
 
-	proc/advance_tier()
-		if (!check_if_tier_completed()) return 0 // Dont do anything if they havent finished the tier yet
-		if (src.tier < src.max_tiers) src.tier++
-		else if (src.tier >= src.max_tiers) return 0 // Don't advance if we're at or above max tiers
+// Stops the current research without finishing it
+/datum/research/proc/cancel_research()
+	if(!is_researching) return 0 // No need to cancel if we're not researching anything
+	src.is_researching = 0
+	src.current_research = null
+	src.current_research_time = 0
+	return 1
 
-		if(src.tier > src.max_tiers)
-			// If they've somehow advanced when they're already at max, fix it and don't tell everyone about it
-			src.tier = src.max_tiers
-		else if (src.tier == src.max_tiers)
-			//Let the world know that we've finished our research
-			var/cashbonus = src.max_tiers * 10000
-			wagesystem.station_budget += cashbonus
-			return command_alert("Centcom congratulates the scientists of the station for reaching the maximum tier of [src.name]. As a reward for your hard work, we have added $[cashbonus] to the station budget.","Research Announcement")
-		else
-			//Let everyone know when we have advanced a tier
-			return command_alert("Centcom congratulates the scientists of the station for reaching Tier [src.tier] of [src.name].","Research Announcement")
+//Returns the time in seconds until researched is finished
+/datum/research/proc/timeleft()
+	if(!is_researching)
+		return
+	//converting timeofday to seconds
+	var/timeleft = round(src.current_research_time - (world.timeofday)/10 ,1)
+	if(timeleft <= 0)
+		src.end_research()
+		return 0
+	return timeleft
 
-	//Starts the research, sets the research item text.
-	//Sets time default to 0 so research can be set up without it being time based
-	//eg engineering research could be based on collecting items, setting up the engine etc.
-	proc/start_research(var/time = 0, var/research_item, var/applytimebonus = 1)
-		//already researching
-		if(is_researching)
-			return 0
-		//can't find it in in the list of shit we need to research
-		var/list/tier_items = src.items_to_research[src.tier]
-		if(!tier_items.Find(research_item))
-			return 0
-		// apply time bonus
-		if (applytimebonus)
-			for(var/i = robotics_research.starting_tier, i <= robotics_research.max_tiers, i++)
-				for(var/datum/roboresearch/X in robotics_research.researched_items[i])
-					if (X.resebonus && X.resemulti != 0 && time != 0) time /= X.resemulti
-			if (wagesystem.research_budget >= 5000)
-				time /= 2
-				wagesystem.research_budget -= 5000
-		// start that shit
-		is_researching = 1
-		src.current_research = research_item
-		//Only if we're considering time
-		if(time)
-			//when it'll be finished in seconds
-			src.current_research_time = round((world.timeofday + time) / 10, 1)
-		return 1
+//Returns the time, in MM:SS format
+/datum/research/proc/get_research_timeleft()
+	var/timeleft = src.timeleft()
+	if(timeleft)
+		return "[add_zero(num2text((timeleft / 60) % 60),2)]:[add_zero(num2text(timeleft % 60), 2)]"
 
-	//End research, sets research item to null and updates finished research list
-	proc/end_research()
-		//already finished or timeleft is not zero
-		if(!is_researching)
-			boutput(world, "Uh oh, research has fucked up. Line 68, research.dm. Report this to a coder.")
-			//this shouldn't happen
-			return 0
-		src.is_researching = 0
-		src.items_to_research[tier] -= src.current_research
-		src.researched_items[tier] += src.current_research
-		score_researchdone += 1
-		src.current_research = null
-		return 1
-
-	// Stops the current research without finishing it
-	proc/cancel_research()
-		if(!is_researching) return 0 // No need to cancel if we're not researching anything
-		src.is_researching = 0
-		src.current_research = null
-		src.current_research_time = 0
-		return 1
-
-	//Returns the time in seconds until researched is finished
-	proc/timeleft()
-		if(!is_researching)
-			return
-		//converting timeofday to seconds
-		var/timeleft = round(src.current_research_time - (world.timeofday)/10 ,1)
-		if(timeleft <= 0)
-			src.end_research()
-			return 0
-		return timeleft
-
-	//Returns the time, in MM:SS format
-	proc/get_research_timeleft()
-		var/timeleft = src.timeleft()
-		if(timeleft)
-			return "[add_zero(num2text((timeleft / 60) % 60),2)]:[add_zero(num2text(timeleft % 60), 2)]"
-
-	proc/calculate_research_time(var/tier, var/applytimebonus = 1)
-		var/time = tier*1000
-		var/finaltime = 0
-		if (applytimebonus)
-			for(var/i = robotics_research.starting_tier, i <= robotics_research.max_tiers, i++)
-				for(var/datum/roboresearch/X in robotics_research.researched_items[i]) if (X.resebonus && X.resemulti != 0 && time != 0) time /= X.resemulti
-			if (wagesystem.research_budget >= 5000)
-				time /= 2
-				wagesystem.research_budget -= 5000
-		finaltime = round(time / 10, 1)
-		return finaltime
+/datum/research/proc/calculate_research_time(var/tier, var/applytimebonus = 1)
+	var/time = tier*1000
+	var/finaltime = 0
+	if (applytimebonus)
+		for(var/i = robotics_research.starting_tier, i <= robotics_research.max_tiers, i++)
+			for(var/datum/roboresearch/X in robotics_research.researched_items[i]) if (X.resebonus && X.resemulti != 0 && time != 0) time /= X.resemulti
+		if (wagesystem.research_budget >= 5000)
+			time /= 2
+			wagesystem.research_budget -= 5000
+	finaltime = round(time / 10, 1)
+	return finaltime
 
 //The disease research will be mostly handled by the research/disease computer
 /datum/research/disease
@@ -177,25 +177,25 @@
 	items_to_research = new/list(5,5)
 	researched_items = new/list(5,5)
 
-	New()
-		..()
-		src.items_to_research[1] = list(tier_one_one, tier_one_two)
-		src.items_to_research[2] = list(tier_two_one, tier_two_two)
-		src.items_to_research[3] = list(tier_three_one, tier_three_two, tier_three_three)
-		//src.items_to_research[4] = list(tier_four_one, tier_four_two, tier_four_three, tier_four_four, tier_four_five)
-		src.items_to_research[5] = list(tier_five_one, tier_five_two, tier_five_three)
+/datum/research/disease/New()
+	..()
+	src.items_to_research[1] = list(tier_one_one, tier_one_two)
+	src.items_to_research[2] = list(tier_two_one, tier_two_two)
+	src.items_to_research[3] = list(tier_three_one, tier_three_two, tier_three_three)
+	//src.items_to_research[4] = list(tier_four_one, tier_four_two, tier_four_three, tier_four_four, tier_four_five)
+	src.items_to_research[5] = list(tier_five_one, tier_five_two, tier_five_three)
 
-	check_if_tier_completed()
-		//this is for detecting if we still have things to research in the current tier
-		//prevents people from spamming the advance tier button
-		//as far as i know the .len for items to research would just return src.max_per_list
-		//hence the reason for the for loop
-		var/count = 0
-		for(var/datum/ailment/a in src.items_to_research[src.tier])
-			count++
-		if(!count)
-			return 1
-		return 0
+/datum/research/disease/check_if_tier_completed()
+	//this is for detecting if we still have things to research in the current tier
+	//prevents people from spamming the advance tier button
+	//as far as i know the .len for items to research would just return src.max_per_list
+	//hence the reason for the for loop
+	var/count = 0
+	for(var/datum/ailment/a in src.items_to_research[src.tier])
+		count++
+	if(!count)
+		return 1
+	return 0
 
 /datum/research/weaponry
 /datum/research/engineering
@@ -278,18 +278,18 @@
 	items_to_research = new/list(5,4)
 	researched_items = new/list(5,4)
 
-	New()
-		..()
-		src.items_to_research[1] = list(tier_one_one, tier_one_two, tier_one_three, tier_one_four, tier_one_five)
-		src.items_to_research[2] = list(tier_two_one, tier_two_two, tier_two_three, tier_two_four, tier_two_five)
-		src.items_to_research[3] = list(tier_three_one, tier_three_two, tier_three_three, tier_three_four, null)
-		src.items_to_research[4] = list(tier_four_one, tier_four_two, null, null, null)
+/datum/research/robotics/New()
+	..()
+	src.items_to_research[1] = list(tier_one_one, tier_one_two, tier_one_three, tier_one_four, tier_one_five)
+	src.items_to_research[2] = list(tier_two_one, tier_two_two, tier_two_three, tier_two_four, tier_two_five)
+	src.items_to_research[3] = list(tier_three_one, tier_three_two, tier_three_three, tier_three_four, null)
+	src.items_to_research[4] = list(tier_four_one, tier_four_two, null, null, null)
 
-	check_if_tier_completed()
-		var/count = 0
-		for(var/datum/roboresearch/a in src.items_to_research[src.tier]) count++
-		if(count <= 1) return 1
-		return 0
+/datum/research/robotics/check_if_tier_completed()
+	var/count = 0
+	for(var/datum/roboresearch/a in src.items_to_research[src.tier]) count++
+	if(count <= 1) return 1
+	return 0
 
 /// Host/Coder Admin verbs for research
 
