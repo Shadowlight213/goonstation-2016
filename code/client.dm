@@ -219,8 +219,8 @@ var/global/list/hellbans = null
 			if (src.holder && rank_to_level(src.holder.rank) >= LEVEL_MOD) // No admin changelog for goat farts (Convair880).
 				admin_changes()
 			load_antag_tokens()
-			if (src.byond_version < 509)
-				if (alert(src, "Please update BYOND to version 509! Would you like to be taken to the download page?", "ALERT", "Yes", "No") == "Yes")
+			if (src.byond_version < 510)
+				if (alert(src, "Please update BYOND to version 510! Would you like to be taken to the download page?", "ALERT", "Yes", "No") == "Yes")
 					src << link("http://www.byond.com/download/")
 		else
 			if (noir)
