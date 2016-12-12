@@ -29,6 +29,9 @@ LOG_COMBAT
 
 LOG_STATION
 
+#Will spam up logs
+#LOG_TOPIC
+
 # probablities for game modes chosen in "secret" and "random" modes
 # 
 # default probablity is 1, increase to make that mode more likely to be picked

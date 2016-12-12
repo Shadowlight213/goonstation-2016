@@ -24,6 +24,7 @@
 	var/log_station = 0					// log station events (includes legacy build)
 	var/log_telepathy = 0				// log telepathy events
 	var/log_debug = 0					// log debug events
+	var/log_world_topic = 0					// log topic messages
 	var/log_vehicles = 0					//I feel like this is a better place for listing who entered what, than the admin log.
 
 	var/allow_vote_restart = 0 			// allow votes to restart
@@ -172,6 +173,9 @@
 
 			if ("log_station")
 				config.log_station = 1
+
+			if ("log_topic")
+				config.log_world_topic = 1
 
 			if ("log_telepathy")
 				config.log_telepathy = 1

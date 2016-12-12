@@ -510,7 +510,8 @@ var/f_color_selector_handler/F_Color_Selector
 		src.status = s
 
 /world/Topic(T, addr, master, key)
-	diary << "TOPIC: \"[T]\", from:[addr], master:[master], key:[key]"
+	if(config && config.log_world_topic)
+		diary << "TOPIC: \"[T]\", from:[addr], master:[master], key:[key]"
 	var/list/plist = params2list(T)
 	var/key_valid = (config.comms_allowed && plist["key"] == config.comms_key)
 	if ("ping" in plist)
