@@ -376,7 +376,7 @@ var/const
 
 //#define RESTART_WHEN_ALL_DEAD 1
 
-//#define PLAYSOUND_LIMITER
+#define PLAYSOUND_LIMITER
 
 //Projectile damage type defines
 #define D_KINETIC 1

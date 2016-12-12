@@ -105,7 +105,7 @@ var/list/admin_verbs = list(
 /client/proc/view_fingerprints,\
 /client/proc/cmd_admin_intercom_announce,\
 /client/proc/cmd_admin_intercom_help,\
-/client/proc/cmd_dectalk,\
+///client/proc/cmd_dectalk,\
 /client/proc/cmd_admin_remove_plasma,\
 /client/proc/toggle_death_confetti,\
 
@@ -273,6 +273,10 @@ var/list/admin_verbs = list(
 /client/proc/admin_smoke,\
 /client/proc/admin_foam,\
 
+#ifdef SERVERTOOLS
+/client/proc/adminchangemap,\
+#endif
+
 /datum/admins/proc/toggleaprilfools,\
 /client/proc/cmd_admin_pop_off_all_the_limbs_oh_god,\
 /datum/admins/proc/togglethetoggles,\
@@ -309,10 +313,6 @@ var/list/admin_verbs = list(
 /client/proc/export_banlist,\
 /client/proc/import_banlist,\
 */
-
-#ifdef SERVERTOOLS
-/client/proc/adminchangemap,\
-#endif
 
 /client/proc/ticklag,\
 /client/proc/cmd_debug_vox,\
