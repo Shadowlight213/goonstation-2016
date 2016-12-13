@@ -67,7 +67,6 @@ var/list/admin_verbs = list(
 // LEVEL_SA, secondary administrator
 /client/proc/getserverlog,\
 /client/proc/stealth,\
-/datum/admins/proc/pixelexplosion,\
 /client/proc/alt_key,\
 /client/proc/secrets,\
 /verb/create_portal,\
@@ -103,9 +102,8 @@ var/list/admin_verbs = list(
 /client/proc/popt_key,\
 /client/proc/show_rules_to_player,\
 /client/proc/view_fingerprints,\
-/client/proc/cmd_admin_intercom_announce,\
-/client/proc/cmd_admin_intercom_help,\
-///client/proc/cmd_dectalk,\
+
+/*/client/proc/cmd_dectalk,\*/
 /client/proc/cmd_admin_remove_plasma,\
 /client/proc/toggle_death_confetti,\
 
@@ -157,12 +155,13 @@ var/list/admin_verbs = list(
 5 = list(\
 // LEVEL_PA, primary administrator
 /datum/admins/proc/togglesuicide,\
-/datum/admins/proc/pixelexplosion,\
 /client/proc/play_sound,\
 /client/proc/play_music,\
 /client/proc/cmd_admin_djmode,\
 /client/proc/give_dj,\
 /client/proc/play_ambient_sound,\
+/client/proc/cmd_admin_intercom_announce,\
+/client/proc/cmd_admin_intercom_help,\
 /client/proc/cmd_admin_clownify,\
 /client/proc/toggle_theater,\
 /client/proc/toggle_toggles,\
@@ -208,7 +207,6 @@ var/list/admin_verbs = list(
 6 = list(\
 // LEVEL_SHITGUY, shit person
 /datum/admins/proc/togglesoundwaiting,\
-/datum/admins/proc/pixelexplosion,\
 /client/proc/rspawn_panel,\
 /proc/mod_color,\
 /client/proc/debug_variables,\
