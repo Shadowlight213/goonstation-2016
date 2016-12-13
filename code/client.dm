@@ -1120,3 +1120,10 @@ var/global/curr_day = null
 	set desc = "Open the Forum in your browser"
 	set hidden = 1
 	src << link("https://tgstation13.org/phpBB/index.php")
+
+/client/verb/repo()
+	set category = "Commands"
+	set name = "Github"
+	set desc = "Open the Github Repository in your browser"
+	set hidden = 1
+	src << link("https://github.com/Shadowlight213/TGoonstation")
