@@ -292,11 +292,11 @@ var/list/ai_emotions = list("Happy" = "ai_happy",\
 
 /mob/living/silicon/ai/update_cursor()
 	if (src.client)
-		if (src.client.check_key("ctrl"))
+		if (src.client.check_key("shift"))
 			src.set_cursor('icons/cursors/open.dmi')
 			return
 
-		if (src.client.check_key("shift"))
+		if (src.client.check_key("ctrl"))
 			src.set_cursor('icons/cursors/bolt.dmi')
 			return
 	return ..()

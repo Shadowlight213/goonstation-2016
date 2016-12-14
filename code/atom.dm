@@ -462,6 +462,9 @@ obj
 	else if (isghostdrone(usr) && (isliving(src) && !isghostdrone(src)))
 		return
 
+	if (istype(usr, /mob/living/silicon/ai))
+		return
+
 	if (istype(usr, /mob/living/carbon) || istype(usr, /mob/living/silicon))
 		add_fingerprint(usr)
 

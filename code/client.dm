@@ -370,7 +370,7 @@ var/global/curr_day = null
 
 //client/Southwest()
 //	return
-/*
+
 /client/Northeast()
 	if (isobj(src.mob.loc))
 		var/obj/O = src.mob.loc
@@ -379,7 +379,7 @@ var/global/curr_day = null
 	if (isliving(src.mob))
 		var/mob/living/L = src.mob
 		L.swap_hand()
-*/
+
 /client/Southeast()
 	if (isobj(src.mob.loc))
 		var/obj/O = src.mob.loc

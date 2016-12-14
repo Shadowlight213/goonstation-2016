@@ -200,7 +200,7 @@
 
 	var/inrange = in_range(target, src)
 	var/obj/item/W = src.equipped()
-	if (params["alt"] || params["ctrl"] || (W && (inrange || (W.flags & EXTRADELAY)))) // slightly hacky, oh well
+	if (params["shift"] || params["ctrl"] || (W && (inrange || (W.flags & EXTRADELAY)))) // slightly hacky, oh well
 		..()
 		if (inrange)
 			return
