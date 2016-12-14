@@ -1,5 +1,5 @@
 /obj/machinery/power/am_engine
-	icon = 'AM_Engine.dmi'
+	icon = 'icons/obj/machines/AM_Engine.dmi'
 	density = 1
 	anchored = 1.0
 	flags = ON_BORDER
@@ -30,17 +30,17 @@
 
 /obj/machinery/power/am_engine/injector/New()
 	..()
-	spawn( 13 )
+	spawn(13)
 		var/loc = get_step(src, NORTH)
 		src.connected = locate(/obj/machinery/power/am_engine/engine, get_step(loc, NORTH))
 		return
 	return
 
 
-/obj/machinery/power/am_engine/injector/attackby(obj/item/weapon/fuel/F, mob/user)
+/obj/machinery/power/am_engine/injector/attackby(obj/item/fuel/F, mob/user)
 	if( (stat & BROKEN) || !connected) return
 
-	if(istype(F, /obj/item/weapon/fuel/H))
+	if(istype(F, /obj/item/fuel/H))
 		if(injecting)
 			boutput(user, "Theres already a fuel rod in the injector!")
 			return
@@ -50,10 +50,10 @@
 		qdel(F)
 		spawn( 300 )
 			injecting = 0
-			new/obj/item/weapon/fuel(src.loc)
+			new/obj/item/fuel(src.loc)
 			connected.H_fuel += fuel
 
-	if(istype(F, /obj/item/weapon/fuel/antiH))
+	if(istype(F, /obj/item/fuel/antiH))
 		if(injecting)
 			boutput(user, "Theres already a fuel rod in the injector!")
 			return
@@ -63,7 +63,7 @@
 		qdel(F)
 		spawn( 300 )
 			injecting = 0
-			new /obj/item/weapon/fuel(src.loc)
+			new /obj/item/fuel(src.loc)
 			connected.antiH_fuel += fuel
 
 	return

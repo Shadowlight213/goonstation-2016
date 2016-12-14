@@ -1,8 +1,8 @@
 /obj/machinery/computer/am_engine
 	name = "Antimatter Engine Console"
-	icon = 'icons/obj/stationobjs.dmi'
-	icon_state = "comm_computer"
-	req_access = list(access_engine)
+	icon = 'icons/obj/computer.dmi'
+	icon_state = "comm"
+	req_access = list()
 	var/engine_id = 0
 	var/authenticated = 0
 	var/obj/machinery/power/am_engine/engine/connected_E = null
@@ -41,9 +41,12 @@
 			src.state = STATE_INJECTOR
 		if("main")
 			src.state = STATE_DEFAULT
+		if("sync")
+			connected_I.connected = connected_E
+			connected_E.connected = connected_I
 		if("login")
 			var/mob/M = usr
-			var/obj/item/weapon/card/id/I = M.equipped()
+			var/obj/item/card/id/I = M.equipped()
 			if (I && istype(I))
 				if(src.check_access(I))
 					authenticated = 1
@@ -68,6 +71,7 @@
 				dat += "<BR>\[ <A HREF='?src=\ref[src];operation=logout'>Log Out</A> \]<br>"
 				dat += "<BR>\[ <A HREF='?src=\ref[src];operation=engine'>Engine Menu</A> \]"
 				dat += "<BR>\[ <A HREF='?src=\ref[src];operation=injector'>Injector Menu</A> \]"
+				dat += "<BR>\[ <A HREF='?src=\ref[src];operation=sync'>Sync</A> \]"
 			else
 				dat += "<BR>\[ <A HREF='?src=\ref[src];operation=login'>Log In</A> \]"
 		if(STATE_INJECTOR)

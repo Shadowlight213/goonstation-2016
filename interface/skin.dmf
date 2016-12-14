@@ -1516,14 +1516,14 @@ window "rpane"
 		is-pane = true
 	elem "repob"
 		type = BUTTON
-		pos = 380,4
+		pos = 380,5
 		size = 60x20
 		anchor1 = 100,0
 		anchor2 = none
 		background-color = none
 		saved-params = "is-checked"
-		text = "Repo"
-		command = "repo"
+		text = "Github"
+		command = "github"
 		group = "rpaneutil"
 	elem "rpanewindow"
 		type = CHILD

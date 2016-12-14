@@ -1108,6 +1108,8 @@ var/datum/preMapLoad/preMapLoad = new
 #include "code\WorkInProgress\tug.dm"
 #include "code\WorkInProgress\WiresStuff.dm"
 #include "code\WorkInProgress\wizardset.dm"
+#include "code\WorkInProgress\antimatter\computer.dm"
+#include "code\WorkInProgress\antimatter\engine.dm"
 #include "code\WorkInProgress\antimatter\fuel.dm"
 #include "code\WorkInProgress\computer3\base_os.dm"
 #include "code\WorkInProgress\computer3\base_program.dm"

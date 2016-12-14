@@ -1,8 +1,8 @@
 /obj/item/fuel
 	name = "Magnetic Storage Ring"
 	desc = "A magnetic storage ring."
-	icon = 'icons/obj/items.dmi'
-	icon_state = "rcdammo"
+	icon = 'icons/obj/ammo.dmi'
+	icon_state = "rcd"
 	opacity = 0
 	density = 0
 	anchored = 0.0
@@ -56,10 +56,10 @@
 		qdel(src)
 		return
 
-	var/turf/ground_zero = get_turf(loc)
+	//var/turf/ground_zero = get_turf(loc)
 
-	var/ground_zero_range = round(strength / 387)
-	explosion(src, ground_zero, ground_zero_range, ground_zero_range*2, ground_zero_range*3, ground_zero_range*4)
+	//var/ground_zero_range = round(strength / 387)
+	//explosion(src, ground_zero, ground_zero_range, ground_zero_range*2, ground_zero_range*3, ground_zero_range*4)//TOO MUCH BOOM
 
 	//SN src = null
 	qdel(src)
