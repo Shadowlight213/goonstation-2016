@@ -1,3 +1,5 @@
+This Fork is out of date and doesn't work in newer BYOND versions. A more up to date version of my modifications can be found [here](https://github.com/Shadowlight213/TGoonstation)
+
 
 [![Build Status](https://travis-ci.org/Shadowlight213/TGoonstation.png)](https://travis-ci.org/Shadowlight213/TGoonstation)
 
